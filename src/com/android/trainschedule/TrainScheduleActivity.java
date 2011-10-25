@@ -3,6 +3,7 @@ package com.android.trainschedule;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -25,6 +26,9 @@ public class TrainScheduleActivity extends Activity {
         setContentView(R.layout.main);
         
         if( isInit == false) {
+        	/**
+        	 * Setup "spinners"
+        	 */
         	spinner_from = (Spinner) findViewById(R.id.station_from);
         	ArrayAdapter<CharSequence> adapter_from = ArrayAdapter.createFromResource(
                 this, R.array.stations_array, android.R.layout.simple_spinner_item);
@@ -52,7 +56,9 @@ public class TrainScheduleActivity extends Activity {
         	adapter_times_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         	spinner_times_to.setAdapter(adapter_times_to);
         	spinner_times_to.setSelection(19);
-        
+        	/**
+        	 * Setup submit button.
+        	 */
         	submit_btn = (Button) findViewById(R.id.submit);
         	submit_btn.setOnClickListener(new View.OnClickListener() {
         		public void onClick(View v) {
@@ -60,10 +66,16 @@ public class TrainScheduleActivity extends Activity {
         		}
         	});
         	isInit = true;
+        	/**
+        	 * Setup listeners for the time select spinners.
+        	 */
         	spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
         	spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
         }
     }
+    /**
+     * Checks whether from time is greater than the to time.
+     */
     public class FromSpinnerOnItemSelectedListener implements OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent,
             View view, int pos, long id) {
@@ -76,6 +88,9 @@ public class TrainScheduleActivity extends Activity {
           // Do nothing.
         }
     }
+    /**
+     * Checks whether the to time is less than the from time.
+     */
     public class ToSpinnerOnItemSelectedListener implements OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent,
             View view, int pos, long id) {
@@ -88,6 +103,9 @@ public class TrainScheduleActivity extends Activity {
           // Do nothing.
         }
     }
+    /**
+     * Calls the next activity to display results.
+     */
     private void show_results() {
     	String station_from = map_station(spinner_from.getFirstVisiblePosition());
     	String station_to = map_station(spinner_to.getFirstVisiblePosition());
@@ -102,6 +120,9 @@ public class TrainScheduleActivity extends Activity {
     	startActivity(intent);
 
     }
+    /**
+     * Map station name in spinner to actual string received by the server.
+     */
     private String map_station(int pos) {
     	String station[] = {"ABN","ANM","AUH","APR","AKU","AWP","ALW","ALT","ABA","ABL","APS","AVD",
     						"AND","AGT","AGL","ANP","APT","AKT","ARW","ASL","AWK","AVS","BAD","BNA",
@@ -131,6 +152,9 @@ public class TrainScheduleActivity extends Activity {
     						"WKA","YGD","YPW","YGM","YTG"};
     	return station[pos];
     }
+    /**
+     * Match "from time" in spinner to actual string received by the server.
+     */
     private String map_time_from(int pos) {
     	String time_from[] = {"00:00:01","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00",
     						  "06:00:00","07:00:00","08:00:00","09:00:00","10:00:00","11:00:00",
@@ -138,6 +162,9 @@ public class TrainScheduleActivity extends Activity {
     						  "18:00:00","19:00:00","20:00:00","21:00:0,","22:00:00","23:00:00"};
     	return time_from[pos];
     }
+    /**
+     * Match "to time" in spinner to actual string received by the server.
+     */
     private String map_time_to(int pos) {
     	String time_to[] = {"01:00:00","02:00:00","03:00:00","04:00:00","05:00:00","06:00:00","07:00:00",
     					    "08:00:00","09:00:00","10:00:00","11:00:00","11:59:59","13:00:00","14:00:00",
