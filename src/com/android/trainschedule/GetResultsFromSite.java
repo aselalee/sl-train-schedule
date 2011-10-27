@@ -16,7 +16,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-
 import android.util.Log;
 
 public class GetResultsFromSite {
@@ -53,8 +52,10 @@ public class GetResultsFromSite {
 	    /**
 	     * In case an error occurs this HTML string will be returned.
 	     */
-	    String htmlNoResult = "";
-	    htmlNoResult += "<html><head></head><body><a>Results Not Found</a></body></html>";
+	    String htmlNoResult = "<html><head></head><body><h1>Results Not Found.</h1></body></html>";
+	    String htmlEncErr = "<html><head></head><body><h1>Encoding Error. Please Try Again.</h1></body></html>";
+	    String htmlHTTPErr = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
+	    String htmlIOErr = "<html><head></head><body><h1>IO Stream Error. Close Application and Try Again.</h1></body></html>";
 
         /**
          * Setup networking.
@@ -65,7 +66,7 @@ public class GetResultsFromSite {
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("TR_SCH_ERR", "ENCODINGERROR : UnsupportedEncodingException : "+e);
-			return htmlNoResult;
+			return htmlEncErr;
 		}
 	    HttpClient httpClient = new DefaultHttpClient();
         HttpResponse response = null;
@@ -77,10 +78,10 @@ public class GetResultsFromSite {
 	        response = httpClient.execute(httpPost);
 	    } catch (ClientProtocolException e) {
 	    	Log.e("TR_SCH_ERR", "HTTPERROR : ClientProtocolException : "+e);
-	    	return htmlNoResult;
+	    	return htmlHTTPErr;
 	    } catch (IOException e) {
 	    	Log.e("TR_SCH_ERR", "HTTPERROR : IOException : "+e);
-	    	return htmlNoResult;
+	    	return htmlHTTPErr;
 	    }
 
 	    /**
@@ -91,10 +92,10 @@ public class GetResultsFromSite {
 	    	ips = response.getEntity().getContent();
 	    } catch (IOException e) {
 	    	Log.e("TR_SCH_ERR", "InputStreamERROR : IOException : "+e);
-	    	return htmlNoResult;
+	    	return htmlIOErr;
 	    } catch (IllegalStateException e) {
 	    	Log.e("TR_SCH_ERR", "InputStreamERROR : IllegalStateException : "+e);
-	    	return htmlNoResult;
+	    	return htmlIOErr;
 	    }
 	    
 	    /**
@@ -110,7 +111,7 @@ public class GetResultsFromSite {
 	    	}
 	 	} catch (IOException e) {
 	 		Log.e("TR_SCH_ERR", "InputStreamERROR : IOException - Read Error: "+e);
-	 		return htmlNoResult;
+	 		return htmlIOErr;
 	 	}
 	    
 	    /**
