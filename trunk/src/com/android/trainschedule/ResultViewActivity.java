@@ -2,6 +2,8 @@ package com.android.trainschedule;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,7 +46,12 @@ public class ResultViewActivity extends Activity implements Runnable {
 	    	 */
 	    	pd = ProgressDialog.show(this, "Working..",
 								 	"Getting Results from www.railway.gov.lk",
-								 	true, false);
+								 	true, true,
+								 	new DialogInterface.OnCancelListener(){
+                						public void onCancel(DialogInterface dialog) {
+                							finish();
+                						}
+	    							});
 
 	    	/**
 	    	 * This will execute the "run" method in a new thread.
@@ -77,4 +84,18 @@ public class ResultViewActivity extends Activity implements Runnable {
 		    mWebView.loadDataWithBaseURL("", result,"text/html", "UTF-8", null);
 		}
 	};
+	
+    @Override
+    public void onPause() {
+    	super.onPause();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+    }
 }
