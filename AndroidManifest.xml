@@ -21,7 +21,8 @@
         <activity
             android:label="@string/results"
             android:name=".ResultViewActivity" 
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation" >
         </activity>
     </application>
 	<uses-permission android:name="android.permission.INTERNET" />

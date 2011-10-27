@@ -1,15 +1,17 @@
 package com.android.trainschedule;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class TrainScheduleActivity extends Activity {
 	private Button submit_btn;
@@ -17,74 +19,84 @@ public class TrainScheduleActivity extends Activity {
 	private Spinner spinner_to;
 	private Spinner spinner_times_from;
 	private Spinner spinner_times_to;
-	private boolean isInit = false;
+
+	/**
+	 * Save spinner positions to this file.
+	 */
+	private static final String PREFERENCES_FILE = "SpinnerPrefs";
+	/**
+	 * Keys to be saved.
+	 */
+	private static final String STATION_FROM_POS = "station_from_pos";
+	private static final String STATION_TO_POS = "station_to_pos";
+	private static final String TIME_FROM_POS = "time_from_pos";
+	private static final String TIME_TO_POS = "time_to_pos";
+	/**
+	 * Default values.
+	 */
+	private int def_station_from = 246;
+	private int def_station_to = 153;
+	private int def_time_from = 14;
+	private int def_time_to = 19;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        if( isInit == false) {
-        	/**
-        	 * Setup "spinners"
-        	 */
-        	spinner_from = (Spinner) findViewById(R.id.station_from);
-        	ArrayAdapter<CharSequence> adapter_from = ArrayAdapter.createFromResource(
-                this, R.array.stations_array, android.R.layout.simple_spinner_item);
-        	adapter_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        	spinner_from.setAdapter(adapter_from);
-        	spinner_from.setSelection(246);
-        
-        	spinner_to = (Spinner) findViewById(R.id.station_to);
-        	ArrayAdapter<CharSequence> adapter_to = ArrayAdapter.createFromResource(
-                this, R.array.stations_array, android.R.layout.simple_spinner_item);
-        	adapter_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        	spinner_to.setAdapter(adapter_to);
-        	spinner_to.setSelection(153);
-        
-        	spinner_times_from = (Spinner) findViewById(R.id.times_from);
-        	ArrayAdapter<CharSequence> adapter_times_from = ArrayAdapter.createFromResource(
-                this, R.array.times_from_array, android.R.layout.simple_spinner_item);
-        	adapter_times_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        	spinner_times_from.setAdapter(adapter_times_from);
-        	spinner_times_from.setSelection(14);
-        
-        	spinner_times_to = (Spinner) findViewById(R.id.times_to);
-        	ArrayAdapter<CharSequence> adapter_times_to = ArrayAdapter.createFromResource(
-                this, R.array.times_to_array, android.R.layout.simple_spinner_item);
-        	adapter_times_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        	spinner_times_to.setAdapter(adapter_times_to);
-        	spinner_times_to.setSelection(19);
-        	/**
-        	 * Setup submit button.
-        	 */
-        	submit_btn = (Button) findViewById(R.id.submit);
-        	submit_btn.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v) {
-        			show_results();
-        		}
-        	});
-        	isInit = true;
-        	/**
-        	 * Setup listeners for the time select spinners.
-        	 */
-        	spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
-        	spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
-        }
+        /**
+         * Setup "spinners"
+         */
+        spinner_from = (Spinner) findViewById(R.id.station_from);
+        ArrayAdapter<CharSequence> adapter_from = ArrayAdapter.createFromResource(
+        		this, R.array.stations_array, android.R.layout.simple_spinner_item);
+        adapter_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_from.setAdapter(adapter_from);
+
+       	spinner_to = (Spinner) findViewById(R.id.station_to);
+       	ArrayAdapter<CharSequence> adapter_to = ArrayAdapter.createFromResource(
+       			this, R.array.stations_array, android.R.layout.simple_spinner_item);
+       	adapter_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       	spinner_to.setAdapter(adapter_to);
+
+       	spinner_times_from = (Spinner) findViewById(R.id.times_from);
+       	ArrayAdapter<CharSequence> adapter_times_from = ArrayAdapter.createFromResource(
+       			this, R.array.times_from_array, android.R.layout.simple_spinner_item);
+        adapter_times_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_times_from.setAdapter(adapter_times_from);
+
+       	spinner_times_to = (Spinner) findViewById(R.id.times_to);
+       	ArrayAdapter<CharSequence> adapter_times_to = ArrayAdapter.createFromResource(
+       			this, R.array.times_to_array, android.R.layout.simple_spinner_item);
+       	adapter_times_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       	spinner_times_to.setAdapter(adapter_times_to);
+       	/**
+       	 * Setup submit button.
+       	 */
+       	submit_btn = (Button) findViewById(R.id.submit);
+       	submit_btn.setOnClickListener(new View.OnClickListener() {
+       		public void onClick(View v) {
+       			show_results();
+        	}
+        });
+        /**
+         * Setup listeners for the time select spinners.
+         */
+        spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
+        spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
     }
     /**
      * Checks whether from time is greater than the to time.
      */
     public class FromSpinnerOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent,
+    	public void onItemSelected(AdapterView<?> parent,
             View view, int pos, long id) {
-        		int toPos = spinner_times_to.getFirstVisiblePosition();
+        		int toPos = spinner_times_to.getSelectedItemPosition();
         		if( pos > toPos) {
         			spinner_times_to.setSelection(pos);
         		}
         }
-        public void onNothingSelected(AdapterView parent) {
+        public void onNothingSelected(AdapterView<?> parent) {
           // Do nothing.
         }
     }
@@ -94,12 +106,12 @@ public class TrainScheduleActivity extends Activity {
     public class ToSpinnerOnItemSelectedListener implements OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent,
             View view, int pos, long id) {
-        		int toPos = spinner_times_from.getFirstVisiblePosition();
+        		int toPos = spinner_times_from.getSelectedItemPosition();
         		if( pos < toPos) {
         			spinner_times_from.setSelection(pos);
         		}
         }
-        public void onNothingSelected(AdapterView parent) {
+        public void onNothingSelected(AdapterView<?> parent) {
           // Do nothing.
         }
     }
@@ -107,10 +119,10 @@ public class TrainScheduleActivity extends Activity {
      * Calls the next activity to display results.
      */
     private void show_results() {
-    	String station_from = map_station(spinner_from.getFirstVisiblePosition());
-    	String station_to = map_station(spinner_to.getFirstVisiblePosition());
-    	String time_from = map_time_from(spinner_times_from.getFirstVisiblePosition());
-    	String time_to = map_time_to(spinner_times_to.getFirstVisiblePosition());
+    	String station_from = map_station(spinner_from.getSelectedItemPosition());
+    	String station_to = map_station(spinner_to.getSelectedItemPosition());
+    	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
+    	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
     	
     	Intent intent = new Intent(this, ResultViewActivity.class);
     	intent.putExtra("station_from", station_from);
@@ -173,13 +185,55 @@ public class TrainScheduleActivity extends Activity {
     	return time_to[pos];
     }
     
-    @Override
-    public void onPause() {
-    	super.onPause();
+    /**
+     * Read spinner positions from preference file.
+     */
+    private void readCurrentState(Context c) {
+    	/**
+         * Get the SharedPreferences object for this application
+         */
+    	SharedPreferences p = c.getSharedPreferences(PREFERENCES_FILE, MODE_WORLD_READABLE);
+        /**
+         * Get the position and value of the spinner from the file
+         */
+    	spinner_from.setSelection(p.getInt(STATION_FROM_POS, def_station_from));
+    	spinner_to.setSelection(p.getInt(STATION_TO_POS, def_station_to));
+    	spinner_times_from.setSelection(p.getInt(TIME_FROM_POS, def_time_from));
+    	spinner_times_to.setSelection(p.getInt(TIME_TO_POS, def_time_to));
+    }
+    /**
+     * Write current spinner positions to preferences file.
+     */
+    private boolean writeCurrentState(Context c) {
+    	/**
+         * Get the SharedPreferences object for this application
+         */
+    	SharedPreferences p = c.getSharedPreferences(PREFERENCES_FILE, MODE_WORLD_READABLE);
+        /**
+         * Get the editor for this object.
+         */
+        SharedPreferences.Editor e = p.edit();
+        /**
+         * Write values.
+         */
+        e.putInt(STATION_FROM_POS, spinner_from.getSelectedItemPosition());
+        e.putInt(STATION_TO_POS, spinner_to.getSelectedItemPosition());
+        e.putInt(TIME_FROM_POS, spinner_times_from.getSelectedItemPosition());
+        e.putInt(TIME_TO_POS, spinner_times_to.getSelectedItemPosition());
+        return (e.commit());
     }
     
     @Override
-    protected void onResume() {
+    public void onPause() {
+    	super.onPause();
+    	if( !writeCurrentState(this) ) {
+    		Toast.makeText(this,
+                    "Failed to write state!", Toast.LENGTH_LONG).show();
+    	}
+    }    
+    @Override
+    public void onResume() {
         super.onResume();
+        readCurrentState(this);
     }
 }
