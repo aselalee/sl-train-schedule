@@ -31,7 +31,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class TrainScheduleActivity extends Activity {
-	private Button submit_btn;
+	private Button get_given_btn;
+	private Button get_all_btn;
 	private Spinner spinner_from;
 	private Spinner spinner_to;
 	private Spinner spinner_times_from;
@@ -88,12 +89,18 @@ public class TrainScheduleActivity extends Activity {
        	adapter_times_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
        	spinner_times_to.setAdapter(adapter_times_to);
        	/**
-       	 * Setup submit button.
+       	 * Setup submit buttons.
        	 */
-       	submit_btn = (Button) findViewById(R.id.submit);
-       	submit_btn.setOnClickListener(new View.OnClickListener() {
+       	get_given_btn = (Button) findViewById(R.id.get_given);
+       	get_given_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
        			show_results();
+        	}
+        });
+       	get_all_btn = (Button) findViewById(R.id.get_all);
+       	get_all_btn.setOnClickListener(new View.OnClickListener() {
+       		public void onClick(View v) {
+       			show_all_results();
         	}
         });
         /**
@@ -133,13 +140,34 @@ public class TrainScheduleActivity extends Activity {
         }
     }
     /**
-     * Calls the next activity to display results.
+     * Get data from UI elements and calls the next activity to display results.
      */
     private void show_results() {
     	String station_from = map_station(spinner_from.getSelectedItemPosition());
     	String station_to = map_station(spinner_to.getSelectedItemPosition());
     	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
     	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
+    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
+    	
+    	Intent intent = new Intent(this, ResultViewActivity.class);
+    	intent.putExtra("station_from", station_from);
+    	intent.putExtra("station_to", station_to);
+    	intent.putExtra("time_from", time_from);
+    	intent.putExtra("time_to", time_to);
+    	intent.putExtra("date_today", date_today);
+    	startActivity(intent);
+
+    }
+    /**
+     * Get data from UI elements and calls the next activity to display results.
+     * To get the full schedule, times are mapped to least starting time and 
+     * most ending time.
+     */
+    private void show_all_results() {
+    	String station_from = map_station(spinner_from.getSelectedItemPosition());
+    	String station_to = map_station(spinner_to.getSelectedItemPosition());
+    	String time_from = map_time_from(0);
+    	String time_to = map_time_to(spinner_times_to.getCount() - 1);
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	
     	Intent intent = new Intent(this, ResultViewActivity.class);

@@ -56,7 +56,6 @@ public class GetResultsFromSite {
         nameValuePairs.add(new BasicNameValuePair("txtToTime", time_to));
         nameValuePairs.add(new BasicNameValuePair("datepicker", date_today));
         nameValuePairs.add(new BasicNameValuePair("Submit", "Find"));
-        Log.i("TR_SCH_INFO", date_today);
         
         /**
          * HTML to be sent as the output. The results table will be appended
