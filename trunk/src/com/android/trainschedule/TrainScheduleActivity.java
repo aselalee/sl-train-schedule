@@ -65,28 +65,25 @@ public class TrainScheduleActivity extends Activity {
         /**
          * Setup "spinners"
          */
-        spinner_from = (Spinner) findViewById(R.id.station_from);
-        ArrayAdapter<CharSequence> adapter_from = ArrayAdapter.createFromResource(
+        
+        ArrayAdapter<CharSequence> adapter_stations = ArrayAdapter.createFromResource(
         		this, R.array.stations_array, android.R.layout.simple_spinner_item);
-        adapter_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_from.setAdapter(adapter_from);
-
+        adapter_stations.setDropDownViewResource(R.layout.list_item);
+        spinner_from = (Spinner) findViewById(R.id.station_from);
+        spinner_from.setAdapter(adapter_stations);
        	spinner_to = (Spinner) findViewById(R.id.station_to);
-       	ArrayAdapter<CharSequence> adapter_to = ArrayAdapter.createFromResource(
-       			this, R.array.stations_array, android.R.layout.simple_spinner_item);
-       	adapter_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-       	spinner_to.setAdapter(adapter_to);
+       	spinner_to.setAdapter(adapter_stations);
 
-       	spinner_times_from = (Spinner) findViewById(R.id.times_from);
        	ArrayAdapter<CharSequence> adapter_times_from = ArrayAdapter.createFromResource(
        			this, R.array.times_from_array, android.R.layout.simple_spinner_item);
-        adapter_times_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter_times_from.setDropDownViewResource(R.layout.list_item);
+       	spinner_times_from = (Spinner) findViewById(R.id.times_from);
         spinner_times_from.setAdapter(adapter_times_from);
 
-       	spinner_times_to = (Spinner) findViewById(R.id.times_to);
        	ArrayAdapter<CharSequence> adapter_times_to = ArrayAdapter.createFromResource(
        			this, R.array.times_to_array, android.R.layout.simple_spinner_item);
-       	adapter_times_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       	adapter_times_to.setDropDownViewResource(R.layout.list_item);
+       	spinner_times_to = (Spinner) findViewById(R.id.times_to);
        	spinner_times_to.setAdapter(adapter_times_to);
        	/**
        	 * Setup submit buttons.
@@ -109,6 +106,7 @@ public class TrainScheduleActivity extends Activity {
         spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
         spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
     }
+
     /**
      * Checks whether from time is greater than the to time.
      */
