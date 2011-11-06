@@ -22,10 +22,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -33,27 +37,36 @@ import android.widget.Toast;
 public class TrainScheduleActivity extends Activity {
 	private Button get_given_btn;
 	private Button get_all_btn;
-	private Spinner spinner_from;
-	private Spinner spinner_to;
+	AutoCompleteTextView actv_from;
+	AutoCompleteTextView actv_to;
+	ArrayAdapter<Station> adapter;
+	ArrayAdapter<CharSequence> adapter_times_from;
+	ArrayAdapter<CharSequence> adapter_times_to;
 	private Spinner spinner_times_from;
 	private Spinner spinner_times_to;
-
+	private Station stations[];
+	private String[] stationsText;
+	private String[] stationsVal;
+	private String station_from_txt = "";
+	private String station_to_txt = "";
+	private String station_from_val = "";
+	private String station_to_val = "";
 	/**
 	 * Save spinner positions to this file.
 	 */
-	private static final String PREFERENCES_FILE = "SpinnerPrefs";
+	private static final String PREFERENCES_FILE = "mainPrefs";
 	/**
 	 * Keys to be saved.
 	 */
-	private static final String STATION_FROM_POS = "station_from_pos";
-	private static final String STATION_TO_POS = "station_to_pos";
 	private static final String TIME_FROM_POS = "time_from_pos";
 	private static final String TIME_TO_POS = "time_to_pos";
+	private static final String STATION_FROM_TXT = "station_from_txt";
+	private static final String STATION_FROM_VAL = "station_from_val";
+	private static final String STATION_TO_TXT = "station_to_txt";
+	private static final String STATION_TO_VAL = "station_to_val";
 	/**
 	 * Default values.
 	 */
-	private int def_station_from = 246;
-	private int def_station_to = 153;
 	private int def_time_from = 14;
 	private int def_time_to = 19;
 	
@@ -63,24 +76,26 @@ public class TrainScheduleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         /**
-         * Setup "spinners"
+         * Setup "AutoCompleteText" views
          */
-        
-        ArrayAdapter<CharSequence> adapter_stations = ArrayAdapter.createFromResource(
-        		this, R.array.stations_array, android.R.layout.simple_spinner_item);
-        adapter_stations.setDropDownViewResource(R.layout.list_item);
-        spinner_from = (Spinner) findViewById(R.id.station_from);
-        spinner_from.setAdapter(adapter_stations);
-       	spinner_to = (Spinner) findViewById(R.id.station_to);
-       	spinner_to.setAdapter(adapter_stations);
-
-       	ArrayAdapter<CharSequence> adapter_times_from = ArrayAdapter.createFromResource(
+        populateStations();
+        actv_from = (AutoCompleteTextView) findViewById(R.id.stations_from);
+        actv_to = (AutoCompleteTextView) findViewById(R.id.stations_to);
+        adapter = new ArrayAdapter<Station>(this, R.layout.list_item, stations);
+        actv_from.setAdapter(adapter);
+        actv_to.setAdapter(adapter);
+        actv_from.setOnItemClickListener(new ACTVFromItemClickListner());
+        actv_to.setOnItemClickListener(new ACTVToItemClickListner());       
+        /**
+         * Setup time "spinner"s
+         */
+       	adapter_times_from = ArrayAdapter.createFromResource(
        			this, R.array.times_from_array, android.R.layout.simple_spinner_item);
         adapter_times_from.setDropDownViewResource(R.layout.list_item);
        	spinner_times_from = (Spinner) findViewById(R.id.times_from);
         spinner_times_from.setAdapter(adapter_times_from);
 
-       	ArrayAdapter<CharSequence> adapter_times_to = ArrayAdapter.createFromResource(
+       	adapter_times_to = ArrayAdapter.createFromResource(
        			this, R.array.times_to_array, android.R.layout.simple_spinner_item);
        	adapter_times_to.setDropDownViewResource(R.layout.list_item);
        	spinner_times_to = (Spinner) findViewById(R.id.times_to);
@@ -106,7 +121,18 @@ public class TrainScheduleActivity extends Activity {
         spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
         spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
     }
-
+    private void populateStations( )
+    {
+    	stationsText = getResources().getStringArray(R.array.stations_array);
+    	stationsVal = getResources().getStringArray(R.array.stations_val_array);
+    	stations = new Station[stationsText.length];
+    	
+    	int index = 0;
+    	for( index = 0; index < stationsText.length; index++ )
+    	{
+    		stations[index] = new Station(stationsText[index],stationsVal[index]);
+    	}
+    }
     /**
      * Checks whether from time is greater than the to time.
      */
@@ -138,23 +164,50 @@ public class TrainScheduleActivity extends Activity {
         }
     }
     /**
+     * From station AutoCompleteText callback
+     */
+    private class ACTVFromItemClickListner implements OnItemClickListener {
+		public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+			Station selectedStation = (Station) parent.getItemAtPosition(pos);
+			station_from_txt = selectedStation.getText();
+			station_from_val = selectedStation.getValue();
+			actv_to.requestFocus();
+			Log.i("ACTV", selectedStation.getText());
+			Log.i("ACTV", selectedStation.getValue());
+		}
+    }
+    /**
+     * From station AutoCompleteText callback
+     */
+    private class ACTVToItemClickListner implements OnItemClickListener {
+    	public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+			Station selectedStation = (Station) parent.getItemAtPosition(pos);
+			station_to_txt = selectedStation.getText();
+			station_to_val = selectedStation.getValue();
+			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(actv_to.getWindowToken(), 0);
+			get_all_btn.requestFocus();
+			actv_to.clearFocus();
+			actv_from.clearFocus();
+			Log.i("ACTV", selectedStation.getText());
+			Log.i("ACTV", selectedStation.getValue());
+		}
+    }
+    /**
      * Get data from UI elements and calls the next activity to display results.
      */
     private void show_results() {
-    	String station_from = map_station(spinner_from.getSelectedItemPosition());
-    	String station_to = map_station(spinner_to.getSelectedItemPosition());
     	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
     	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	
     	Intent intent = new Intent(this, ResultViewActivity.class);
-    	intent.putExtra("station_from", station_from);
-    	intent.putExtra("station_to", station_to);
+    	intent.putExtra("station_from", station_from_val);
+    	intent.putExtra("station_to", station_to_val);
     	intent.putExtra("time_from", time_from);
     	intent.putExtra("time_to", time_to);
     	intent.putExtra("date_today", date_today);
     	startActivity(intent);
-
     }
     /**
      * Get data from UI elements and calls the next activity to display results.
@@ -162,52 +215,18 @@ public class TrainScheduleActivity extends Activity {
      * most ending time.
      */
     private void show_all_results() {
-    	String station_from = map_station(spinner_from.getSelectedItemPosition());
-    	String station_to = map_station(spinner_to.getSelectedItemPosition());
     	String time_from = map_time_from(0);
     	String time_to = map_time_to(spinner_times_to.getCount() - 1);
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	
     	Intent intent = new Intent(this, ResultViewActivity.class);
-    	intent.putExtra("station_from", station_from);
-    	intent.putExtra("station_to", station_to);
+    	intent.putExtra("station_from", station_from_val);
+    	intent.putExtra("station_to", station_to_val);
     	intent.putExtra("time_from", time_from);
     	intent.putExtra("time_to", time_to);
     	intent.putExtra("date_today", date_today);
     	startActivity(intent);
 
-    }
-    /**
-     * Map station name in spinner to actual string received by the server.
-     */
-    private String map_station(int pos) {
-    	String station[] = {"ABN","ANM","AUH","APR","AKU","AWP","ALW","ALT","ABA","ABL","APS","AVD",
-    						"AND","AGT","AGL","ANP","APT","AKT","ARW","ASL","AWK","AVS","BAD","BNA",
-    						"BPA","BPT","BDA","BSL","BOA","BCO","BTU","BEM","BNT","BRL","BLT","BSH",
-    						"BSA","BTL","BGH","BJM","CHL","CBY","FOT","CLY","CRD","DRL","DWL","DAG",
-    						"DDR","DPM","DLA","DNA","EYA","ELL","EDM","EKM","EVR","EPN","IPZ","GBD",
-    						"GLM","GLE","GAL","GOA","GMA","GPH","GPL","GND","GAN","GNW","GDA","GTL",
-    						"GEY","GNT","GRB","GGA","GWN","HBD","HBN","HEA","HPT","HAU","HKT","HTN",
-    						"HLO","HDP","HML","HKD","HRG","YPP","HMA","HHR","HRP","HLA","HUN","IGH",
-    						"IHA","IKT","IWL","IDA","INO","JLA","JAP","KDN","KMA","KGW","KDG","KWE",
-    						"KYA","KLW","KKH","KTN","KTS","KMG","KAN","KGD","KDT","KNI","KAW","KPL",
-    						"KTL","KAT","KTG","KUG","KKD","CAK","KTK","KEN","KRA","KLA","KNM","KPE",
-    						"KEL","KCH","KOG","KLP","KLN","KPN","KON","KOR","KSG","KDA","KHA","KGA",
-    						"KOT","KWW","KUD","KMK","KMB","KUR","KRN","LYA","LGM","LNA","LWL","MPA",
-    						"MDP","MKI","MGG","MGN","MYA","MAG","MHO","MPL","MPT","MGE","MDA","MTL",
-    						"MTR","MEM","MWH","MGD","MWA","MED","MHN","MHJ","MIY","MIR","MIS","MLP",
-    						"MLG","MKP","MRT","MLV","MNL","MTG","NAG","NLY","NOA","NHP","NAT","NVP",
-    						"NWN","NGM","NGB","NPK","NOR","NUG","OHA","OMT","PDK","PVI","PLL","PUW",
-    						"PND","PNG","PNL","PAN","PKU","PHW","PGD","PTP","PPL","PGN","PGS","PDA",
-    						"PKP","PRL","PNV","PLD","PLT","PNW","PIN","PGM","PYA","PLN","PLG","PLR",
-    						"PON","PTA","PCK","PNI","PTM","PWP","RDL","RGM","RBK","RMA","RGA","RTG",
-    						"RML","RCH","RZL","SAL","SUA","SWR","SCR","SED","SMA","SGM","SVP","SYA",
-    						"SRP","TLA","TKL","TWG","TAN","TWT","TBL","TLP","TBM","TDK","TDY","TNA",
-    						"TIM","TSM","TRH","TCO","TUD","TDR","UDL","UWL","UHM","UDW","UGL","UKL",
-    						"ULP","UNW","VCH","VML","VNA","VGD","WDA","WGG","WKL","WHP","WLG","WPA",
-    						"WSL","WRW","WTG","WAT","WLA","WGA","WLM","WKD","WEL","WTE","WRD","WWT",
-    						"WKA","YGD","YPW","YGM","YTG"};
-    	return station[pos];
     }
     /**
      * Match "from time" in spinner to actual string received by the server.
@@ -229,7 +248,6 @@ public class TrainScheduleActivity extends Activity {
     					    "22:00:0,","23:00:00","23:59:59"};
     	return time_to[pos];
     }
-    
     /**
      * Read spinner positions from preference file.
      */
@@ -241,8 +259,12 @@ public class TrainScheduleActivity extends Activity {
         /**
          * Get the position and value of the spinner from the file
          */
-    	spinner_from.setSelection(p.getInt(STATION_FROM_POS, def_station_from));
-    	spinner_to.setSelection(p.getInt(STATION_TO_POS, def_station_to));
+    	station_from_txt = p.getString(STATION_FROM_TXT, "");
+    	actv_from.setText(station_from_txt);
+    	station_from_val = p.getString(STATION_FROM_VAL, "");
+    	station_to_txt = p.getString(STATION_TO_TXT, "");
+    	actv_to.setText(station_to_txt);
+    	station_to_val = p.getString(STATION_TO_VAL, "");
     	spinner_times_from.setSelection(p.getInt(TIME_FROM_POS, def_time_from));
     	spinner_times_to.setSelection(p.getInt(TIME_TO_POS, def_time_to));
     }
@@ -261,13 +283,14 @@ public class TrainScheduleActivity extends Activity {
         /**
          * Write values.
          */
-        e.putInt(STATION_FROM_POS, spinner_from.getSelectedItemPosition());
-        e.putInt(STATION_TO_POS, spinner_to.getSelectedItemPosition());
+        e.putString(STATION_FROM_TXT, station_from_txt);
+        e.putString(STATION_FROM_VAL, station_from_val);
+        e.putString(STATION_TO_TXT, station_to_txt);
+        e.putString(STATION_TO_VAL, station_to_val);
         e.putInt(TIME_FROM_POS, spinner_times_from.getSelectedItemPosition());
         e.putInt(TIME_TO_POS, spinner_times_to.getSelectedItemPosition());
         return (e.commit());
     }
-    
     @Override
     public void onPause() {
     	super.onPause();
@@ -280,5 +303,31 @@ public class TrainScheduleActivity extends Activity {
     public void onResume() {
         super.onResume();
         readCurrentState(this);
+        //get_all_btn.requestFocus();
+        //actv_from.clearFocus();
+        //actv_to.clearFocus();
+        get_given_btn.requestFocus();
+    }
+    
+    private class Station {
+        private String text;
+        private String value;
+
+        public Station( String textStr, String valueStr ) {
+            this.text = textStr;
+            this.value = valueStr;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String toString() {
+            return text;
+        }
     }
 }

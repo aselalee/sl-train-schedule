@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Train Schedule</string>
-	<string name="results">Schedule</string>
-	
+	<string name="results">Schedule</string>	
     <string name="stations_from">Choose Starting Station</string>
     <string name="stations_to">Choose Destination Station</string>
+    <string name="time_desc">Trains Starting Within</string>
+	<string name="to">To</string>
+	<string name="schedule">Schedule</string>
+	<string name="full_schedule">Full Schedule</string>
+
     <string-array name="stations_array">
         <item>ABANPOLA</item>
         <item>AHANGAMA</item>
@@ -312,8 +316,315 @@
         <item>YATAGAMA</item>
         <item>YATTALGODA</item>
     </string-array>
-    
-    <string name="times_from">Start Time</string>
+
+    <string-array name="stations_val_array">
+        <item>ABN</item>
+        <item>ANM</item>
+        <item>AUH</item>
+        <item>APR</item>
+        <item>AKU</item>
+        <item>AWP</item>
+        <item>ALW</item>
+        <item>ALT</item>
+        <item>ABA</item>
+        <item>ABL</item>
+        <item>APS</item>
+        <item>AVD</item>
+        <item>AND</item>
+        <item>AGT</item>
+        <item>AGL</item>
+        <item>ANP</item>
+        <item>APT</item>
+        <item>AKT</item>
+        <item>ARW</item>
+        <item>ASL</item>
+        <item>AWK</item>
+        <item>AVS</item>
+        <item>BAD</item>
+        <item>BNA</item>
+        <item>BPA</item>
+        <item>BPT</item>
+        <item>BDA</item>
+        <item>BSL</item>
+        <item>BOA</item>
+        <item>BCO</item>
+        <item>BTU</item>
+        <item>BEM</item>
+        <item>BNT</item>
+        <item>BRL</item>
+        <item>BLT</item>
+        <item>BSH</item>
+        <item>BSA</item>
+        <item>BTL</item>
+        <item>BGH</item>
+        <item>BJM</item>
+        <item>CHL</item>
+        <item>CBY</item>
+        <item>FOT</item>
+        <item>CLY</item>
+        <item>CRD</item>
+        <item>DRL</item>
+        <item>DWL</item>
+        <item>DAG</item>
+        <item>DDR</item>
+        <item>DPM</item>
+        <item>DLA</item>
+        <item>DNA</item>
+        <item>EYA</item>
+        <item>ELL</item>
+        <item>EDM</item>
+        <item>EKM</item>
+        <item>EVR</item>
+        <item>EPN</item>
+        <item>IPZ</item>
+        <item>GBD</item>
+        <item>GLM</item>
+        <item>GLE</item>
+        <item>GAL</item>
+        <item>GOA</item>
+        <item>GMA</item>
+        <item>GPH</item>
+        <item>GPL</item>
+        <item>GND</item>
+        <item>GAN</item>
+        <item>GNW</item>
+        <item>GDA</item>
+        <item>GTL</item>
+        <item>GEY</item>
+        <item>GNT</item>
+        <item>GRB</item>
+        <item>GGA</item>
+        <item>GWN</item>
+        <item>HBD</item>
+        <item>HBN</item>
+        <item>HEA</item>
+        <item>HPT</item>
+        <item>HAU</item>
+        <item>HKT</item>
+        <item>HTN</item>
+        <item>HLO</item>
+        <item>HDP</item>
+        <item>HML</item>
+        <item>HKD</item>
+        <item>HRG</item>
+        <item>YPP</item>
+        <item>HMA</item>
+        <item>HHR</item>
+        <item>HRP</item>
+        <item>HLA</item>
+        <item>HUN</item>
+        <item>IGH</item>
+        <item>IHA</item>
+        <item>IKT</item>
+        <item>IWL</item>
+        <item>IDA</item>
+        <item>INO</item>
+        <item>JLA</item>
+        <item>JAP</item>
+        <item>KDN</item>
+        <item>KMA</item>
+        <item>KGW</item>
+        <item>KDG</item>
+        <item>KWE</item>
+        <item>KYA</item>
+        <item>KLW</item>
+        <item>KKH</item>
+        <item>KTN</item>
+        <item>KTS</item>
+        <item>KMG</item>
+        <item>KAN</item>
+        <item>KGD</item>
+        <item>KDT</item>
+        <item>KNI</item>
+        <item>KAW</item>
+        <item>KPL</item>
+        <item>KTL</item>
+        <item>KAT</item>
+        <item>KTG</item>
+        <item>KUG</item>
+        <item>KKD</item>
+        <item>CAK</item>
+        <item>KTK</item>
+        <item>KEN</item>
+        <item>KRA</item>
+        <item>KLA</item>
+        <item>KNM</item>
+        <item>KPE</item>
+        <item>KEL</item>
+        <item>KCH</item>
+        <item>KOG</item>
+        <item>KLP</item>
+        <item>KLN</item>
+        <item>KPN</item>
+        <item>KON</item>
+        <item>KOR</item>
+        <item>KSG</item>
+        <item>KDA</item>
+        <item>KHA</item>
+        <item>KGA</item>
+        <item>KOT</item>
+        <item>KWW</item>
+        <item>KUD</item>
+        <item>KMK</item>
+        <item>KMB</item>
+        <item>KUR</item>
+        <item>KRN</item>
+        <item>LYA</item>
+        <item>LGM</item>
+        <item>LNA</item>
+        <item>LWL</item>
+        <item>MPA</item>
+        <item>MDP</item>
+        <item>MKI</item>
+        <item>MGG</item>
+        <item>MGN</item>
+        <item>MYA</item>
+        <item>MAG</item>
+        <item>MHO</item>
+        <item>MPL</item>
+        <item>MPT</item>
+        <item>MGE</item>
+        <item>MDA</item>
+        <item>MTL</item>
+        <item>MTR</item>
+        <item>MEM</item>
+        <item>MWH</item>
+        <item>MGD</item>
+        <item>MWA</item>
+        <item>MED</item>
+        <item>MHN</item>
+        <item>MHJ</item>
+        <item>MIY</item>
+        <item>MIR</item>
+        <item>MIS</item>
+        <item>MLP</item>
+        <item>MLG</item>
+        <item>MKP</item>
+        <item>MRT</item>
+        <item>MLV</item>
+        <item>MNL</item>
+        <item>MTG</item>
+        <item>NAG</item>
+        <item>NLY</item>
+        <item>NOA</item>
+        <item>NHP</item>
+        <item>NAT</item>
+        <item>NVP</item>
+        <item>NWN</item>
+        <item>NGM</item>
+        <item>NGB</item>
+        <item>NPK</item>
+        <item>NOR</item>
+        <item>NUG</item>
+        <item>OHA</item>
+        <item>OMT</item>
+        <item>PDK</item>
+        <item>PVI</item>
+        <item>PLL</item>
+        <item>PUW</item>
+        <item>PND</item>
+        <item>PNG</item>
+        <item>PNL</item>
+        <item>PAN</item>
+        <item>PKU</item>
+        <item>PHW</item>
+        <item>PGD</item>
+        <item>PTP</item>
+        <item>PPL</item>
+        <item>PGN</item>
+        <item>PGS</item>
+        <item>PDA</item>
+        <item>PKP</item>
+        <item>PRL</item>
+        <item>PNV</item>
+        <item>PLD</item>
+        <item>PLT</item>
+        <item>PNW</item>
+        <item>PIN</item>
+        <item>PGM</item>
+        <item>PYA</item>
+        <item>PLN</item>
+        <item>PLG</item>
+        <item>PLR</item>
+        <item>PON</item>
+        <item>PTA</item>
+        <item>PCK</item>
+        <item>PNI</item>
+        <item>PTM</item>
+        <item>PWP</item>
+        <item>RDL</item>
+        <item>RGM</item>
+        <item>RBK</item>
+        <item>RMA</item>
+        <item>RGA</item>
+        <item>RTG</item>
+        <item>RML</item>
+        <item>RCH</item>
+        <item>RZL</item>
+        <item>SAL</item>
+        <item>SUA</item>
+        <item>SWR</item>
+        <item>SCR</item>
+        <item>SED</item>
+        <item>SMA</item>
+        <item>SGM</item>
+        <item>SVP</item>
+        <item>SYA</item>
+        <item>SRP</item>
+        <item>TLA</item>
+        <item>TKL</item>
+        <item>TWG</item>
+        <item>TAN</item>
+        <item>TWT</item>
+        <item>TBL</item>
+        <item>TLP</item>
+        <item>TBM</item>
+        <item>TDK</item>
+        <item>TDY</item>
+        <item>TNA</item>
+        <item>TIM</item>
+        <item>TSM</item>
+        <item>TRH</item>
+        <item>TCO</item>
+        <item>TUD</item>
+        <item>TDR</item>
+        <item>UDL</item>
+        <item>UWL</item>
+        <item>UHM</item>
+        <item>UDW</item>
+        <item>UGL</item>
+        <item>UKL</item>
+        <item>ULP</item>
+        <item>UNW</item>
+        <item>VCH</item>
+        <item>VML</item>
+        <item>VNA</item>
+        <item>VGD</item>
+        <item>WDA</item>
+        <item>WGG</item>
+        <item>WKL</item>
+        <item>WHP</item>
+        <item>WLG</item>
+        <item>WPA</item>
+        <item>WSL</item>
+        <item>WRW</item>
+        <item>WTG</item>
+        <item>WAT</item>
+        <item>WLA</item>
+        <item>WGA</item>
+        <item>WLM</item>
+        <item>WKD</item>
+        <item>WEL</item>
+        <item>WTE</item>
+        <item>WRD</item>
+        <item>WWT</item>
+        <item>WKA</item>
+        <item>YGD</item>
+        <item>YPW</item>
+        <item>YGM</item>
+        <item>YTG</item>
+    </string-array>
+
     <string-array name="times_from_array"> 
         <item>00.00</item>
         <item>01.00</item>
@@ -340,8 +651,7 @@
         <item>22.00</item>
         <item>23.00</item>
     </string-array>
-    
-    <string name="times_to">End Time</string>
+
     <string-array name="times_to_array">                    	
         <item>01.00</item>
         <item>02.00</item>
