@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -85,7 +86,7 @@ public class TrainScheduleActivity extends Activity {
         actv_from.setAdapter(adapter);
         actv_to.setAdapter(adapter);
         actv_from.setOnItemClickListener(new ACTVFromItemClickListner());
-        actv_to.setOnItemClickListener(new ACTVToItemClickListner());       
+        actv_to.setOnItemClickListener(new ACTVToItemClickListner());
         /**
          * Setup time "spinner"s
          */
@@ -126,7 +127,6 @@ public class TrainScheduleActivity extends Activity {
     	stationsText = getResources().getStringArray(R.array.stations_array);
     	stationsVal = getResources().getStringArray(R.array.stations_val_array);
     	stations = new Station[stationsText.length];
-    	
     	int index = 0;
     	for( index = 0; index < stationsText.length; index++ )
     	{
@@ -171,7 +171,7 @@ public class TrainScheduleActivity extends Activity {
 			Station selectedStation = (Station) parent.getItemAtPosition(pos);
 			station_from_txt = selectedStation.getText();
 			station_from_val = selectedStation.getValue();
-			actv_to.requestFocus();
+			actv_to.requestFocusFromTouch();;
 			Log.i("ACTV", selectedStation.getText());
 			Log.i("ACTV", selectedStation.getValue());
 		}
@@ -186,9 +186,7 @@ public class TrainScheduleActivity extends Activity {
 			station_to_val = selectedStation.getValue();
 			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(actv_to.getWindowToken(), 0);
-			get_all_btn.requestFocus();
-			actv_to.clearFocus();
-			actv_from.clearFocus();
+			get_all_btn.requestFocusFromTouch();
 			Log.i("ACTV", selectedStation.getText());
 			Log.i("ACTV", selectedStation.getValue());
 		}
@@ -200,7 +198,6 @@ public class TrainScheduleActivity extends Activity {
     	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
     	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	
     	Intent intent = new Intent(this, ResultViewActivity.class);
     	intent.putExtra("station_from", station_from_val);
     	intent.putExtra("station_to", station_to_val);
@@ -218,7 +215,6 @@ public class TrainScheduleActivity extends Activity {
     	String time_from = map_time_from(0);
     	String time_to = map_time_to(spinner_times_to.getCount() - 1);
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	
     	Intent intent = new Intent(this, ResultViewActivity.class);
     	intent.putExtra("station_from", station_from_val);
     	intent.putExtra("station_to", station_to_val);
@@ -303,12 +299,12 @@ public class TrainScheduleActivity extends Activity {
     public void onResume() {
         super.onResume();
         readCurrentState(this);
-        //get_all_btn.requestFocus();
-        //actv_from.clearFocus();
-        //actv_to.clearFocus();
-        get_given_btn.requestFocus();
+        get_all_btn.requestFocusFromTouch();
     }
-    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+    }
     private class Station {
         private String text;
         private String value;

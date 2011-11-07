@@ -112,7 +112,6 @@ public class ResultViewActivity extends Activity implements Runnable {
     public void onResume() {
         super.onResume();
     }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
