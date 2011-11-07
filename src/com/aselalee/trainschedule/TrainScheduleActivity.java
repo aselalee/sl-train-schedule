@@ -32,17 +32,19 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 public class TrainScheduleActivity extends Activity {
+	private LinearLayout lin_lay;
 	private Button get_given_btn;
 	private Button get_all_btn;
-	AutoCompleteTextView actv_from;
-	AutoCompleteTextView actv_to;
-	ArrayAdapter<Station> adapter;
-	ArrayAdapter<CharSequence> adapter_times_from;
-	ArrayAdapter<CharSequence> adapter_times_to;
+	private AutoCompleteTextView actv_from;
+	private AutoCompleteTextView actv_to;
+	private ArrayAdapter<Station> adapter;
+	private ArrayAdapter<CharSequence> adapter_times_from;
+	private ArrayAdapter<CharSequence> adapter_times_to;
 	private Spinner spinner_times_from;
 	private Spinner spinner_times_to;
 	private Station stations[];
@@ -121,6 +123,10 @@ public class TrainScheduleActivity extends Activity {
          */
         spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
         spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
+        /**
+         * Get Layout handle
+         */
+        lin_lay = (LinearLayout) findViewById(R.id.lin_lay);
     }
     private void populateStations( )
     {
@@ -186,7 +192,7 @@ public class TrainScheduleActivity extends Activity {
 			station_to_val = selectedStation.getValue();
 			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(actv_to.getWindowToken(), 0);
-			get_all_btn.requestFocusFromTouch();
+			lin_lay.requestFocusFromTouch();
 			Log.i("ACTV", selectedStation.getText());
 			Log.i("ACTV", selectedStation.getValue());
 		}
@@ -299,7 +305,7 @@ public class TrainScheduleActivity extends Activity {
     public void onResume() {
         super.onResume();
         readCurrentState(this);
-        get_all_btn.requestFocusFromTouch();
+        lin_lay.requestFocusFromTouch();
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
