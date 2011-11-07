@@ -8,6 +8,7 @@
 	<string name="to">To</string>
 	<string name="schedule">Schedule</string>
 	<string name="full_schedule">Full Schedule</string>
+	<string name="swap">Swap</string>
 
     <string-array name="stations_array">
         <item>ABANPOLA</item>
@@ -256,7 +257,7 @@
         <item>SALIYAPURA</item>
         <item>SARASAVIUYANA</item>
         <item>SAWARANA</item>
-        <item>SECRETARTAT HALT</item>
+        <item>SECRETARIAT HALT</item>
         <item>SEEDUWA</item>
         <item>SEENIGAMA</item>
         <item>SENARATHGAMA</item>

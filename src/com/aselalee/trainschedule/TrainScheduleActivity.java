@@ -23,8 +23,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -40,6 +40,7 @@ public class TrainScheduleActivity extends Activity {
 	private LinearLayout lin_lay;
 	private Button get_given_btn;
 	private Button get_all_btn;
+	private Button swap_btn;
 	private AutoCompleteTextView actv_from;
 	private AutoCompleteTextView actv_to;
 	private ArrayAdapter<Station> adapter;
@@ -89,6 +90,17 @@ public class TrainScheduleActivity extends Activity {
         actv_to.setAdapter(adapter);
         actv_from.setOnItemClickListener(new ACTVFromItemClickListner());
         actv_to.setOnItemClickListener(new ACTVToItemClickListner());
+        
+        actv_from.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				((AutoCompleteTextView) v).selectAll();
+			}
+        });
+        actv_to.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				((AutoCompleteTextView) v).selectAll();
+			}
+        });
         /**
          * Setup time "spinner"s
          */
@@ -124,10 +136,30 @@ public class TrainScheduleActivity extends Activity {
         spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
         spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
         /**
-         * Get Layout handle
+         * Get Layout handle.
          */
         lin_lay = (LinearLayout) findViewById(R.id.lin_lay);
+        /**
+         * Setup swap button.
+         */
+        swap_btn = (Button) findViewById(R.id.swap);
+        swap_btn.setOnClickListener(new View.OnClickListener() {
+       		public void onClick(View v) {
+       			String tmp = station_to_txt;
+       			station_to_txt = station_from_txt;
+       			station_from_txt = tmp;
+       			tmp = station_to_val;
+       			station_to_val = station_from_val;
+       			station_from_val = tmp;
+       			tmp = null;
+       			actv_to.setText(station_to_txt);
+       			actv_from.setText(station_from_txt);
+        	}
+        });
     }
+    /**
+     * Populate stations adapter with string resources.
+     */
     private void populateStations( )
     {
     	stationsText = getResources().getStringArray(R.array.stations_array);
@@ -178,8 +210,6 @@ public class TrainScheduleActivity extends Activity {
 			station_from_txt = selectedStation.getText();
 			station_from_val = selectedStation.getValue();
 			actv_to.requestFocusFromTouch();;
-			Log.i("ACTV", selectedStation.getText());
-			Log.i("ACTV", selectedStation.getValue());
 		}
     }
     /**
@@ -193,8 +223,6 @@ public class TrainScheduleActivity extends Activity {
 			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(actv_to.getWindowToken(), 0);
 			lin_lay.requestFocusFromTouch();
-			Log.i("ACTV", selectedStation.getText());
-			Log.i("ACTV", selectedStation.getValue());
 		}
     }
     /**
@@ -311,6 +339,11 @@ public class TrainScheduleActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
     }
+    /**
+     * Private class to hold stations data.
+     * This container is used as the adapter object for auto complete text
+     * views.
+     */
     private class Station {
         private String text;
         private String value;
@@ -321,15 +354,15 @@ public class TrainScheduleActivity extends Activity {
         }
 
         public String getText() {
-            return text;
+            return this.text;
         }
 
         public String getValue() {
-            return value;
+            return this.value;
         }
 
         public String toString() {
-            return text;
+            return this.text;
         }
     }
 }

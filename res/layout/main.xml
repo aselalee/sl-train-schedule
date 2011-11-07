@@ -11,26 +11,44 @@
     	android:layout_height="fill_parent"
     	android:orientation="vertical"
 		android:focusableInTouchMode="true" >
-    	<TextView
-        	android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
-        	android:text="@string/stations_from" />
-    	<AutoCompleteTextView
-    	    android:id="@+id/stations_from"
-        	android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
-        	android:layout_marginLeft="5dp"
-        	android:completionThreshold="1" />
-    	<TextView
-        	android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
-        	android:text="@string/stations_to" />
-    	<AutoCompleteTextView
-    	    android:id="@+id/stations_to"
-        	android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
-        	android:layout_marginLeft="5dp"
-        	android:completionThreshold="1" />
+		<TableLayout 
+		   	android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:stretchColumns="*" >
+	    	<TableRow
+	    	    android:gravity="center_vertical" >
+				<TableLayout 
+		   			android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:stretchColumns="*">
+    			<TextView
+        			android:layout_width="fill_parent"
+        			android:layout_height="wrap_content"
+        			android:text="@string/stations_from" />
+    			<AutoCompleteTextView
+    	    		android:id="@+id/stations_from"
+        			android:layout_width="fill_parent"
+        			android:layout_height="wrap_content"
+        			android:layout_marginLeft="5dp"
+        			android:completionThreshold="1" />
+    			<TextView
+        			android:layout_width="fill_parent"
+        			android:layout_height="wrap_content"
+        			android:text="@string/stations_to" />
+    			<AutoCompleteTextView
+    	    		android:id="@+id/stations_to"
+        			android:layout_width="fill_parent"
+        			android:layout_height="wrap_content"
+        			android:layout_marginLeft="5dp"
+        			android:completionThreshold="1" />
+    			</TableLayout>
+    			<Button
+	    	    	android:id="@+id/swap"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/swap" />
+    		</TableRow>
+    	</TableLayout>
     	<Button
 			android:id="@+id/get_all"
 			android:layout_width="fill_parent"
