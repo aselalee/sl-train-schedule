@@ -162,7 +162,12 @@ public class GetResultsFromSite {
 	    	return htmlNoResult;
 	    }
 	    htmlOutput += "</body></html>";
-
+	    htmlOutput = CorrectGrammerAndSpelling( htmlOutput );
 	    return htmlOutput;
+	}
+	private static String CorrectGrammerAndSpelling( String htmlCode ) {
+		String tmp = htmlCode.replace("Arrival to", "Arrival at");
+		tmp = tmp.replace("Reaching to", "Reaching");
+		return tmp.replace("Type of the Train", "Type of Train");		
 	}
 }
