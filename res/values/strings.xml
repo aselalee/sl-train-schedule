@@ -2,11 +2,11 @@
 <resources>
 	<string name="app_name">Train Schedule</string>
 	<string name="results">Schedule</string>	
-    <string name="stations_from">Enter Starting Station</string>
+    <string name="stations_from">Enter Departing Station</string>
     <string name="stations_to">Enter Destination Station</string>
-    <string name="time_desc">Trains Starting Within</string>
+    <string name="time_desc">Trains Departing Within</string>
 	<string name="to">To</string>
-	<string name="schedule">Get Schedule</string>
+	<string name="schedule">Get Filtered Schedule</string>
 	<string name="full_schedule">Get Full Schedule</string>
 	<string name="swap">Swap\nStations</string>
 
