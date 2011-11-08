@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -91,16 +90,18 @@ public class TrainScheduleActivity extends Activity {
         actv_from.setOnItemClickListener(new ACTVFromItemClickListner());
         actv_to.setOnItemClickListener(new ACTVToItemClickListner());
         
-        actv_from.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
+        actv_from.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
 				((AutoCompleteTextView) v).selectAll();
 			}
-        });
-        actv_to.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
+		});
+        actv_to.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
 				((AutoCompleteTextView) v).selectAll();
 			}
-        });
+		});
         /**
          * Setup time "spinner"s
          */
@@ -145,6 +146,7 @@ public class TrainScheduleActivity extends Activity {
         swap_btn = (Button) findViewById(R.id.swap);
         swap_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
+       			lin_lay.requestFocusFromTouch();
        			String tmp = station_to_txt;
        			station_to_txt = station_from_txt;
        			station_from_txt = tmp;
@@ -220,8 +222,7 @@ public class TrainScheduleActivity extends Activity {
 			Station selectedStation = (Station) parent.getItemAtPosition(pos);
 			station_to_txt = selectedStation.getText();
 			station_to_val = selectedStation.getValue();
-			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(actv_to.getWindowToken(), 0);
+			hideSoftKeyboard(actv_to);
 			lin_lay.requestFocusFromTouch();
 		}
     }
@@ -229,16 +230,16 @@ public class TrainScheduleActivity extends Activity {
      * Get data from UI elements and calls the next activity to display results.
      */
     private void show_results() {
+    	hideSoftKeyboard(actv_to);
     	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
     	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	Intent intent = new Intent(this, ResultViewActivity.class);
-    	intent.putExtra("station_from", station_from_val);
-    	intent.putExtra("station_to", station_to_val);
-    	intent.putExtra("time_from", time_from);
-    	intent.putExtra("time_to", time_to);
-    	intent.putExtra("date_today", date_today);
-    	startActivity(intent);
+    	if( validateStations() ) {
+        	Intent intent = new Intent(this, ResultViewActivity.class);
+    	   	populateIntent(intent, time_from, time_to, date_today);
+    		startActivity(intent);
+    	}
+    	return;
     }
     /**
      * Get data from UI elements and calls the next activity to display results.
@@ -246,17 +247,16 @@ public class TrainScheduleActivity extends Activity {
      * most ending time.
      */
     private void show_all_results() {
+    	hideSoftKeyboard(actv_to);
     	String time_from = map_time_from(0);
     	String time_to = map_time_to(spinner_times_to.getCount() - 1);
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	Intent intent = new Intent(this, ResultViewActivity.class);
-    	intent.putExtra("station_from", station_from_val);
-    	intent.putExtra("station_to", station_to_val);
-    	intent.putExtra("time_from", time_from);
-    	intent.putExtra("time_to", time_to);
-    	intent.putExtra("date_today", date_today);
-    	startActivity(intent);
-
+    	if( validateStations() ) {
+    	   	Intent intent = new Intent(this, ResultViewActivity.class);
+    	   	populateIntent(intent, time_from, time_to, date_today);
+    		startActivity(intent);
+    	}
+    	return;
     }
     /**
      * Match "from time" in spinner to actual string received by the server.
@@ -364,5 +364,37 @@ public class TrainScheduleActivity extends Activity {
         public String toString() {
             return this.text;
         }
+    }
+    /**
+     * Utility functions.
+     */
+    private boolean validateStations() {
+    	if( (searchString(stationsText, actv_from.getText().toString()) > -1) &&
+        		(searchString(stationsText, actv_to.getText().toString()) > -1) ) {
+        		return true;
+        	}
+       	Toast.makeText(this,
+                        "Check Station Names", Toast.LENGTH_LONG).show();
+        return false;
+    }
+    private int searchString(String strArray[], String strSrc) {
+    	for( int i = 0; i < strArray.length; i++) {
+    		if( strArray[i].equals(strSrc) ) {
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+    private void hideSoftKeyboard(AutoCompleteTextView actv) {
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
+    }
+    private void populateIntent(Intent intent,
+    		String time_from, String time_to, String date_today) {
+    	intent.putExtra("station_from", station_from_val);
+    	intent.putExtra("station_to", station_to_val);
+    	intent.putExtra("time_from", time_from);
+    	intent.putExtra("time_to", time_to);
+    	intent.putExtra("date_today", date_today);
     }
 }

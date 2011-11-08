@@ -14,9 +14,12 @@
 		<TableLayout 
 		   	android:layout_width="fill_parent"
     		android:layout_height="fill_parent"
-    		android:stretchColumns="*" >
+    		android:stretchColumns="*"
+    		android:layout_marginLeft="8dp"
+	    	android:layout_marginRight="8dp" >
 	    	<TableRow
-	    	    android:gravity="center_vertical" >
+	    	    android:gravity="center_vertical"
+ >
 				<TableLayout 
 		   			android:layout_width="wrap_content"
     				android:layout_height="wrap_content"
@@ -29,8 +32,8 @@
     	    		android:id="@+id/stations_from"
         			android:layout_width="fill_parent"
         			android:layout_height="wrap_content"
-        			android:layout_marginLeft="5dp"
-        			android:completionThreshold="1" />
+        			android:completionThreshold="1"
+        			android:inputType="text" />
     			<TextView
         			android:layout_width="fill_parent"
         			android:layout_height="wrap_content"
@@ -39,14 +42,15 @@
     	    		android:id="@+id/stations_to"
         			android:layout_width="fill_parent"
         			android:layout_height="wrap_content"
-        			android:layout_marginLeft="5dp"
-        			android:completionThreshold="1" />
+        			android:completionThreshold="1"
+        			android:inputType="text" />
     			</TableLayout>
     			<Button
 	    	    	android:id="@+id/swap"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="@string/swap" />
+					android:text="@string/swap"
+					android:gravity="center" />"
     		</TableRow>
     	</TableLayout>
     	<Button
@@ -58,7 +62,9 @@
 		<TextView
         	android:layout_width="fill_parent"
         	android:layout_height="wrap_content"
-        	android:text="@string/time_desc" />
+        	android:text="@string/time_desc"
+        	android:layout_marginTop="10dp"
+        	android:gravity="center_horizontal" />
 		<TableLayout
 		    android:layout_width="fill_parent"
     		android:layout_height="fill_parent"
