@@ -2,13 +2,13 @@
 <resources>
 	<string name="app_name">Train Schedule</string>
 	<string name="results">Schedule</string>	
-    <string name="stations_from">Choose Starting Station</string>
-    <string name="stations_to">Choose Destination Station</string>
+    <string name="stations_from">Enter Starting Station</string>
+    <string name="stations_to">Enter Destination Station</string>
     <string name="time_desc">Trains Starting Within</string>
 	<string name="to">To</string>
-	<string name="schedule">Schedule</string>
-	<string name="full_schedule">Full Schedule</string>
-	<string name="swap">Swap</string>
+	<string name="schedule">Get Schedule</string>
+	<string name="full_schedule">Get Full Schedule</string>
+	<string name="swap">Swap\nStations</string>
 
     <string-array name="stations_array">
         <item>ABANPOLA</item>
