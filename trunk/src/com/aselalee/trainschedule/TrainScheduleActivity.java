@@ -91,15 +91,17 @@ public class TrainScheduleActivity extends Activity {
         actv_to.setOnItemClickListener(new ACTVToItemClickListner());
         
         actv_from.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			
 			public void onFocusChange(View v, boolean hasFocus) {
-				((AutoCompleteTextView) v).selectAll();
+				if( hasFocus == true ) {
+					((AutoCompleteTextView) v).selectAll();
+				}
 			}
 		});
         actv_to.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			
 			public void onFocusChange(View v, boolean hasFocus) {
-				((AutoCompleteTextView) v).selectAll();
+				if( hasFocus == true ) {
+					((AutoCompleteTextView) v).selectAll();
+				}
 			}
 		});
         /**

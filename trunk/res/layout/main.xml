@@ -3,91 +3,95 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" > 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" > 
 	<LinearLayout
 	    android:id="@+id/lin_lay"
-		android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"
+		android:layout_width="match_parent"
+    	android:layout_height="match_parent"
     	android:orientation="vertical"
 		android:focusableInTouchMode="true" >
-		<TableLayout 
-		   	android:layout_width="fill_parent"
-    		android:layout_height="fill_parent"
-    		android:stretchColumns="*"
-    		android:layout_marginLeft="8dp"
-	    	android:layout_marginRight="8dp" >
-	    	<TableRow
-	    	    android:gravity="center_vertical"
- >
-				<TableLayout 
-		   			android:layout_width="wrap_content"
-    				android:layout_height="wrap_content"
-    				android:stretchColumns="*">
+		<LinearLayout
+			android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:gravity="center" >
     			<TextView
-        			android:layout_width="fill_parent"
+        			android:layout_width="80dp"
         			android:layout_height="wrap_content"
         			android:text="@string/stations_from" />
     			<AutoCompleteTextView
     	    		android:id="@+id/stations_from"
-        			android:layout_width="fill_parent"
+        			android:layout_width="match_parent"
         			android:layout_height="wrap_content"
         			android:completionThreshold="1"
         			android:inputType="text" />
-    			<TextView
-        			android:layout_width="fill_parent"
-        			android:layout_height="wrap_content"
-        			android:text="@string/stations_to" />
-    			<AutoCompleteTextView
-    	    		android:id="@+id/stations_to"
-        			android:layout_width="fill_parent"
-        			android:layout_height="wrap_content"
-        			android:completionThreshold="1"
-        			android:inputType="text" />
-    			</TableLayout>
+    	</LinearLayout>
+		<LinearLayout
+			android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:gravity="center" >
     			<Button
 	    	    	android:id="@+id/swap"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="@string/swap"
-					android:gravity="center" />"
-    		</TableRow>
-    	</TableLayout>
+					android:drawableLeft="@drawable/ic_swap_btn_med"
+					android:gravity="center" />
+    	</LinearLayout>
+		<LinearLayout
+			android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:gravity="center" >
+    			<TextView
+        			android:layout_width="80dp"
+        			android:layout_height="wrap_content"
+        			android:text="@string/stations_to" />
+    			<AutoCompleteTextView
+    	    		android:id="@+id/stations_to"
+        			android:layout_width="match_parent"
+        			android:layout_height="wrap_content"
+        			android:completionThreshold="1"
+        			android:inputType="text" />
+    	</LinearLayout>
     	<Button
 			android:id="@+id/get_all"
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/full_schedule" />
 
 		<TextView
-        	android:layout_width="fill_parent"
+        	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="@string/time_desc"
         	android:layout_marginTop="10dp"
         	android:gravity="center_horizontal" />
 		<TableLayout
-		    android:layout_width="fill_parent"
-    		android:layout_height="fill_parent"
-    		android:stretchColumns="*">
+		    android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:stretchColumns="*"
+    		android:layout_marginLeft="8dp"
+	    	android:layout_marginRight="8dp" >
    			<TableRow>
    			    <Spinner
        				android:id="@+id/times_from"
-       				android:layout_width="fill_parent"
+       				android:layout_width="match_parent"
        				android:layout_height="wrap_content" />
 				<TextView
-        			android:layout_width="fill_parent"
+        			android:layout_width="match_parent"
         			android:layout_height="wrap_content"
         			android:gravity="center_horizontal"
         			android:text="@string/to" />
    				<Spinner
        				android:id="@+id/times_to"
-       				android:layout_width="fill_parent"
+       				android:layout_width="match_parent"
        				android:layout_height="wrap_content" />
    			</TableRow>
 		</TableLayout>
     	<Button
        		android:id="@+id/get_given"
-       		android:layout_width="fill_parent"
+       		android:layout_width="match_parent"
        		android:layout_height="wrap_content"
        		android:text="@string/schedule" />
    	</LinearLayout>
