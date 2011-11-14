@@ -3,8 +3,9 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_width="320dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="center" >
    	<LinearLayout
 	    android:id="@+id/lin_lay"
 		android:layout_width="match_parent"
@@ -20,17 +21,19 @@
 	    		android:layout_height="wrap_content" >
 			    <TableRow 
 			        android:layout_width="wrap_content"
-        			android:layout_height="wrap_content">
+        			android:layout_height="wrap_content" >
                 	<TextView
 	        			android:layout_width="80dp"
         				android:layout_height="wrap_content"
-        				android:text="@string/stations_from" />
+        				android:text="@string/stations_from" 
+        				android:layout_gravity="center_vertical" />
     				<AutoCompleteTextView
 	    	    		android:id="@+id/stations_from"
         				android:layout_width="200dp"
         				android:layout_height="wrap_content"
         				android:completionThreshold="1"
-        				android:inputType="text" />
+        				android:inputType="text"
+        				android:selectAllOnFocus="true" />
     			</TableRow>
     			<TableRow
     			    android:layout_width="wrap_content"
@@ -38,13 +41,15 @@
 	                <TextView
         				android:layout_width="80dp"
         				android:layout_height="wrap_content"
-        				android:text="@string/stations_to" />
+        				android:text="@string/stations_to"
+        				android:layout_gravity="center_vertical" />
     				<AutoCompleteTextView
 	    	    		android:id="@+id/stations_to"
         				android:layout_width="200dp"
         				android:layout_height="wrap_content"
         				android:completionThreshold="1"
-        				android:inputType="text" />
+        				android:inputType="text"
+        				android:selectAllOnFocus="true" />
     			</TableRow>
     		</TableLayout>
         	<Button
@@ -69,9 +74,7 @@
 		<TableLayout
 		    android:layout_width="match_parent"
     		android:layout_height="wrap_content"
-    		android:stretchColumns="*"
-    		android:layout_marginLeft="8dp"
-	    	android:layout_marginRight="8dp" >
+    		android:stretchColumns="*" >
    			<TableRow>
    			    <Spinner
        				android:id="@+id/times_from"
@@ -87,11 +90,14 @@
        				android:layout_width="match_parent"
        				android:layout_height="wrap_content" />
    			</TableRow>
-		</TableLayout>
-    	<Button
-       		android:id="@+id/get_given"
-       		android:layout_width="match_parent"
-       		android:layout_height="wrap_content"
-       		android:text="@string/schedule" />
+			<TableRow >
+    			<Button
+       				android:id="@+id/get_given"
+       				android:layout_width="match_parent"
+		       		android:layout_height="wrap_content"
+       				android:text="@string/schedule"
+       				android:layout_span="3" />
+    		</TableRow>
+    	</TableLayout>
    	</LinearLayout>
 </ScrollView>
