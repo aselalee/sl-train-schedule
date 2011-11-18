@@ -77,7 +77,7 @@ public class TrainScheduleActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.get_user_input);
         /**
          * Setup "AutoCompleteText" views
          */
