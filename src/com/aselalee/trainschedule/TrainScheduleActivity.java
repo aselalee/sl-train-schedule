@@ -23,6 +23,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -326,6 +329,26 @@ public class TrainScheduleActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.schedule_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.add_to_fav:
+        	addParamsToFavs();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    private void addParamsToFavs() {
+    	Toast.makeText(this,
+                "Added To Favourites", Toast.LENGTH_LONG).show();
     }
     /**
      * Private class to hold stations data.
