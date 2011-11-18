@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Train Schedule</string>
-	<string name="results">Schedule</string>	
+	<string name="results">Schedule</string>
+	<string name="user_input">Input Search Parameters</string>
+	<string name="history">History</string>
+	<string name="favourites">Favourites</string>
     <string name="stations_from">Departing\nStation</string>
     <string name="stations_to">Destination\nStation</string>
     <string name="time_desc">Trains Departing Within</string>
