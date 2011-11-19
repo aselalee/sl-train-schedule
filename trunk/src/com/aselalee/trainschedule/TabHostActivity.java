@@ -20,6 +20,7 @@ package com.aselalee.trainschedule;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
 
@@ -31,20 +32,24 @@ public class TabHostActivity extends TabActivity {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.main);
 
+	    Resources res = getResources();
 	    TabHost tabHost = getTabHost();
 	    TabHost.TabSpec spec;
 	    Intent intent;
 
 	    intent = new Intent().setClass(this, TrainScheduleActivity.class);
-	    spec = tabHost.newTabSpec("schedule").setIndicator("Schedule").setContent(intent);
+	    spec = tabHost.newTabSpec("search").setIndicator("Search",
+	    		res.getDrawable(R.drawable.ic_tab_search)).setContent(intent);
 	    tabHost.addTab(spec);
 
 	    intent = new Intent().setClass(this, HistoryActivity.class);
-	    spec = tabHost.newTabSpec("history").setIndicator("History").setContent(intent);
+	    spec = tabHost.newTabSpec("history").setIndicator("History",
+	    		res.getDrawable(R.drawable.ic_tab_history)).setContent(intent);
 	    tabHost.addTab(spec);
 
 	    intent = new Intent().setClass(this, FavouritesActivity.class);
-	    spec = tabHost.newTabSpec("favourites").setIndicator("Favourites").setContent(intent);
+	    spec = tabHost.newTabSpec("favourites").setIndicator("Favourites",
+	    		res.getDrawable(R.drawable.ic_tab_fav)).setContent(intent);
 	    tabHost.addTab(spec);
 
 	    tabHost.setCurrentTab(0);
