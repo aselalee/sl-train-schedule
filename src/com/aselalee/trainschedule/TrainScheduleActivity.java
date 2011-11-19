@@ -402,10 +402,10 @@ public class TrainScheduleActivity extends Activity {
     }
     private void populateIntent(Intent intent,
     		String time_from, String time_to, String date_today) {
-    	intent.putExtra("station_from", station_from_val);
-    	intent.putExtra("station_to", station_to_val);
-    	intent.putExtra("time_from", time_from);
-    	intent.putExtra("time_to", time_to);
-    	intent.putExtra("date_today", date_today);
+    			intent.putExtra("station_from", station_from_val);
+    			intent.putExtra("station_to", station_to_val);
+    			intent.putExtra("time_from", time_from);
+    			intent.putExtra("time_to", time_to);
+    			intent.putExtra("date_today", date_today);
     }
 }
