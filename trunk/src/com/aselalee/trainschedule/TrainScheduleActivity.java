@@ -113,13 +113,21 @@ public class TrainScheduleActivity extends Activity {
        	get_given_btn = (Button) findViewById(R.id.get_given);
        	get_given_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
-       			show_results();
+       	    	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
+       	    	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
+       			show_results(time_from, time_to);
         	}
         });
        	get_all_btn = (Button) findViewById(R.id.get_all);
        	get_all_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
-       			show_all_results();
+       		    /**
+       		     * To get the full schedule, times are mapped to least starting time and 
+       		     * most ending time.
+       		     */
+       		   	String time_from = map_time_from(0);
+       	    	String time_to = map_time_to(spinner_times_to.getCount() - 1);
+       			show_results(time_from, time_to);
         	}
         });
         /**
@@ -218,32 +226,13 @@ public class TrainScheduleActivity extends Activity {
 		}
     }
     /**
-     * Get data from UI elements and calls the next activity to display results.
+     * Calls the next activity to display results.
      */
-    private void show_results() {
+    private void show_results(String time_from, String time_to) {
     	hideSoftKeyboard(actv_to);
-    	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
-    	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	if( validateStations() ) {
         	Intent intent = new Intent(this, ResultViewActivity.class);
-    	   	populateIntent(intent, time_from, time_to, date_today);
-    		startActivity(intent);
-    	}
-    	return;
-    }
-    /**
-     * Get data from UI elements and calls the next activity to display results.
-     * To get the full schedule, times are mapped to least starting time and 
-     * most ending time.
-     */
-    private void show_all_results() {
-    	hideSoftKeyboard(actv_to);
-    	String time_from = map_time_from(0);
-    	String time_to = map_time_to(spinner_times_to.getCount() - 1);
-    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	if( validateStations() ) {
-    	   	Intent intent = new Intent(this, ResultViewActivity.class);
     	   	populateIntent(intent, time_from, time_to, date_today);
     		startActivity(intent);
     	}
