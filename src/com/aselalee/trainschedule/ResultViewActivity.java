@@ -1,5 +1,5 @@
 /**
-* @copyright	Copyright (C) 2011 Asela Leelaratne
+* @copyright	Copyright (C) 2010 - 2011 Asela Leelaratne
 * @license		GNU/GPL Version 3
 * 
 * This Application is released to the public under the GNU General Public License.
@@ -59,6 +59,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 	    	 * Get the webview handle.
 	    	 */
 	    	mWebView = (WebView) findViewById(R.id.webview);
+	    	mWebView.getSettings().setBuiltInZoomControls(true); 
 	    
 	    	/**
 	    	 * Display progress Dialog.
@@ -85,7 +86,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 		/**
 		 * Call the "GetResults" method to retrieve data from server.
 		 */
-		result= GetResultsFromSite.GetResults(station_from, station_to, time_from, time_to, date_today);
+		result= GetResultsFromSite.GetResultsJson(station_from, station_to, time_from, time_to, date_today);
 		/**
 		 * This will send message to the calling thread to continue and display data.
 		 */

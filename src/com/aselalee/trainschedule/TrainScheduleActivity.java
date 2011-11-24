@@ -1,5 +1,5 @@
 /**
-* @copyright	Copyright (C) 2011 Asela Leelaratne
+* @copyright	Copyright (C) 2010 - 2011 Asela Leelaratne
 * @license		GNU/GPL Version 3
 * 
 * This Application is released to the public under the GNU General Public License.
@@ -23,9 +23,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -80,7 +77,7 @@ public class TrainScheduleActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.get_user_input);
+        setContentView(R.layout.main);
         /**
          * Setup "AutoCompleteText" views
          */
@@ -113,21 +110,13 @@ public class TrainScheduleActivity extends Activity {
        	get_given_btn = (Button) findViewById(R.id.get_given);
        	get_given_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
-       	    	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
-       	    	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
-       			show_results(time_from, time_to);
+       			show_results();
         	}
         });
        	get_all_btn = (Button) findViewById(R.id.get_all);
        	get_all_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
-       		    /**
-       		     * To get the full schedule, times are mapped to least starting time and 
-       		     * most ending time.
-       		     */
-       		   	String time_from = map_time_from(0);
-       	    	String time_to = map_time_to(spinner_times_to.getCount() - 1);
-       			show_results(time_from, time_to);
+       			show_all_results();
         	}
         });
         /**
@@ -226,13 +215,32 @@ public class TrainScheduleActivity extends Activity {
 		}
     }
     /**
-     * Calls the next activity to display results.
+     * Get data from UI elements and calls the next activity to display results.
      */
-    private void show_results(String time_from, String time_to) {
+    private void show_results() {
     	hideSoftKeyboard(actv_to);
+    	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
+    	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	if( validateStations() ) {
         	Intent intent = new Intent(this, ResultViewActivity.class);
+    	   	populateIntent(intent, time_from, time_to, date_today);
+    		startActivity(intent);
+    	}
+    	return;
+    }
+    /**
+     * Get data from UI elements and calls the next activity to display results.
+     * To get the full schedule, times are mapped to least starting time and 
+     * most ending time.
+     */
+    private void show_all_results() {
+    	hideSoftKeyboard(actv_to);
+    	String time_from = map_time_from(0);
+    	String time_to = map_time_to(spinner_times_to.getCount() - 1);
+    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
+    	if( validateStations() ) {
+    	   	Intent intent = new Intent(this, ResultViewActivity.class);
     	   	populateIntent(intent, time_from, time_to, date_today);
     		startActivity(intent);
     	}
@@ -319,26 +327,6 @@ public class TrainScheduleActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.schedule_menu, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.add_to_fav:
-        	addParamsToFavs();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-    private void addParamsToFavs() {
-    	Toast.makeText(this,
-                "Added To Favourites", Toast.LENGTH_LONG).show();
-    }
     /**
      * Private class to hold stations data.
      * This container is used as the adapter object for auto complete text
@@ -391,10 +379,10 @@ public class TrainScheduleActivity extends Activity {
     }
     private void populateIntent(Intent intent,
     		String time_from, String time_to, String date_today) {
-    			intent.putExtra("station_from", station_from_val);
-    			intent.putExtra("station_to", station_to_val);
-    			intent.putExtra("time_from", time_from);
-    			intent.putExtra("time_to", time_to);
-    			intent.putExtra("date_today", date_today);
+    	intent.putExtra("station_from", station_from_val);
+    	intent.putExtra("station_to", station_to_val);
+    	intent.putExtra("time_from", time_from);
+    	intent.putExtra("time_to", time_to);
+    	intent.putExtra("date_today", date_today);
     }
 }
