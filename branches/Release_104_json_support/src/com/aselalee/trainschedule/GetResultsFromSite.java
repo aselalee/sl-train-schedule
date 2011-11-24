@@ -134,7 +134,7 @@ public class GetResultsFromSite {
 	 		return htmlIOErr;
 	 	}    
 	    htmlOutput += JSONToHTMLTable(strBuilder.toString());
-	    htmlOutput += "</body></html>";
+	    htmlOutput += "<br/><br/><br/></body></html>";
 	    //Log.i("TR", htmlOutput);
 	    return htmlOutput;
 	}
