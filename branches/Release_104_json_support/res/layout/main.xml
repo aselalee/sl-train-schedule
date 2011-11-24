@@ -4,17 +4,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="320dp"
-    android:layout_height="match_parent"
+    android:layout_height="fill_parent"
     android:layout_gravity="center" >
    	<LinearLayout
 	    android:id="@+id/lin_lay"
-		android:layout_width="match_parent"
-    	android:layout_height="match_parent"
+		android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
     	android:orientation="vertical"
 		android:focusableInTouchMode="true" >
     	<LinearLayout
     	    android:orientation="horizontal"
-    	    android:layout_width="match_parent"
+    	    android:layout_width="fill_parent"
 	    	android:layout_height="wrap_content" >
 			<TableLayout 
 				android:layout_width="wrap_content"
@@ -61,39 +61,39 @@
     	</LinearLayout>
     	<Button
 			android:id="@+id/get_all"
-			android:layout_width="match_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/full_schedule" />
 
 		<TextView
-        	android:layout_width="match_parent"
+        	android:layout_width="fill_parent"
         	android:layout_height="wrap_content"
         	android:text="@string/time_desc"
         	android:layout_marginTop="10dp"
         	android:gravity="center_horizontal" />
 		<TableLayout
-		    android:layout_width="match_parent"
+		    android:layout_width="fill_parent"
     		android:layout_height="wrap_content"
     		android:stretchColumns="*" >
    			<TableRow>
    			    <Spinner
        				android:id="@+id/times_from"
-       				android:layout_width="match_parent"
+       				android:layout_width="fill_parent"
        				android:layout_height="wrap_content" />
 				<TextView
-        			android:layout_width="match_parent"
+        			android:layout_width="fill_parent"
         			android:layout_height="wrap_content"
         			android:gravity="center_horizontal"
         			android:text="@string/to" />
    				<Spinner
        				android:id="@+id/times_to"
-       				android:layout_width="match_parent"
+       				android:layout_width="fill_parent"
        				android:layout_height="wrap_content" />
    			</TableRow>
 			<TableRow >
     			<Button
        				android:id="@+id/get_given"
-       				android:layout_width="match_parent"
+       				android:layout_width="fill_parent"
 		       		android:layout_height="wrap_content"
        				android:text="@string/schedule"
        				android:layout_span="3" />

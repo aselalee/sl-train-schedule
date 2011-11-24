@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aselalee.trainschedule"
-    android:versionCode="104"
-    android:versionName="1.04"
-    android:installLocation="auto" >
+    android:versionCode="105"
+    android:versionName="1.05" >
 
-    <uses-sdk android:minSdkVersion="8" />
+    <uses-sdk android:minSdkVersion="7" />
 
     <application
         android:icon="@drawable/ic_launcher"
