@@ -1,5 +1,5 @@
 /**
-* @copyright	Copyright (C) 2011 Asela Leelaratne
+* @copyright	Copyright (C) 2010 - 2011 Asela Leelaratne
 * @license		GNU/GPL Version 3
 * 
 * This Application is released to the public under the GNU General Public License.
