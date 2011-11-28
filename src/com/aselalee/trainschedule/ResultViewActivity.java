@@ -65,7 +65,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 	    	 * Display progress Dialog.
 	    	 */
 	    	pd = ProgressDialog.show(this, "Working..",
-								 	"Getting Results from www.railway.gov.lk",
+								 	"Fetching Results...",
 								 	true, true,
 								 	new DialogInterface.OnCancelListener(){
                 						public void onCancel(DialogInterface dialog) {
