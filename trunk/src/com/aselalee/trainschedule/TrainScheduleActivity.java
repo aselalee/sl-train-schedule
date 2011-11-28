@@ -57,19 +57,7 @@ public class TrainScheduleActivity extends Activity {
 	private String station_to_txt = "";
 	private String station_from_val = "";
 	private String station_to_val = "";
-	/**
-	 * Save spinner positions to this file.
-	 */
-	private static final String PREFERENCES_FILE = "mainPrefs";
-	/**
-	 * Keys to be saved.
-	 */
-	private static final String TIME_FROM_POS = "time_from_pos";
-	private static final String TIME_TO_POS = "time_to_pos";
-	private static final String STATION_FROM_TXT = "station_from_txt";
-	private static final String STATION_FROM_VAL = "station_from_val";
-	private static final String STATION_TO_TXT = "station_to_txt";
-	private static final String STATION_TO_VAL = "station_to_val";
+
 	/**
 	 * Default values.
 	 */
@@ -230,6 +218,9 @@ public class TrainScheduleActivity extends Activity {
      */
     private void show_results(String time_from, String time_to) {
     	hideSoftKeyboard(actv_to);
+    	DBDataAccess myDBAcc = new DBDataAccess(this);
+    	myDBAcc.PushData(station_from_txt, station_from_val, station_to_txt, station_to_val, time_from, time_to);
+    	myDBAcc.close();
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	if( validateStations() ) {
         	Intent intent = new Intent(this, ResultViewActivity.class);
@@ -265,18 +256,18 @@ public class TrainScheduleActivity extends Activity {
     	/**
          * Get the SharedPreferences object for this application
          */
-    	SharedPreferences p = c.getSharedPreferences(PREFERENCES_FILE, MODE_WORLD_READABLE);
+    	SharedPreferences p = c.getSharedPreferences(Constants.PREFERENCES_FILE, MODE_WORLD_READABLE);
         /**
          * Get the position and value of the spinner from the file
          */
-    	station_from_txt = p.getString(STATION_FROM_TXT, "");
+    	station_from_txt = p.getString(Constants.STATION_FROM_TXT, "");
     	actv_from.setText(station_from_txt);
-    	station_from_val = p.getString(STATION_FROM_VAL, "");
-    	station_to_txt = p.getString(STATION_TO_TXT, "");
+    	station_from_val = p.getString(Constants.STATION_FROM_VAL, "");
+    	station_to_txt = p.getString(Constants.STATION_TO_TXT, "");
     	actv_to.setText(station_to_txt);
-    	station_to_val = p.getString(STATION_TO_VAL, "");
-    	spinner_times_from.setSelection(p.getInt(TIME_FROM_POS, def_time_from));
-    	spinner_times_to.setSelection(p.getInt(TIME_TO_POS, def_time_to));
+    	station_to_val = p.getString(Constants.STATION_TO_VAL, "");
+    	spinner_times_from.setSelection(p.getInt(Constants.TIME_FROM_POS, def_time_from));
+    	spinner_times_to.setSelection(p.getInt(Constants.TIME_TO_POS, def_time_to));
     }
     /**
      * Write current spinner positions to preferences file.
@@ -285,7 +276,7 @@ public class TrainScheduleActivity extends Activity {
     	/**
          * Get the SharedPreferences object for this application
          */
-    	SharedPreferences p = c.getSharedPreferences(PREFERENCES_FILE, MODE_WORLD_READABLE);
+    	SharedPreferences p = c.getSharedPreferences(Constants.PREFERENCES_FILE, MODE_WORLD_READABLE);
         /**
          * Get the editor for this object.
          */
@@ -293,12 +284,12 @@ public class TrainScheduleActivity extends Activity {
         /**
          * Write values.
          */
-        e.putString(STATION_FROM_TXT, station_from_txt);
-        e.putString(STATION_FROM_VAL, station_from_val);
-        e.putString(STATION_TO_TXT, station_to_txt);
-        e.putString(STATION_TO_VAL, station_to_val);
-        e.putInt(TIME_FROM_POS, spinner_times_from.getSelectedItemPosition());
-        e.putInt(TIME_TO_POS, spinner_times_to.getSelectedItemPosition());
+        e.putString(Constants.STATION_FROM_TXT, station_from_txt);
+        e.putString(Constants.STATION_FROM_VAL, station_from_val);
+        e.putString(Constants.STATION_TO_TXT, station_to_txt);
+        e.putString(Constants.STATION_TO_VAL, station_to_val);
+        e.putInt(Constants.TIME_FROM_POS, spinner_times_from.getSelectedItemPosition());
+        e.putInt(Constants.TIME_TO_POS, spinner_times_to.getSelectedItemPosition());
         return (e.commit());
     }
     @Override
@@ -306,7 +297,7 @@ public class TrainScheduleActivity extends Activity {
     	super.onPause();
     	if( !writeCurrentState(this) ) {
     		Toast.makeText(this,
-                    "Failed to write state!", Toast.LENGTH_LONG).show();
+                    "Failed to save state!", Toast.LENGTH_LONG).show();
     	}
     }    
     @Override

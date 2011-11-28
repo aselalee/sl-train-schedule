@@ -43,11 +43,6 @@ public class GetResultsFromSite {
 	public static String GetResultsJson(String station_from, String station_to,
 							 String time_from, String time_to, String date_today)
 	{
-		/**
-		 * Base URL to get results from.
-		 */
-	    String url = "http://mobile.icta.lk/services/railwayservice/getSchedule.php";
-	    
 	    /**
 	     * Create name value pairs to be sent the the above URL.
 	     * variable names were extracted manually from the site.
@@ -61,8 +56,8 @@ public class GetResultsFromSite {
         nameValuePairs.add(new BasicNameValuePair("currentDate", date_today));
         nameValuePairs.add(new BasicNameValuePair("currentTime","01:00:00"));
         String strParams =  URLEncodedUtils.format(nameValuePairs, "utf-8");
-        url = url + "?" + strParams;
-        
+        String url = Constants.JASONURL + "?" + strParams;
+
         /**
          * HTML to be sent as the output. The results table will be appended
          * to this variable.
@@ -77,7 +72,7 @@ public class GetResultsFromSite {
 	    htmlOutput += 	"table {font-size:10px;border-width:1px;border-collapse:collapse;border-color:black;border-style:outset;}";
 	    htmlOutput += "</style>";
 	    htmlOutput += "</head><body>";
-	    
+
 	    /**
 	     * In case an error occurs this HTML string will be returned.
 	     */
@@ -98,10 +93,10 @@ public class GetResultsFromSite {
 	    try {
 	        response = httpClient.execute(httpGet);
 	    } catch (ClientProtocolException e) {
-	    	Log.e("TR_SCH_ERR", "HTTPERROR : ClientProtocolException : "+e);
+	    	Log.e(Constants.LOG_TAG, "HTTPERROR : ClientProtocolException : "+e);
 	    	return htmlHTTPErr;
 	    } catch (IOException e) {
-	    	Log.e("TR_SCH_ERR", "HTTPERROR : IOException : "+e);
+	    	Log.e(Constants.LOG_TAG, "HTTPERROR : IOException : "+e);
 	    	return htmlHTTPErr;
 	    }
 
@@ -112,10 +107,10 @@ public class GetResultsFromSite {
 	    try {
 	    	ips = response.getEntity().getContent();
 	    } catch (IOException e) {
-	    	Log.e("TR_SCH_ERR", "InputStreamERROR : IOException : "+e);
+	    	Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException : "+e);
 	    	return htmlIOErr;
 	    } catch (IllegalStateException e) {
-	    	Log.e("TR_SCH_ERR", "InputStreamERROR : IllegalStateException : "+e);
+	    	Log.e(Constants.LOG_TAG, "InputStreamERROR : IllegalStateException : "+e);
 	    	return htmlIOErr;
 	    }
 	    /**
@@ -130,12 +125,12 @@ public class GetResultsFromSite {
 	    		strBuilder.append(new String(bytes, 0, numRead));
 	    	}
 	 	} catch (IOException e) {
-	 		Log.e("TR_SCH_ERR", "InputStreamERROR : IOException - Read Error: "+e);
+	 		Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException - Read Error: "+e);
 	 		return htmlIOErr;
 	 	}    
 	    htmlOutput += JSONToHTMLTable(strBuilder.toString());
 	    htmlOutput += "<br/><br/><br/></body></html>";
-	    //Log.i("TR", htmlOutput);
+	    //Log.i(Constants.LOG_TAG, htmlOutput);
 	    return htmlOutput;
 	}
 	private static String JSONToHTMLTable(String strJSON) {
@@ -149,13 +144,13 @@ public class GetResultsFromSite {
 		try {
 			jObject = new JSONObject(strJSON); 
 		} catch (JSONException e) {
-			Log.e("TR_SCH_ERR", "Error Parsing JSON string:"+e);
+			Log.e(Constants.LOG_TAG, "Error Parsing JSON string:"+e);
 			return "<h1>Error Parsing JSON string</h1>";
 		}
 		try {
 			trainsArray = jObject.getJSONArray("trains");
 		} catch (JSONException e) {
-			Log.e("TR_SCH_ERR", "Error Parsing JSON object:"+e);
+			Log.e(Constants.LOG_TAG, "Error Parsing JSON object:"+e);
 			return "<h1>Error Parsing JSON object</h1>";
 		}
 		if( trainsArray.length() < 1 ) {
@@ -165,7 +160,7 @@ public class GetResultsFromSite {
 				startStation = trainsArray.getJSONObject(0).getString("startStationName").toString().trim();
 				endStation = trainsArray.getJSONObject(0).getString("endStationName").toString().trim();
 		} catch (JSONException e) {
-			Log.e("TR_SCH_ERR", "Error Parsing JSON array object:"+e);
+			Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
 			return "<h1>Error Parsing JSON array object</h1>";
 		}
 		
@@ -218,7 +213,7 @@ public class GetResultsFromSite {
 				htmlTable += "</td>";
 				htmlTable += "</tr>";
 			} catch (JSONException e) {
-				Log.e("TR_SCH_ERR", "Error Parsing JSON array object:"+e);
+				Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
 				return "<h1>Error Parsing JSON array object</h1>";
 			}
 		}
