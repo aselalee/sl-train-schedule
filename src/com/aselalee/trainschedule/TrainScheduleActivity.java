@@ -219,7 +219,7 @@ public class TrainScheduleActivity extends Activity {
     private void show_results(String time_from, String time_to) {
     	hideSoftKeyboard(actv_to);
     	DBDataAccess myDBAcc = new DBDataAccess(this);
-    	myDBAcc.PushData(station_from_txt, station_from_val, station_to_txt, station_to_val, time_from, time_to);
+    	myDBAcc.PushDataHistory(station_from_txt, station_from_val, station_to_txt, station_to_val, time_from, time_to);
     	myDBAcc.close();
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	if( validateStations() ) {
