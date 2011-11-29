@@ -38,4 +38,9 @@ public final class Constants {
 	public static final String COL_END_STATION_VAL = "end_station_val";
 	public static final String COL_START_TIME = "start_time";
 	public static final String COL_END_TIME = "end_time";
+	
+	/**
+	 * Maximum entries kept in the history table.
+	 */
+	public static final int MAX_HIS_COUNT = 5;
 }
