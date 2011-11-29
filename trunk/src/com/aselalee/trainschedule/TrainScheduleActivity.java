@@ -38,7 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class TrainScheduleActivity extends Activity {
+public class TrainScheduleActivity extends Activity implements Runnable {
 	private LinearLayout lin_lay;
 	private Button get_given_btn;
 	private Button get_all_btn;
@@ -57,6 +57,8 @@ public class TrainScheduleActivity extends Activity {
 	private String station_to_txt = "";
 	private String station_from_val = "";
 	private String station_to_val = "";
+	private String time_from_txt = "";
+	private String time_to_txt = "";
 
 	/**
 	 * Default values.
@@ -101,9 +103,9 @@ public class TrainScheduleActivity extends Activity {
        	get_given_btn = (Button) findViewById(R.id.get_given);
        	get_given_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
-       	    	String time_from = map_time_from(spinner_times_from.getSelectedItemPosition());
-       	    	String time_to = map_time_to(spinner_times_to.getSelectedItemPosition());
-       			show_results(time_from, time_to);
+       	    	time_from_txt = map_time_from(spinner_times_from.getSelectedItemPosition());
+       	    	time_to_txt = map_time_to(spinner_times_to.getSelectedItemPosition());
+       			show_results();
         	}
         });
        	get_all_btn = (Button) findViewById(R.id.get_all);
@@ -113,9 +115,9 @@ public class TrainScheduleActivity extends Activity {
        		     * To get the full schedule, times are mapped to least starting time and 
        		     * most ending time.
        		     */
-       		   	String time_from = map_time_from(0);
-       	    	String time_to = map_time_to(spinner_times_to.getCount() - 1);
-       			show_results(time_from, time_to);
+       		   	time_from_txt = map_time_from(0);
+       	    	time_to_txt = map_time_to(spinner_times_to.getCount() - 1);
+       			show_results();
         	}
         });
         /**
@@ -216,15 +218,18 @@ public class TrainScheduleActivity extends Activity {
     /**
      * Calls the next activity to display results.
      */
-    private void show_results(String time_from, String time_to) {
+    private void show_results() {
+    	/**
+    	 * Add params to history database.
+    	 * This is done in a separate thread.
+    	 */
+    	Thread thread = new Thread(this);
+    	thread.start();
+
     	hideSoftKeyboard(actv_to);
-    	DBDataAccess myDBAcc = new DBDataAccess(this);
-    	myDBAcc.PushDataHistory(station_from_txt, station_from_val, station_to_txt, station_to_val, time_from, time_to);
-    	myDBAcc.close();
-    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	if( validateStations() ) {
         	Intent intent = new Intent(this, ResultViewActivity.class);
-    	   	populateIntent(intent, time_from, time_to, date_today);
+    	   	populateIntent(intent);
     		startActivity(intent);
     	}
     	return;
@@ -310,6 +315,13 @@ public class TrainScheduleActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
     }
+	public void run() {
+    	DBDataAccess myDBAcc = new DBDataAccess(this);
+    	myDBAcc.PushDataHistory(station_from_txt, station_from_val,
+    							station_to_txt, station_to_val,
+    							time_from_txt, time_to_txt);
+    	myDBAcc.close();
+	}
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -380,12 +392,12 @@ public class TrainScheduleActivity extends Activity {
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
     }
-    private void populateIntent(Intent intent,
-    		String time_from, String time_to, String date_today) {
-    			intent.putExtra("station_from", station_from_val);
-    			intent.putExtra("station_to", station_to_val);
-    			intent.putExtra("time_from", time_from);
-    			intent.putExtra("time_to", time_to);
-    			intent.putExtra("date_today", date_today);
+    private void populateIntent(Intent intent) {
+    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
+    	intent.putExtra("station_from", station_from_val);
+    	intent.putExtra("station_to", station_to_val);
+    	intent.putExtra("time_from", time_from_txt);
+    	intent.putExtra("time_to", time_to_txt);
+    	intent.putExtra("date_today", date_today);
     }
 }
