@@ -59,6 +59,9 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	private String station_to_val = "";
 	private String time_from_txt = "";
 	private String time_to_txt = "";
+	private String time_from_val = "";
+	private String time_to_val = "";
+
 
 	/**
 	 * Default values.
@@ -103,8 +106,10 @@ public class TrainScheduleActivity extends Activity implements Runnable {
        	get_given_btn = (Button) findViewById(R.id.get_given);
        	get_given_btn.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v) {
-       	    	time_from_txt = map_time_from(spinner_times_from.getSelectedItemPosition());
-       	    	time_to_txt = map_time_to(spinner_times_to.getSelectedItemPosition());
+       	    	time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
+       	    	time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
+       	    	time_from_txt = spinner_times_from.getSelectedItem().toString();
+       	    	time_to_txt = spinner_times_to.getSelectedItem().toString();
        			show_results();
         	}
         });
@@ -115,8 +120,10 @@ public class TrainScheduleActivity extends Activity implements Runnable {
        		     * To get the full schedule, times are mapped to least starting time and 
        		     * most ending time.
        		     */
-       		   	time_from_txt = map_time_from(0);
-       	    	time_to_txt = map_time_to(spinner_times_to.getCount() - 1);
+       		   	time_from_val = map_time_from(0);
+       	    	time_to_val = map_time_to(spinner_times_to.getCount() - 1);
+       		   	time_from_txt = "00.00";
+       		   	time_to_txt = "24.00";
        			show_results();
         	}
         });
@@ -319,7 +326,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	DBDataAccess myDBAcc = new DBDataAccess(this);
     	myDBAcc.PushDataHistory(station_from_txt, station_from_val,
     							station_to_txt, station_to_val,
-    							time_from_txt, time_to_txt);
+    							time_from_txt, time_from_val,
+    							time_to_txt, time_to_val);
     	myDBAcc.close();
 	}
     @Override
@@ -396,8 +404,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	intent.putExtra("station_from", station_from_val);
     	intent.putExtra("station_to", station_to_val);
-    	intent.putExtra("time_from", time_from_txt);
-    	intent.putExtra("time_to", time_to_txt);
+    	intent.putExtra("time_from", time_from_val);
+    	intent.putExtra("time_to", time_to_val);
     	intent.putExtra("date_today", date_today);
     }
 }
