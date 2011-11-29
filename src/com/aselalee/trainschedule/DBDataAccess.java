@@ -52,8 +52,11 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
 		long rowID = -1;
-		
-		db = this.getWritableDatabase();
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+		}
 		if( db == null ) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return false;
@@ -73,13 +76,12 @@ public class DBDataAccess extends SQLiteOpenHelper {
 				db.close();
 				return false;
 			}
-			db.setTransactionSuccessful();
 		}catch ( Exception e) {
-			Log.e(Constants.LOG_TAG, "Error pushing data to DB" + e);
+			Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
 			return false;
-		} finally {
-			db.endTransaction();
 		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		try {
 			myCur = db.query(Constants.TABLE_HIS, new String [] {"_ID"}, null, null, null, null, null);
 			if( myCur == null) {
@@ -88,12 +90,13 @@ public class DBDataAccess extends SQLiteOpenHelper {
 				return false;
 			}
 		} catch ( Exception e) {
-			Log.e(Constants.LOG_TAG, "Error pushing data to DB" + e);
+			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
 			return false;
 		}
+		db.beginTransaction();
+		myCur.moveToFirst();
 		for( int i = myCur.getCount(); i > Constants.MAX_HIS_COUNT; i--) {
 			try {
-				myCur.moveToFirst();
 				rowID = myCur.getLong(0);
 				if( rowID < 0 ) {
 					db.close();
@@ -101,24 +104,64 @@ public class DBDataAccess extends SQLiteOpenHelper {
 					Log.e(Constants.LOG_TAG, "Errornous row ID value= " + rowID);
 					return false;
 				}
-				db.beginTransaction();
-				int delCount = db.delete(Constants.TABLE_HIS, "WHERE _ID = " + rowID, null);
+				int delCount = db.delete(Constants.TABLE_HIS, "_ID = " + rowID, null);
 				if( delCount <= 0) {
 					Log.w(Constants.LOG_TAG, "Extra row not deleted...");
 				}
-				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				myCur.close();
 				db.close();
-				Log.e(Constants.LOG_TAG, "Error Deleting a row");
+				Log.e(Constants.LOG_TAG, "Error Deleting a row " + e);
 				return false;
-			}finally {
-				db.endTransaction();
 			}
+			myCur.moveToNext();
 		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		myCur.close();
 		db.close();
 		return true;
 	}
-
+	public ParameterSet [] GetHistory() {
+		ParameterSet [] paramsList = null;
+		paramsList = null;
+		SQLiteDatabase db = null;
+		Cursor myCur = null;
+		
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return null;
+		}
+		try {
+			myCur = db.query(Constants.TABLE_HIS, new String [] {"*"}, null, null, null, null, null);
+			if( myCur == null) {
+				Log.e(Constants.LOG_TAG, "Select operation failed");
+				db.close();
+				return null;
+			}
+		} catch ( Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
+			return null;
+		}
+		paramsList = new ParameterSet[myCur.getCount()];
+		myCur.moveToLast();
+		for(int i = 0; i < myCur.getCount(); i++) {
+			paramsList[i] = new ParameterSet();
+			paramsList[i].start_station_txt = myCur.getString(1);
+			paramsList[i].start_station_val = myCur.getString(2);
+			paramsList[i].end_station_txt = myCur.getString(3);
+			paramsList[i].end_station_val = myCur.getString(4);
+			paramsList[i].start_time_txt = myCur.getString(5);
+			paramsList[i].end_time_txt = myCur.getString(6);
+			myCur.moveToPrevious();
+		}
+		myCur.close();
+		db.close();
+		return paramsList;
+	}
 }

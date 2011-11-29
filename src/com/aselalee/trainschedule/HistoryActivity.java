@@ -17,21 +17,17 @@
 
 package com.aselalee.trainschedule;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.util.Log;
 
-public class HistoryActivity extends Activity {
-
+public class HistoryActivity extends ListActivity {
+	private ParameterSet [] paramsList = null;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	
-        TextView textview = new TextView(this);
-        textview.setText("Hisoty");
-        setContentView(textview);
 	}
     @Override
     public void onPause() {
@@ -40,6 +36,18 @@ public class HistoryActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+    	/**
+    	 * 1. Get history from database.
+    	 * 2. Then show it in the list view.
+    	 */
+	    DBDataAccess myDBAcc = new DBDataAccess(this);
+	    paramsList = myDBAcc.GetHistory();
+	    if(paramsList == null) {
+	    	Log.e(Constants.LOG_TAG, "Parameter List not populated properly");
+	    	return;
+	    }
+	    myDBAcc.close();
+	    setListAdapter(new HisAndFavAdapter(this, paramsList));
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
