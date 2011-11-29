@@ -1,6 +1,24 @@
+/**
+* @copyright	Copyright (C) 2011 Asela Leelaratne
+* @license		GNU/GPL Version 3
+* 
+* This Application is released to the public under the GNU General Public License.
+* 
+* GNU/GPL V3 Extract.
+* 15. Disclaimer of Warranty.
+* THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+* EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+* PROVIDE THE PROGRAM AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+* PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+* NECESSARY SERVICING, REPAIR OR CORRECTION.
+*/
+
 package com.aselalee.trainschedule;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -52,18 +70,15 @@ public class HisAndFavAdapter extends BaseAdapter {
     	private TextView myTV2 = null;
         public ItemView(Context context, ParameterSet params) {
             super(context);
-            this.setOrientation(VERTICAL);
-            myTV1 = new TextView(context);
-            myTV1.setText(params.start_station_txt + " <-> " + params.end_station_txt);
-            addView(myTV1, new LinearLayout.LayoutParams(
-                    LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-            myTV2 = new TextView(context);
+            LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view=layoutInflater.inflate(R.layout.his_fav_list_item, this, true);
+            myTV1 = (TextView)view.findViewById(R.id.station_names);
+            myTV1.setText(params.start_station_txt + " - "  + params.end_station_txt);
+            myTV2 = (TextView)view.findViewById(R.id.filter_time);
             myTV2.setText(params.start_time_txt + " to " + params.end_time_txt);
-            addView(myTV2, new LinearLayout.LayoutParams(
-                    LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         }
         public void setParams(ParameterSet params) {
-        	myTV1.setText(params.start_station_txt + " <-> " + params.end_station_txt);
+        	myTV1.setText(params.start_station_txt + " - " + params.end_station_txt);
         	myTV2.setText(params.start_time_txt + " to " + params.end_time_txt);
         }
     }
