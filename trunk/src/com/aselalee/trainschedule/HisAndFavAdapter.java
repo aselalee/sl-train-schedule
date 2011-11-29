@@ -66,20 +66,24 @@ public class HisAndFavAdapter extends BaseAdapter {
      * History and Favourites Item view.
      */
     private class ItemView extends LinearLayout {
-    	private TextView myTV1 = null;
-    	private TextView myTV2 = null;
+    	private TextView startStationTV = null;
+    	private TextView endStationTV = null;
+    	private TextView filterTV = null;
         public ItemView(Context context, ParameterSet params) {
             super(context);
             LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view=layoutInflater.inflate(R.layout.his_fav_list_item, this, true);
-            myTV1 = (TextView)view.findViewById(R.id.station_names);
-            myTV1.setText(params.start_station_txt + " - "  + params.end_station_txt);
-            myTV2 = (TextView)view.findViewById(R.id.filter_time);
-            myTV2.setText(params.start_time_txt + " to " + params.end_time_txt);
+            startStationTV = (TextView)view.findViewById(R.id.start_station_name);
+            startStationTV.setText(params.start_station_txt);
+            endStationTV = (TextView)view.findViewById(R.id.end_station_name);
+            endStationTV.setText(params.end_station_txt);
+            filterTV = (TextView)view.findViewById(R.id.filter_time);
+            filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt);
         }
         public void setParams(ParameterSet params) {
-        	myTV1.setText(params.start_station_txt + " - " + params.end_station_txt);
-        	myTV2.setText(params.start_time_txt + " to " + params.end_time_txt);
+        	startStationTV.setText(params.start_station_txt);
+        	endStationTV.setText(params.end_station_txt);
+        	filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt);
         }
     }
 }

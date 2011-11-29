@@ -21,6 +21,10 @@ import android.app.ListActivity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
 public class HistoryActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
@@ -28,6 +32,19 @@ public class HistoryActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    ListView lv = getListView();
+	    lv.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> adv, View view,
+									int position, long id) {
+				if( paramsList != null) {
+					Log.i(Constants.LOG_TAG, paramsList[position].start_station_txt + 
+							", " + paramsList[position].end_station_txt);
+				}
+				else {
+					Log.w(Constants.LOG_TAG, "History lit is empty");
+				}
+			}
+	    });
 	}
     @Override
     public void onPause() {
