@@ -22,6 +22,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -70,7 +73,25 @@ public class HistoryActivity extends ListActivity {
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
     }
-    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.history_activity_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.clear_his:
+        	DBDataAccess myDBAcc = new DBDataAccess(this);
+        	myDBAcc.ClearHistoryTable();
+        	myDBAcc.close();
+        	onResume();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
     private void getResults(ParameterSet paramSet) {
     	Intent intent = new Intent(this, ResultViewActivity.class);
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();

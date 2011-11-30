@@ -192,4 +192,13 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.close();
 		return paramsList;
 	}
+	
+	public void ClearHistoryTable() {
+		SQLiteDatabase db= this.getWritableDatabase();
+		db.beginTransaction();
+		db.delete(Constants.TABLE_HIS, null, null);
+		db.setTransactionSuccessful();
+		db.endTransaction();
+		db.close();
+	}
 }
