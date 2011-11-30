@@ -13,7 +13,7 @@
 			android:layout_height="wrap_content"
 			android:textSize="18sp"
 			android:textColor="#ffffff"
-			android:text="From: "
+			android:text="@string/list_from_txt"
 			android:gravity="right"/>
 		<TextView
 			android:id="@+id/start_station_name"
@@ -31,7 +31,7 @@
 			android:layout_height="wrap_content"
 			android:textSize="18sp"
 			android:textColor="#ffffff"
-			android:text="To: "
+			android:text="@string/list_to_txt"
 			android:gravity="right"/>
 		<TextView
 			android:id="@+id/end_station_name"
