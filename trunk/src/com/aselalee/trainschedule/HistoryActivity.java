@@ -18,6 +18,7 @@
 package com.aselalee.trainschedule;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,8 +38,7 @@ public class HistoryActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> adv, View view,
 									int position, long id) {
 				if( paramsList != null) {
-					Log.i(Constants.LOG_TAG, paramsList[position].start_station_txt + 
-							", " + paramsList[position].end_station_txt);
+					getResults(paramsList[position]);
 				}
 				else {
 					Log.w(Constants.LOG_TAG, "History lit is empty");
@@ -69,5 +69,16 @@ public class HistoryActivity extends ListActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
+    }
+    
+    private void getResults(ParameterSet paramSet) {
+    	Intent intent = new Intent(this, ResultViewActivity.class);
+    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
+    	intent.putExtra("station_from", paramSet.start_station_val);
+    	intent.putExtra("station_to", paramSet.end_station_val);
+    	intent.putExtra("time_from", paramSet.start_time_val);
+    	intent.putExtra("time_to", paramSet.end_time_val);
+    	intent.putExtra("date_today", date_today);
+		startActivity(intent);
     }
 }

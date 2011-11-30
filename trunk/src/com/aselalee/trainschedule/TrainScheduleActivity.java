@@ -333,7 +333,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.schedule_menu, menu);
+        inflater.inflate(R.menu.search_activity_menu, menu);
         return true;
     }
     @Override
