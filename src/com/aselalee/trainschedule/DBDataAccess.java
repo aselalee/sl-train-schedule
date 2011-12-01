@@ -286,6 +286,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		}
 		else {
 			/** Maximum favourites limit exceeded **/
+			Log.w(Constants.LOG_TAG, "Maximum favourites limit exceeded");
 			db.close();
 			return false;
 		}
@@ -362,5 +363,29 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();
+	}
+	public boolean DeleteFavRecord(long id) {
+		SQLiteDatabase db = null;
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+			return false;
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return false;
+		}
+		db.beginTransaction();
+		try {
+			db.setTransactionSuccessful();
+			db.delete(Constants.TABLE_FAV, "_ID=" + String.valueOf(id), null);
+			db.endTransaction();
+			db.close();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in deleting record" + e);
+			return false;
+		}
+		return true;
 	}
 }
