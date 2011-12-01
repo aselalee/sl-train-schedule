@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,7 +62,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	private String time_to_txt = "";
 	private String time_from_val = "";
 	private String time_to_val = "";
-
+	private boolean isThreadHistory = true;
 
 	/**
 	 * Default values.
@@ -231,6 +232,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	 * This is done in a separate thread.
     	 */
     	Thread thread = new Thread(this);
+    	isThreadHistory = true;
     	thread.start();
 
     	hideSoftKeyboard(actv_to);
@@ -324,10 +326,19 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     }
 	public void run() {
     	DBDataAccess myDBAcc = new DBDataAccess(this);
-    	myDBAcc.PushDataHistory(station_from_txt, station_from_val,
+    	if ( isThreadHistory == true) {
+    		myDBAcc.PushDataHistory(station_from_txt, station_from_val,
     							station_to_txt, station_to_val,
     							time_from_txt, time_from_val,
     							time_to_txt, time_to_val);
+    	}
+    	else {
+    		myDBAcc.PushDataFavourites(station_from_txt, station_from_val,
+					station_to_txt, station_to_val,
+					time_from_txt, time_from_val,
+					time_to_txt, time_to_val,
+					station_from_val + "-" + station_to_val, this );
+    	}
     	myDBAcc.close();
 	}
     @Override
@@ -346,9 +357,30 @@ public class TrainScheduleActivity extends Activity implements Runnable {
             return super.onOptionsItemSelected(item);
         }
     }
+	Handler toastHandler = new Handler();
+	Runnable toastRunnableOK = new Runnable() {
+		public void run() {
+			Toast.makeText(getBaseContext(),"Added to favourites.", Toast.LENGTH_SHORT).show();
+		}
+	};
+	Runnable toastRunnableERROR = new Runnable() {
+		public void run() {
+			Toast.makeText(getBaseContext(),"Error occured.", Toast.LENGTH_SHORT).show();
+		}
+	};
+	Runnable toastRunnableFULL = new Runnable() {
+		public void run() {
+			Toast.makeText(getBaseContext(),"Hisotry list Full. Delete one or more items.", Toast.LENGTH_SHORT).show();
+		}
+	};
     private void addParamsToFavs() {
-    	Toast.makeText(this,
-                "Added To Favourites", Toast.LENGTH_LONG).show();
+    	Thread thread = new Thread(this);
+    	isThreadHistory = false;
+	    time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
+	    time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
+	    time_from_txt = spinner_times_from.getSelectedItem().toString();
+	    time_to_txt = spinner_times_to.getSelectedItem().toString();
+    	thread.start();
     }
     /**
      * Private class to hold stations data.

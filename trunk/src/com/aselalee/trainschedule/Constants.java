@@ -57,9 +57,14 @@ public final class Constants {
 	public static final String COL_END_TIME_TXT = "end_time_txt";
 	public static final String COL_START_TIME_VAL = "start_time_val";
 	public static final String COL_END_TIME_VAL = "end_time_val";
+	public static final String COL_FAV_NAME = "fav_name";
 
 	/**
 	 * Maximum entries kept in the history table.
 	 */
 	public static final int MAX_HIS_COUNT = 5;
+	/**
+	 * Maximum entries kept in the favourites table.
+	 */
+	public static final int MAX_FAV_COUNT = 15;
 }

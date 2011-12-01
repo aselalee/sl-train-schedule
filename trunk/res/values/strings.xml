@@ -16,6 +16,9 @@
 	<string name="clear_his_txt">Clear History</string>
 	<string name="list_from_txt">From: </string>
 	<string name="list_to_txt">To: </string>
+	<string name="clear_fav_txt">Clear Favourites</string>
+	<string name="rename_fav_txt">Rename</string>
+	<string name="delete_fav_txt">Rename</string>
 
     <string-array name="stations_array">
         <item>ABANPOLA</item>
