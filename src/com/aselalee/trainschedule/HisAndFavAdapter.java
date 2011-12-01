@@ -28,10 +28,12 @@ import android.widget.TextView;
 public class HisAndFavAdapter extends BaseAdapter {
 	private ParameterSet [] paramSet = null;
 	private Context mContext = null;
+	private boolean isHistory = true;
 
-	public HisAndFavAdapter(Context context, ParameterSet [] params) {
+	public HisAndFavAdapter(Context context, ParameterSet [] params, boolean for_history) {
 		paramSet = params;
 		mContext = context;
+		isHistory = for_history;
 	}
 
 	public int getCount() {
@@ -48,37 +50,71 @@ public class HisAndFavAdapter extends BaseAdapter {
 	}
 
 	public long getItemId(int position) {
-		return position;
+		//return position;
+		return paramSet[position].id;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ItemView iv = null;
-        if (convertView == null) {
-            iv = new ItemView(mContext, paramSet[position]);
-        } else {
-            iv = (ItemView) convertView;
-            iv.setParams(paramSet[position]);
-        }
-		return iv;
+		if( isHistory == true ) {
+			ItemViewHistory iv = null;
+	        if (convertView == null) {
+	            iv = new ItemViewHistory(mContext, paramSet[position]);
+	        } else {
+	            iv = (ItemViewHistory) convertView;
+	            iv.setParams(paramSet[position]);
+	        }
+			return iv;
+		}
+		else {
+			ItemViewFavourites iv = null;
+	        if (convertView == null) {
+	            iv = new ItemViewFavourites(mContext, paramSet[position]);
+	        } else {
+	            iv = (ItemViewFavourites) convertView;
+	            iv.setParams(paramSet[position]);
+	        }
+			return iv;
+		}
 	}
 
     /**
-     * History and Favourites Item view.
+     * History Item view.
      */
-    private class ItemView extends LinearLayout {
+    private class ItemViewHistory extends LinearLayout {
     	private TextView startStationTV = null;
     	private TextView endStationTV = null;
     	private TextView filterTV = null;
-        public ItemView(Context context, ParameterSet params) {
+        public ItemViewHistory(Context context, ParameterSet params) {
             super(context);
             LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view=layoutInflater.inflate(R.layout.his_fav_list_item, this, true);
+            View view=layoutInflater.inflate(R.layout.his_list_item, this, true);
             startStationTV = (TextView)view.findViewById(R.id.start_station_name);
-            startStationTV.setText(params.start_station_txt);
             endStationTV = (TextView)view.findViewById(R.id.end_station_name);
-            endStationTV.setText(params.end_station_txt);
             filterTV = (TextView)view.findViewById(R.id.filter_time);
-            filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt);
+            setParams(params);
+        }
+        public void setParams(ParameterSet params) {
+        	startStationTV.setText(params.start_station_txt);
+        	endStationTV.setText(params.end_station_txt);
+        	filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt);
+        }
+    }
+
+    /**
+     * Favourites Item view.
+     */
+    private class ItemViewFavourites extends LinearLayout {
+    	private TextView startStationTV = null;
+    	private TextView endStationTV = null;
+    	private TextView filterTV = null;
+        public ItemViewFavourites(Context context, ParameterSet params) {
+            super(context);
+            LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view=layoutInflater.inflate(R.layout.fav_list_item, this, true);
+            startStationTV = (TextView)view.findViewById(R.id.start_station_name);
+            endStationTV = (TextView)view.findViewById(R.id.end_station_name);
+            filterTV = (TextView)view.findViewById(R.id.filter_time);
+            setParams(params);
         }
         public void setParams(ParameterSet params) {
         	startStationTV.setText(params.start_station_txt);

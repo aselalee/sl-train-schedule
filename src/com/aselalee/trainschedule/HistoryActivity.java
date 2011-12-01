@@ -32,7 +32,6 @@ import android.widget.ListView;
 
 public class HistoryActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -44,7 +43,7 @@ public class HistoryActivity extends ListActivity {
 					getResults(paramsList[position]);
 				}
 				else {
-					Log.w(Constants.LOG_TAG, "History lit is empty");
+					Log.w(Constants.LOG_TAG, "History list is empty");
 				}
 			}
 	    });
@@ -67,7 +66,7 @@ public class HistoryActivity extends ListActivity {
 	    	return;
 	    }
 	    myDBAcc.close();
-	    setListAdapter(new HisAndFavAdapter(this, paramsList));
+	    setListAdapter(new HisAndFavAdapter(this, paramsList, true));
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

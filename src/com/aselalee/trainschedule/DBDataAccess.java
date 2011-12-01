@@ -55,7 +55,8 @@ public class DBDataAccess extends SQLiteOpenHelper {
         		+ Constants.COL_START_TIME_TXT + " TEXT,"
         		+ Constants.COL_START_TIME_VAL + " TEXT,"
         		+ Constants.COL_END_TIME_TXT + " TEXT,"
-        		+ Constants.COL_END_TIME_VAL + " TEXT"
+        		+ Constants.COL_END_TIME_VAL + " TEXT,"
+        		+ Constants.COL_FAV_NAME + " TEXT"
         		+ ");");
 	}
 
@@ -103,6 +104,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			}
 		}catch ( Exception e) {
 			Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
+			db.close();
 			return false;
 		}
 		db.setTransactionSuccessful();
@@ -116,6 +118,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			}
 		} catch ( Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
+			db.close();
 			return false;
 		}
 		db.beginTransaction();
@@ -172,6 +175,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			}
 		} catch ( Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
+			db.close();
 			return null;
 		}
 		paramsList = new ParameterSet[myCur.getCount()];
@@ -194,9 +198,167 @@ public class DBDataAccess extends SQLiteOpenHelper {
 	}
 	
 	public void ClearHistoryTable() {
-		SQLiteDatabase db= this.getWritableDatabase();
+		SQLiteDatabase db = null;
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+			return;
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return;
+		}
 		db.beginTransaction();
-		db.delete(Constants.TABLE_HIS, null, null);
+		try {
+			db.delete(Constants.TABLE_HIS, null, null);
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in deleting all records in table" + e);
+			db.close();
+			return;
+		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
+		db.close();
+	}
+	
+	public boolean PushDataFavourites(String start_st_txt, String start_st_val,
+			String end_st_txt, String end_st_val,
+			String start_time_txt, String start_time_val,
+			String end_time_txt, String end_time_val,
+			String name, Context context ) {
+
+		SQLiteDatabase db = null;
+		Cursor myCur = null;
+		int rowCount = Constants.MAX_FAV_COUNT;
+		
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return false;
+		}
+
+		try {
+			myCur = db.query(Constants.TABLE_FAV, new String [] {"_ID"}, null, null, null, null, null);
+			if( myCur == null) {
+				Log.e(Constants.LOG_TAG, "Select operation failed");
+				db.close();
+				return false;
+			}
+		} catch ( Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
+			return false;
+		}
+		rowCount = myCur.getCount();
+		myCur.close();
+		/**
+		 * If items in history table is less than the max count add data. Else return false.
+		 */
+		if( rowCount < Constants.MAX_FAV_COUNT ) {
+			ContentValues keyValPairs = new ContentValues(6);
+			keyValPairs.put(Constants.COL_START_STATION_TXT, start_st_txt);
+			keyValPairs.put(Constants.COL_START_STATION_VAL, start_st_val);
+			keyValPairs.put(Constants.COL_END_STATION_TXT, end_st_txt);
+			keyValPairs.put(Constants.COL_END_STATION_VAL, end_st_val);
+			keyValPairs.put(Constants.COL_START_TIME_TXT, start_time_txt);
+			keyValPairs.put(Constants.COL_START_TIME_VAL, start_time_val);
+			keyValPairs.put(Constants.COL_END_TIME_TXT, end_time_txt);
+			keyValPairs.put(Constants.COL_END_TIME_VAL, end_time_val);
+			keyValPairs.put(Constants.COL_FAV_NAME, name);
+			db.beginTransaction();
+			try {
+				if( db.insert(Constants.TABLE_FAV, null, keyValPairs) < 0 ) {
+					Log.e(Constants.LOG_TAG, "Error writing to DB");
+					db.close();
+					return false;
+				}
+			}catch ( Exception e) {
+				Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
+				db.close();
+				return false;
+			}
+			db.setTransactionSuccessful();
+			db.endTransaction();
+		}
+		else {
+			/** Maximum favourites limit exceeded **/
+			db.close();
+			return false;
+		}
+		db.close();
+		return true;
+	}
+	public ParameterSet [] GetFavourites() {
+		ParameterSet [] paramsList = null;
+		paramsList = null;
+		SQLiteDatabase db = null;
+		Cursor myCur = null;
+		
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return null;
+		}
+		try {
+			myCur = db.query(Constants.TABLE_FAV, new String [] {"*"}, null, null, null, null, null);
+			if( myCur == null) {
+				Log.e(Constants.LOG_TAG, "Select operation failed");
+				db.close();
+				return null;
+			}
+		} catch ( Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
+			db.close();
+			return null;
+		}
+		paramsList = new ParameterSet[myCur.getCount()];
+		myCur.moveToFirst();
+		for(int i = 0; i < myCur.getCount(); i++) {
+			paramsList[i] = new ParameterSet();
+			paramsList[i].id = myCur.getLong(0);
+			paramsList[i].start_station_txt = myCur.getString(1);
+			paramsList[i].start_station_val = myCur.getString(2);
+			paramsList[i].end_station_txt = myCur.getString(3);
+			paramsList[i].end_station_val = myCur.getString(4);
+			paramsList[i].start_time_txt = myCur.getString(5);
+			paramsList[i].start_time_val = myCur.getString(6);
+			paramsList[i].end_time_txt = myCur.getString(7);
+			paramsList[i].end_time_val = myCur.getString(8);
+			paramsList[i].name = myCur.getString(9);
+			myCur.moveToNext();
+		}
+		myCur.close();
+		db.close();
+		return paramsList;
+	}
+	public void ClearFavouritesTable() {
+		SQLiteDatabase db = null;
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+			return;
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return;
+		}
+		db.beginTransaction();
+		try {
+			db.delete(Constants.TABLE_FAV, null, null);
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in deleting all records in table" + e);
+			db.close();
+			return;
+		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();

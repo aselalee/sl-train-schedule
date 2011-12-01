@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+		<TextView
+			android:layout_width="70dp"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:textColor="#ffffff"
+			android:text="@string/list_from_txt"
+			android:gravity="right"/>
+		<TextView
+			android:id="@+id/start_station_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:textColor="#ffffff" />
+	</LinearLayout>
+	<LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+		<TextView
+			android:layout_width="70dp"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:textColor="#ffffff"
+			android:text="@string/list_to_txt"
+			android:gravity="right"/>
+		<TextView
+			android:id="@+id/end_station_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:textColor="#ffffff" />
+	</LinearLayout>
+		<TextView
+			android:id="@+id/filter_time"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:padding="6dp"
+			android:textSize="12sp"
+			android:textColor="#848284"
+			android:layout_span="2" />
+</LinearLayout>
