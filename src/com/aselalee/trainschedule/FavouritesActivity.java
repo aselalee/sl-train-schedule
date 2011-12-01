@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -123,8 +124,8 @@ public class FavouritesActivity extends ListActivity {
     		default:
     			return super.onContextItemSelected(item);
     	}
-    	onResume();
     	myDBAcc.close();
+    	onResume();
     	return true;
     }
     private void getResults(ParameterSet paramSet) {
@@ -137,13 +138,20 @@ public class FavouritesActivity extends ListActivity {
     	intent.putExtra("date_today", date_today);
     	startActivity(intent);
     }
-    private void renameFavItem(int itemPosition, DBDataAccess myDBAcc) {
-    	EditText etv = new EditText(this);
+    private void renameFavItem(final int itemPosition, final DBDataAccess myDBAcc) {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    	builder.setView(etv);
+    	
+    	builder.setView(textEntryView);
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
     	           public void onClick(DialogInterface dialog, int id) {
-
+    	        	   EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+    	        	   String newName = "";
+    	        	   newName = et.getEditableText().toString();
+    	        	   if(newName != "") {
+    	        		   myDBAcc.RenameFavRecord(paramsList[itemPosition].id, newName);
+    	        	   }
     	           }
     	       });
     	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

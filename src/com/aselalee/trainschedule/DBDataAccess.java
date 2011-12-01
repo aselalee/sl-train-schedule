@@ -104,6 +104,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			}
 		}catch ( Exception e) {
 			Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
+			db.endTransaction();
 			db.close();
 			return false;
 		}
@@ -137,6 +138,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 					Log.w(Constants.LOG_TAG, "Extra row not deleted...");
 				}
 			} catch (Exception e) {
+				db.endTransaction();
 				myCur.close();
 				db.close();
 				Log.e(Constants.LOG_TAG, "Error Deleting a row " + e);
@@ -214,6 +216,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			db.delete(Constants.TABLE_HIS, null, null);
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in deleting all records in table" + e);
+			db.endTransaction();
 			db.close();
 			return;
 		}
@@ -278,6 +281,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 				}
 			}catch ( Exception e) {
 				Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
+				db.endTransaction();
 				db.close();
 				return false;
 			}
@@ -357,6 +361,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			db.delete(Constants.TABLE_FAV, null, null);
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in deleting all records in table" + e);
+			db.endTransaction();
 			db.close();
 			return;
 		}
@@ -378,14 +383,44 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		}
 		db.beginTransaction();
 		try {
-			db.setTransactionSuccessful();
 			db.delete(Constants.TABLE_FAV, "_ID=" + String.valueOf(id), null);
-			db.endTransaction();
-			db.close();
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in deleting record" + e);
+			db.endTransaction();
+			db.close();
 			return false;
 		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
+		db.close();
+		return true;
+	}
+	public boolean RenameFavRecord(long id, String newName) {
+		SQLiteDatabase db = null;
+		try {
+			db = this.getWritableDatabase();
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+			return false;
+		}
+		if( db == null ) {
+			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			return false;
+		}
+		db.beginTransaction();
+		try {
+			ContentValues keyValPairs = new ContentValues(1);
+			keyValPairs.put(Constants.COL_FAV_NAME, newName);
+			db.update(Constants.TABLE_FAV, keyValPairs, "_ID=" + String.valueOf(id), null);
+		} catch(Exception e) {
+			Log.e(Constants.LOG_TAG, "Error in deleting record" + e);
+			db.endTransaction();
+			db.close();
+			return false;
+		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
+		db.close();
 		return true;
 	}
 }
