@@ -19,6 +19,7 @@ package com.aselalee.trainschedule;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -26,6 +27,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -145,22 +147,28 @@ public class FavouritesActivity extends ListActivity {
     	
     	builder.setView(textEntryView);
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-    	           public void onClick(DialogInterface dialog, int id) {
-    	        	   EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
-    	        	   String newName = "";
-    	        	   newName = et.getEditableText().toString();
-    	        	   if(newName != "") {
-    	        		   myDBAcc.RenameFavRecord(paramsList[itemPosition].id, newName);
-    	        	   }
-    	           }
-    	       });
+    				public void onClick(DialogInterface dialog, int id) {
+    					EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+    					String newName = "";
+    					newName = et.getEditableText().toString();
+    					if(newName != "") {
+    						myDBAcc.RenameFavRecord(paramsList[itemPosition].id, newName);
+    					}
+    					hideSoftKeyboard(et);
+    					onResume();
+    				}
+    			});
     	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-    	           public void onClick(DialogInterface dialog, int id) {
-    	                dialog.cancel();
-    	           }
-    	       });
+    				public void onClick(DialogInterface dialog, int id) {
+    					dialog.cancel();
+    				}
+    			});
     	builder.setTitle("Enter New Name");
     	AlertDialog alert = builder.create();
     	alert.show();
+    }
+    private void hideSoftKeyboard(EditText actv) {
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
     }
 }
