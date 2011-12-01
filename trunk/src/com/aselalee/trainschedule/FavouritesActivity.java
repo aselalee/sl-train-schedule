@@ -17,7 +17,9 @@
 
 package com.aselalee.trainschedule;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class FavouritesActivity extends ListActivity {
@@ -107,13 +110,22 @@ public class FavouritesActivity extends ListActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
     	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+    	DBDataAccess myDBAcc = null;
     	switch (item.getItemId()) {
     		case R.id.rename_fav:
-    			Log.i(Constants.LOG_TAG, String.valueOf(paramsList[info.position].id) + "/" + paramsList[info.position].name);
-    			return true;
+    			myDBAcc = new DBDataAccess(this);
+    			renameFavItem(info.position, myDBAcc);
+    			break;
+    		case R.id.delete_fav:
+    			myDBAcc = new DBDataAccess(this);
+    			myDBAcc.DeleteFavRecord(paramsList[info.position].id);
+    			break;
     		default:
     			return super.onContextItemSelected(item);
-      }
+    	}
+    	onResume();
+    	myDBAcc.close();
+    	return true;
     }
     private void getResults(ParameterSet paramSet) {
     	Intent intent = new Intent(this, ResultViewActivity.class);
@@ -124,5 +136,23 @@ public class FavouritesActivity extends ListActivity {
     	intent.putExtra("time_to", paramSet.end_time_val);
     	intent.putExtra("date_today", date_today);
     	startActivity(intent);
+    }
+    private void renameFavItem(int itemPosition, DBDataAccess myDBAcc) {
+    	EditText etv = new EditText(this);
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setView(etv);
+    	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+    	           public void onClick(DialogInterface dialog, int id) {
+
+    	           }
+    	       });
+    	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+    	           public void onClick(DialogInterface dialog, int id) {
+    	                dialog.cancel();
+    	           }
+    	       });
+    	builder.setTitle("Enter New Name");
+    	AlertDialog alert = builder.create();
+    	alert.show();
     }
 }
