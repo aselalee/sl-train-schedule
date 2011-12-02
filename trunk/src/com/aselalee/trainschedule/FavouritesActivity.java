@@ -38,6 +38,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class FavouritesActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
@@ -66,8 +67,9 @@ public class FavouritesActivity extends ListActivity {
     public void onResume() {
         super.onResume();
     	/**
-    	 * 1. Get history from database.
+    	 * 1. Get favourites from database.
     	 * 2. Then show it in the list view.
+    	 * 3. Call this when ever the database is updated.
     	 */
 	    DBDataAccess myDBAcc = new DBDataAccess(this);
 	    paramsList = myDBAcc.GetFavourites();
@@ -142,17 +144,19 @@ public class FavouritesActivity extends ListActivity {
     }
     private void renameFavItem(final int itemPosition, final DBDataAccess myDBAcc) {
         LayoutInflater factory = LayoutInflater.from(this);
-        final View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
+        View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
+        final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    	
     	builder.setView(textEntryView);
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
-    					EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
     					String newName = "";
     					newName = et.getEditableText().toString();
-    					if(newName != "") {
+    					if(newName.length() != 0) {
     						myDBAcc.RenameFavRecord(paramsList[itemPosition].id, newName);
+    					}
+    					else {
+    						runToast("Invalid name.");
     					}
     					hideSoftKeyboard(et);
     					onResume();
@@ -160,6 +164,7 @@ public class FavouritesActivity extends ListActivity {
     			});
     	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
+    					hideSoftKeyboard(et);
     					dialog.cancel();
     				}
     			});
@@ -170,5 +175,8 @@ public class FavouritesActivity extends ListActivity {
     private void hideSoftKeyboard(EditText actv) {
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
+    }
+    private void runToast(String msg) {
+    	Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 }

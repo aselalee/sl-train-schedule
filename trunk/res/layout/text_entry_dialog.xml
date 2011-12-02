@@ -19,5 +19,7 @@
 <EditText xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/new_name"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:inputType="text"
+    android:selectAllOnFocus="true">
 </EditText>

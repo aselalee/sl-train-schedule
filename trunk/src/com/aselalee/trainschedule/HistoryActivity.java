@@ -58,6 +58,7 @@ public class HistoryActivity extends ListActivity {
     	/**
     	 * 1. Get history from database.
     	 * 2. Then show it in the list view.
+    	 * 3. Call this when ever the database is updated.
     	 */
 	    DBDataAccess myDBAcc = new DBDataAccess(this);
 	    paramsList = myDBAcc.GetHistory();
