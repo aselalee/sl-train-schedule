@@ -18,12 +18,15 @@
 package com.aselalee.trainschedule;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +38,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -62,6 +66,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	private String time_to_txt = "";
 	private String time_from_val = "";
 	private String time_to_val = "";
+	private String name_txt = "";
 	private boolean isThreadHistory = true;
 
 	/**
@@ -337,7 +342,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 					station_to_txt, station_to_val,
 					time_from_txt, time_from_val,
 					time_to_txt, time_to_val,
-					station_from_val + "-" + station_to_val, this );
+					name_txt, this );
     	}
     	myDBAcc.close();
 	}
@@ -351,7 +356,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.add_to_fav:
-        	addParamsToFavs();
+        	getNewFavName();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -373,13 +378,42 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			Toast.makeText(getBaseContext(),"Hisotry list Full. Delete one or more items.", Toast.LENGTH_SHORT).show();
 		}
 	};
-    private void addParamsToFavs() {
+    private void getNewFavName() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
+        final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+        et.setText(station_from_txt + " - " + station_to_txt);
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setView(textEntryView);
+    	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    					addParamsToFavs(et.getEditableText().toString());
+    					hideSoftKeyboard(et);
+    				}
+    			});
+    	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    					hideSoftKeyboard(et);
+    					dialog.cancel();
+    				}
+    			});
+    	builder.setTitle("Enter New Name");
+    	AlertDialog alert = builder.create();
+    	alert.show();
+    }
+    private void addParamsToFavs(String newName) {
     	Thread thread = new Thread(this);
     	isThreadHistory = false;
 	    time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
 	    time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
 	    time_from_txt = spinner_times_from.getSelectedItem().toString();
 	    time_to_txt = spinner_times_to.getSelectedItem().toString();
+	    name_txt = newName;
+	    if(name_txt.length() == 0) {
+	       	Toast.makeText(this,
+                    "Invalid name", Toast.LENGTH_LONG).show();
+			return;
+		}
     	thread.start();
     }
     /**
@@ -428,7 +462,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	}
     	return -1;
     }
-    private void hideSoftKeyboard(AutoCompleteTextView actv) {
+    private void hideSoftKeyboard(View actv) {
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
     }
