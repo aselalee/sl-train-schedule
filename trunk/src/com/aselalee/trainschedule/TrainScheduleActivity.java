@@ -379,6 +379,9 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		}
 	};
     private void getNewFavName() {
+    	if( validateStations() == false) {
+    		return;
+    	}
         LayoutInflater factory = LayoutInflater.from(this);
         View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
         final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
@@ -451,7 +454,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
         		return true;
         	}
        	Toast.makeText(this,
-                        "Check Station Names", Toast.LENGTH_LONG).show();
+                        "Invalid Station Names", Toast.LENGTH_LONG).show();
         return false;
     }
     private int searchString(String strArray[], String strSrc) {
@@ -469,9 +472,13 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     private void populateIntent(Intent intent) {
     	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
     	intent.putExtra("station_from", station_from_val);
+    	intent.putExtra("station_from_txt", station_from_txt);
     	intent.putExtra("station_to", station_to_val);
+    	intent.putExtra("station_to_txt", station_to_txt);
     	intent.putExtra("time_from", time_from_val);
+    	intent.putExtra("time_from_txt", time_from_txt);
     	intent.putExtra("time_to", time_to_val);
+    	intent.putExtra("time_to_txt", time_to_txt);
     	intent.putExtra("date_today", date_today);
     }
 }
