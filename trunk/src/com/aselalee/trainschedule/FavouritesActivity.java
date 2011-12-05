@@ -19,7 +19,6 @@ package com.aselalee.trainschedule;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -27,7 +26,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -134,16 +132,12 @@ public class FavouritesActivity extends ListActivity {
     }
     private void getResults(ParameterSet paramSet) {
     	Intent intent = new Intent(this, ResultViewActivity.class);
-    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	intent.putExtra("station_from", paramSet.start_station_val);
-    	intent.putExtra("station_from_txt", paramSet.start_station_txt);
-    	intent.putExtra("station_to", paramSet.end_station_val);
-    	intent.putExtra("station_to_txt", paramSet.end_station_txt);
-    	intent.putExtra("time_from", paramSet.start_time_val);
-    	intent.putExtra("time_from_txt", paramSet.start_time_txt);
-    	intent.putExtra("time_to", paramSet.end_time_val);
-    	intent.putExtra("time_to_txt", paramSet.end_time_txt);
-    	intent.putExtra("date_today", date_today);
+    	Constants.PupulateIntentForResultsActivity(
+    			paramSet.start_station_val, paramSet.start_station_txt,
+    			paramSet.end_station_val, paramSet.end_station_txt,
+    			paramSet.start_time_val, paramSet.start_time_txt,
+    			paramSet.end_time_val, paramSet.end_time_txt,
+    			intent);
     	startActivity(intent);
     }
     private void renameFavItem(final int itemPosition, final DBDataAccess myDBAcc) {
@@ -163,13 +157,13 @@ public class FavouritesActivity extends ListActivity {
     					else {
     						runToast("Invalid name.");
     					}
-    					hideSoftKeyboard(et);
+    					Constants.HideSoftKeyboard(et, getBaseContext());
     					onResume();
     				}
     			});
     	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
-    					hideSoftKeyboard(et);
+    					Constants.HideSoftKeyboard(et, getBaseContext());
     					dialog.cancel();
     				}
     			});
@@ -178,10 +172,6 @@ public class FavouritesActivity extends ListActivity {
     	alert.show();
     }
 
-    private void hideSoftKeyboard(EditText actv) {
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
-    }
     private void runToast(String msg) {
     	Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
