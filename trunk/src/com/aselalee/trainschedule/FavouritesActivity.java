@@ -146,6 +146,7 @@ public class FavouritesActivity extends ListActivity {
         LayoutInflater factory = LayoutInflater.from(this);
         View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
         final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+        et.setText(paramsList[itemPosition].name);
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setView(textEntryView);
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -172,6 +173,7 @@ public class FavouritesActivity extends ListActivity {
     	AlertDialog alert = builder.create();
     	alert.show();
     }
+
     private void hideSoftKeyboard(EditText actv) {
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
