@@ -20,18 +20,17 @@ package com.aselalee.trainschedule;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -59,46 +58,46 @@ public class ResultViewActivity extends Activity implements Runnable {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.result_table);
 
-	    	/**
-	    	 * Read data passed from the calling activity.
-	    	 */
-	    	Bundle extras = getIntent().getExtras(); 
-	    	if(extras !=null) {
-	    		station_from = extras.getString("station_from");
-	    		station_from_txt = extras.getString("station_from_txt");
-	    		station_to = extras.getString("station_to");
-	    		station_to_txt = extras.getString("station_to_txt");
-	    		time_from = extras.getString("time_from");
-	    		time_from_txt = extras.getString("time_from_txt");
-	    		time_to = extras.getString("time_to");
-	    		time_to_txt = extras.getString("time_to_txt");
-	    		date_today = extras.getString("date_today");
-	    	}
+    	/**
+    	 * Read data passed from the calling activity.
+    	 */
+    	Bundle extras = getIntent().getExtras(); 
+    	if(extras !=null) {
+    		station_from = extras.getString("station_from");
+    		station_from_txt = extras.getString("station_from_txt");
+    		station_to = extras.getString("station_to");
+    		station_to_txt = extras.getString("station_to_txt");
+    		time_from = extras.getString("time_from");
+    		time_from_txt = extras.getString("time_from_txt");
+    		time_to = extras.getString("time_to");
+    		time_to_txt = extras.getString("time_to_txt");
+    		date_today = extras.getString("date_today");
+    	}
 
-	    	/**
-	    	 * Get the webview handle.
-	    	 */
-	    	mWebView = (WebView) findViewById(R.id.webview);
-	    	mWebView.getSettings().setBuiltInZoomControls(true); 
-	    
-	    	/**
-	    	 * Display progress Dialog.
-	    	 */
-	    	pd = ProgressDialog.show(this, "Working..",
-								 	"Fetching Results...",
-								 	true, true,
-								 	new DialogInterface.OnCancelListener(){
-                						public void onCancel(DialogInterface dialog) {
-                							finish();
-                						}
-	    							});
+    	/**
+    	 * Get the webview handle.
+    	 */
+    	mWebView = (WebView) findViewById(R.id.webview);
+    	mWebView.getSettings().setBuiltInZoomControls(true); 
+    
+    	/**
+    	 * Display progress Dialog.
+    	 */
+    	pd = ProgressDialog.show(this, "Working..",
+							 	"Fetching Results...",
+							 	true, true,
+							 	new DialogInterface.OnCancelListener(){
+            						public void onCancel(DialogInterface dialog) {
+            							finish();
+            						}
+    							});
 
-	    	/**
-	    	 * This will execute the "run" method in a new thread.
-	    	 */
-	    	Thread thread = new Thread(this);
-	    	isThreadFavourites = false;
-	    	thread.start();
+    	/**
+    	 * This will execute the "run" method in a new thread.
+    	 */
+    	Thread thread = new Thread(this);
+    	isThreadFavourites = false;
+    	thread.start();
 	}
 	/**
 	 * run() method that must be implemented when implementing "Runnable" class.
@@ -112,14 +111,16 @@ public class ResultViewActivity extends Activity implements Runnable {
 			/**
 			 * This will send message to the calling thread to continue and display data.
 			 */
-			handler.sendEmptyMessage(0);
+			Message myMsg = new Message();
+			myMsg.arg1 = Constants.THREAD_GET_RESULTS;
+			handler.sendMessage(myMsg);
 		} else {
 			DBDataAccess myDBAcc = new DBDataAccess(this);
     		myDBAcc.PushDataFavourites(station_from_txt, station_from,
 					station_to_txt, station_to,
 					time_from_txt, time_from,
 					time_to_txt, time_to,
-					name_txt, this );
+					name_txt, handler );
     		myDBAcc.close();
 		}
 	}
@@ -131,8 +132,21 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			pd.dismiss();
-		    mWebView.loadDataWithBaseURL("", result,"text/html", "UTF-8", null);
+			if( msg.arg1 == Constants.THREAD_GET_RESULTS) {
+				pd.dismiss();
+				if( mWebView != null && result != null) {
+					try {
+						mWebView.loadDataWithBaseURL("", result,"text/html", "UTF-8", null);
+					} catch (Exception e) {
+						Log.e(Constants.LOG_TAG, "Eror occurred in loadDataWithBaseURL " + e);
+					}
+				} else {
+					Toast.makeText(getBaseContext(), "Error occured. Please try again.", Toast.LENGTH_SHORT).show();
+				}
+			} else {
+				String msgStr = (String)msg.obj;
+				Toast.makeText(getBaseContext(), msgStr, Toast.LENGTH_SHORT).show();
+			}
 		}
 	};
 	
@@ -141,7 +155,7 @@ public class ResultViewActivity extends Activity implements Runnable {
     	super.onPause();
     }
     @Override
-    public void onStop() {
+    public void onDestroy() {
     	super.onStop();
     	if( mWebView != null) {
     		mWebView.destroy();
@@ -181,12 +195,12 @@ public class ResultViewActivity extends Activity implements Runnable {
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
     					addParamsToFavs(et.getEditableText().toString());
-    					hideSoftKeyboard(et);
+    					Constants.HideSoftKeyboard(et, getBaseContext());
     				}
     			});
     	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
-    					hideSoftKeyboard(et);
+    					Constants.HideSoftKeyboard(et, getBaseContext());
     					dialog.cancel();
     				}
     			});
@@ -204,9 +218,5 @@ public class ResultViewActivity extends Activity implements Runnable {
 			return;
 		}
     	thread.start();
-    }
-    private void hideSoftKeyboard(View actv) {
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
     }
 }

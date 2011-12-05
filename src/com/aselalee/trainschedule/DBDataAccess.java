@@ -22,6 +22,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.BaseColumns;
 import android.util.Log;
 
@@ -86,7 +88,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			return false;
 		}
 
-		ContentValues keyValPairs = new ContentValues(6);
+		ContentValues keyValPairs = new ContentValues(8);
 		keyValPairs.put(Constants.COL_START_STATION_TXT, start_st_txt);
 		keyValPairs.put(Constants.COL_START_STATION_VAL, start_st_val);
 		keyValPairs.put(Constants.COL_END_STATION_TXT, end_st_txt);
@@ -229,19 +231,26 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			String end_st_txt, String end_st_val,
 			String start_time_txt, String start_time_val,
 			String end_time_txt, String end_time_val,
-			String name, Context context ) {
+			String name, Handler handler ) {
 
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
 		int rowCount = Constants.MAX_FAV_COUNT;
+		Message myMsg = new Message();
+		String msgStr = "Error... Restart application";
+		myMsg.obj = (Object)msgStr;
+		myMsg.arg1 = Constants.THREAD_PUSH_DATA_FAVOURITES;
 		
 		try {
 			db = this.getWritableDatabase();
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
+			handler.sendMessage(myMsg);
+			return false;
 		}
 		if( db == null ) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
+			handler.sendMessage(myMsg);
 			return false;
 		}
 
@@ -250,10 +259,12 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			if( myCur == null) {
 				Log.e(Constants.LOG_TAG, "Select operation failed");
 				db.close();
+				handler.sendMessage(myMsg);
 				return false;
 			}
 		} catch ( Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
+			handler.sendMessage(myMsg);
 			return false;
 		}
 		rowCount = myCur.getCount();
@@ -262,7 +273,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		 * If items in history table is less than the max count add data. Else return false.
 		 */
 		if( rowCount < Constants.MAX_FAV_COUNT ) {
-			ContentValues keyValPairs = new ContentValues(6);
+			ContentValues keyValPairs = new ContentValues(9);
 			keyValPairs.put(Constants.COL_START_STATION_TXT, start_st_txt);
 			keyValPairs.put(Constants.COL_START_STATION_VAL, start_st_val);
 			keyValPairs.put(Constants.COL_END_STATION_TXT, end_st_txt);
@@ -277,12 +288,14 @@ public class DBDataAccess extends SQLiteOpenHelper {
 				if( db.insert(Constants.TABLE_FAV, null, keyValPairs) < 0 ) {
 					Log.e(Constants.LOG_TAG, "Error writing to DB");
 					db.close();
+					handler.sendMessage(myMsg);
 					return false;
 				}
 			}catch ( Exception e) {
 				Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
 				db.endTransaction();
 				db.close();
+				handler.sendMessage(myMsg);
 				return false;
 			}
 			db.setTransactionSuccessful();
@@ -292,9 +305,15 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			/** Maximum favourites limit exceeded **/
 			Log.w(Constants.LOG_TAG, "Maximum favourites limit exceeded");
 			db.close();
+			msgStr = "Maximum favourites limit of " + Constants.MAX_FAV_COUNT + " reached.";
+			myMsg.obj = (Object)msgStr;
+			handler.sendMessage(myMsg);
 			return false;
 		}
 		db.close();
+		msgStr = "Sucessfully added to favourites.";
+		myMsg.obj = (Object)msgStr;
+		handler.sendMessage(myMsg);
 		return true;
 	}
 	public ParameterSet [] GetFavourites() {

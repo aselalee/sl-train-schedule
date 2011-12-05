@@ -94,16 +94,12 @@ public class HistoryActivity extends ListActivity {
     }
     private void getResults(ParameterSet paramSet) {
     	Intent intent = new Intent(this, ResultViewActivity.class);
-    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	intent.putExtra("station_from", paramSet.start_station_val);
-    	intent.putExtra("station_from_txt", paramSet.start_station_txt);
-    	intent.putExtra("station_to", paramSet.end_station_val);
-    	intent.putExtra("station_to_txt", paramSet.end_station_txt);
-    	intent.putExtra("time_from", paramSet.start_time_val);
-    	intent.putExtra("time_from_txt", paramSet.start_time_txt);
-    	intent.putExtra("time_to", paramSet.end_time_val);
-    	intent.putExtra("time_to_txt", paramSet.end_time_txt);
-    	intent.putExtra("date_today", date_today);
+    	Constants.PupulateIntentForResultsActivity(
+    			paramSet.start_station_val, paramSet.start_station_txt,
+    			paramSet.end_station_val, paramSet.end_station_txt,
+    			paramSet.start_time_val, paramSet.start_time_txt,
+    			paramSet.end_time_val, paramSet.end_time_txt,
+    			intent);
 		startActivity(intent);
     }
 }

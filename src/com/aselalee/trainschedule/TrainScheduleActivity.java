@@ -26,12 +26,12 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -224,7 +224,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			Station selectedStation = (Station) parent.getItemAtPosition(pos);
 			station_to_txt = selectedStation.getText();
 			station_to_val = selectedStation.getValue();
-			hideSoftKeyboard(actv_to);
+			Constants.HideSoftKeyboard(actv_to, getBaseContext());
 			lin_lay.requestFocusFromTouch();
 		}
     }
@@ -240,10 +240,15 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	isThreadHistory = true;
     	thread.start();
 
-    	hideSoftKeyboard(actv_to);
+    	Constants.HideSoftKeyboard(actv_to, getBaseContext());
     	if( validateStations() ) {
         	Intent intent = new Intent(this, ResultViewActivity.class);
-    	   	populateIntent(intent);
+        	Constants.PupulateIntentForResultsActivity(
+        			station_from_val, station_from_txt,
+        			station_to_val, station_to_txt,
+        			time_from_val, time_from_txt,
+        			time_to_val, time_to_txt,
+        			intent);
     		startActivity(intent);
     	}
     	return;
@@ -342,7 +347,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 					station_to_txt, station_to_val,
 					time_from_txt, time_from_val,
 					time_to_txt, time_to_val,
-					name_txt, this );
+					name_txt, handler );
     	}
     	myDBAcc.close();
 	}
@@ -362,20 +367,11 @@ public class TrainScheduleActivity extends Activity implements Runnable {
             return super.onOptionsItemSelected(item);
         }
     }
-	Handler toastHandler = new Handler();
-	Runnable toastRunnableOK = new Runnable() {
-		public void run() {
-			Toast.makeText(getBaseContext(),"Added to favourites.", Toast.LENGTH_SHORT).show();
-		}
-	};
-	Runnable toastRunnableERROR = new Runnable() {
-		public void run() {
-			Toast.makeText(getBaseContext(),"Error occured.", Toast.LENGTH_SHORT).show();
-		}
-	};
-	Runnable toastRunnableFULL = new Runnable() {
-		public void run() {
-			Toast.makeText(getBaseContext(),"Hisotry list Full. Delete one or more items.", Toast.LENGTH_SHORT).show();
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			String msgStr = (String)msg.obj;
+			Toast.makeText(getBaseContext(), msgStr, Toast.LENGTH_SHORT).show();
 		}
 	};
     private void getNewFavName() {
@@ -391,12 +387,12 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
     					addParamsToFavs(et.getEditableText().toString());
-    					hideSoftKeyboard(et);
+    					Constants.HideSoftKeyboard(et, getBaseContext());
     				}
     			});
     	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
-    					hideSoftKeyboard(et);
+    					Constants.HideSoftKeyboard(actv_to, getBaseContext());
     					dialog.cancel();
     				}
     			});
@@ -464,21 +460,5 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     		}
     	}
     	return -1;
-    }
-    private void hideSoftKeyboard(View actv) {
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
-    }
-    private void populateIntent(Intent intent) {
-    	String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
-    	intent.putExtra("station_from", station_from_val);
-    	intent.putExtra("station_from_txt", station_from_txt);
-    	intent.putExtra("station_to", station_to_val);
-    	intent.putExtra("station_to_txt", station_to_txt);
-    	intent.putExtra("time_from", time_from_val);
-    	intent.putExtra("time_from_txt", time_from_txt);
-    	intent.putExtra("time_to", time_to_val);
-    	intent.putExtra("time_to_txt", time_to_txt);
-    	intent.putExtra("date_today", date_today);
     }
 }
