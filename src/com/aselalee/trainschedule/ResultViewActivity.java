@@ -18,23 +18,39 @@
 package com.aselalee.trainschedule;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class ResultViewActivity extends Activity implements Runnable {
-	String station_from;
-	String station_to;
-	String time_from;
-	String time_to;
-	String date_today;
-	String result;
+	private String station_from;
+	private String station_from_txt;
+	private String station_to;
+	private String station_to_txt;
+	private String time_from;
+	private String time_from_txt;
+	private String time_to;
+	private String time_to_txt;
+	private String date_today;
+	private String result;
+	private boolean isThreadFavourites = false;
+	private String name_txt = "";
 	
-	WebView mWebView;
+	private WebView mWebView = null;
 	private ProgressDialog pd;
 	
 	/** Called when the activity is first created. */
@@ -49,9 +65,13 @@ public class ResultViewActivity extends Activity implements Runnable {
 	    	Bundle extras = getIntent().getExtras(); 
 	    	if(extras !=null) {
 	    		station_from = extras.getString("station_from");
+	    		station_from_txt = extras.getString("station_from_txt");
 	    		station_to = extras.getString("station_to");
+	    		station_to_txt = extras.getString("station_to_txt");
 	    		time_from = extras.getString("time_from");
+	    		time_from_txt = extras.getString("time_from_txt");
 	    		time_to = extras.getString("time_to");
+	    		time_to_txt = extras.getString("time_to_txt");
 	    		date_today = extras.getString("date_today");
 	    	}
 
@@ -77,20 +97,31 @@ public class ResultViewActivity extends Activity implements Runnable {
 	    	 * This will execute the "run" method in a new thread.
 	    	 */
 	    	Thread thread = new Thread(this);
+	    	isThreadFavourites = false;
 	    	thread.start();
 	}
 	/**
 	 * run() method that must be implemented when implementing "Runnable" class.
 	 */
 	public void run() {
-		/**
-		 * Call the "GetResults" method to retrieve data from server.
-		 */
-		result= GetResultsFromSite.GetResultsJson(station_from, station_to, time_from, time_to, date_today);
-		/**
-		 * This will send message to the calling thread to continue and display data.
-		 */
-		handler.sendEmptyMessage(0);
+		if( isThreadFavourites == false ) {
+			/**
+			 * Call the "GetResults" method to retrieve data from server.
+			 */
+			result= GetResultsFromSite.GetResultsJson(station_from, station_to, time_from, time_to, date_today);
+			/**
+			 * This will send message to the calling thread to continue and display data.
+			 */
+			handler.sendEmptyMessage(0);
+		} else {
+			DBDataAccess myDBAcc = new DBDataAccess(this);
+    		myDBAcc.PushDataFavourites(station_from_txt, station_from,
+					station_to_txt, station_to,
+					time_from_txt, time_from,
+					time_to_txt, time_to,
+					name_txt, this );
+    		myDBAcc.close();
+		}
 	}
 	/**
 	 * Handler variable which is used to handle processing after results are received.
@@ -110,11 +141,72 @@ public class ResultViewActivity extends Activity implements Runnable {
     	super.onPause();
     }
     @Override
+    public void onStop() {
+    	super.onStop();
+    	if( mWebView != null) {
+    		mWebView.destroy();
+    	}
+    }
+    @Override
     public void onResume() {
         super.onResume();
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_activity_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.add_to_fav:
+        	getNewFavName();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    private void getNewFavName() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
+        final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+        et.setText(station_from_txt + " - " + station_to_txt);
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setView(textEntryView);
+    	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    					addParamsToFavs(et.getEditableText().toString());
+    					hideSoftKeyboard(et);
+    				}
+    			});
+    	builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    					hideSoftKeyboard(et);
+    					dialog.cancel();
+    				}
+    			});
+    	builder.setTitle("Enter New Name");
+    	AlertDialog alert = builder.create();
+    	alert.show();
+    }
+    private void addParamsToFavs(String newName) {
+    	Thread thread = new Thread(this);
+    	isThreadFavourites = true;
+	    name_txt = newName;
+	    if(name_txt.length() == 0) {
+	       	Toast.makeText(this,
+                    "Invalid name", Toast.LENGTH_LONG).show();
+			return;
+		}
+    	thread.start();
+    }
+    private void hideSoftKeyboard(View actv) {
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(actv.getWindowToken(), 0);
     }
 }
