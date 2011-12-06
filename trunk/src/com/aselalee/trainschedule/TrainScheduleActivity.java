@@ -233,16 +233,16 @@ public class TrainScheduleActivity extends Activity implements Runnable {
      * Calls the next activity to display results.
      */
     private void show_results() {
-    	/**
-    	 * Add params to history database.
-    	 * This is done in a separate thread.
-    	 */
-    	Thread thread = new Thread(this);
-    	isThreadHistory = true;
-    	thread.start();
-
     	Constants.HideSoftKeyboard(actv_to, getBaseContext());
     	if( validateStations() ) {
+        	/**
+        	 * Add params to history database.
+        	 * This is done in a separate thread.
+        	 */
+        	Thread thread = new Thread(this);
+        	isThreadHistory = true;
+        	thread.start();
+
         	Intent intent = new Intent(this, ResultViewActivity.class);
         	Constants.PupulateIntentForResultsActivity(
         			station_from_val, station_from_txt,
