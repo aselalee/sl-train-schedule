@@ -52,6 +52,8 @@ public class ResultViewActivity extends Activity implements Runnable {
 	
 	private WebView mWebView = null;
 	private ProgressDialog pd;
+	private Thread thread = null;
+	private volatile boolean isStop = false;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -96,7 +98,7 @@ public class ResultViewActivity extends Activity implements Runnable {
     	/**
     	 * This will execute the "run" method in a new thread.
     	 */
-    	Thread thread = new Thread(this);
+    	thread = new Thread(this);
     	isThreadFavourites = false;
     	thread.start();
 	}
@@ -135,14 +137,15 @@ public class ResultViewActivity extends Activity implements Runnable {
 		public void handleMessage(Message msg) {
 			if( msg.arg1 == Constants.THREAD_GET_RESULTS) {
 				pd.dismiss();
-				if( mWebView != null && result != null) {
+				if( mWebView != null && result != null && isStop == false) {
 					try {
 						mWebView.loadDataWithBaseURL("", result,"text/html", "UTF-8", null);
 					} catch (Exception e) {
 						Log.e(Constants.LOG_TAG, "Eror occurred in loadDataWithBaseURL " + e);
 					}
 				} else {
-					Toast.makeText(getBaseContext(), "Error occured. Please try again.", Toast.LENGTH_SHORT).show();
+					Log.i(Constants.LOG_TAG, "Thread exited by force.");
+					//Toast.makeText(getBaseContext(), "Error occurred. Please try again.", Toast.LENGTH_SHORT).show();
 				}
 			} else {
 				String msgStr = (String)msg.obj;
@@ -158,7 +161,8 @@ public class ResultViewActivity extends Activity implements Runnable {
     @Override
     public void onDestroy() {
     	super.onStop();
-    	if( mWebView != null) {
+    	isStop = true;
+    	if(mWebView != null) {
     		mWebView.destroy();
     	}
     }
