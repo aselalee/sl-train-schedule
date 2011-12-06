@@ -38,6 +38,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -128,8 +129,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
        		     */
        		   	time_from_val = map_time_from(0);
        	    	time_to_val = map_time_to(spinner_times_to.getCount() - 1);
-       		   	time_from_txt = "00.00";
-       		   	time_to_txt = "24.00";
+       		   	time_from_txt = spinner_times_from.getItemAtPosition(0).toString();
+       		   	time_to_txt = spinner_times_to.getItemAtPosition(spinner_times_to.getCount() - 1).toString();
        			show_results();
         	}
         });
@@ -381,12 +382,13 @@ public class TrainScheduleActivity extends Activity implements Runnable {
         LayoutInflater factory = LayoutInflater.from(this);
         View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
         final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+        final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.isTimeFilterOnCB);
         et.setText(station_from_txt + " - " + station_to_txt);
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setView(textEntryView);
     	builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
-    					addParamsToFavs(et.getEditableText().toString());
+    					addParamsToFavs(et.getEditableText().toString(), cb.isChecked());
     					Constants.HideSoftKeyboard(et, getBaseContext());
     				}
     			});
@@ -400,13 +402,20 @@ public class TrainScheduleActivity extends Activity implements Runnable {
     	AlertDialog alert = builder.create();
     	alert.show();
     }
-    private void addParamsToFavs(String newName) {
+    private void addParamsToFavs(String newName, Boolean isTimeFilterOn) {
     	Thread thread = new Thread(this);
     	isThreadHistory = false;
-	    time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
-	    time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
-	    time_from_txt = spinner_times_from.getSelectedItem().toString();
-	    time_to_txt = spinner_times_to.getSelectedItem().toString();
+    	if( isTimeFilterOn == true) {
+    		time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
+    		time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
+    		time_from_txt = spinner_times_from.getSelectedItem().toString();
+    		time_to_txt = spinner_times_to.getSelectedItem().toString();
+    	}else {
+    		time_from_val = map_time_from(0);
+    		time_to_val = map_time_to(spinner_times_to.getCount() - 1);
+    		time_from_txt = spinner_times_from.getItemAtPosition(0).toString();
+    		time_to_txt = spinner_times_to.getItemAtPosition(spinner_times_to.getCount() - 1).toString();
+    	}
 	    name_txt = newName;
 	    if(name_txt.length() == 0) {
 	       	Toast.makeText(this,

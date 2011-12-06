@@ -20,6 +20,7 @@
 	<string name="clear_fav_txt">Clear Favourites</string>
 	<string name="rename_fav_txt">Rename</string>
 	<string name="delete_fav_txt">Delete</string>
+	<string name="add_filter_txt">Add to favourites with time filter</string>
 
     <string-array name="stations_array">
         <item>ABANPOLA</item>

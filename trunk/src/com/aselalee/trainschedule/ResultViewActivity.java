@@ -32,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -189,6 +190,8 @@ public class ResultViewActivity extends Activity implements Runnable {
         LayoutInflater factory = LayoutInflater.from(this);
         View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
         final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+        final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.isTimeFilterOnCB);
+        cb.setVisibility(View.GONE);
         et.setText(station_from_txt + " - " + station_to_txt);
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setView(textEntryView);
