@@ -26,44 +26,46 @@ import android.widget.TabHost;
 
 public class TabHostActivity extends TabActivity {
 
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.main);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
 
-	    Resources res = getResources();
-	    TabHost tabHost = getTabHost();
-	    TabHost.TabSpec spec;
-	    Intent intent;
+		Resources res = getResources();
+		TabHost tabHost = getTabHost();
+		TabHost.TabSpec spec;
+		Intent intent;
 
-	    intent = new Intent().setClass(this, TrainScheduleActivity.class);
-	    spec = tabHost.newTabSpec("search").setIndicator("Search",
-	    		res.getDrawable(R.drawable.ic_tab_search)).setContent(intent);
-	    tabHost.addTab(spec);
+		intent = new Intent().setClass(this, TrainScheduleActivity.class);
+		spec = tabHost.newTabSpec("search").setIndicator("Search",
+				res.getDrawable(R.drawable.ic_tab_search)).setContent(intent);
+		tabHost.addTab(spec);
 
-	    intent = new Intent().setClass(this, HistoryActivity.class);
-	    spec = tabHost.newTabSpec("history").setIndicator("History",
-	    		res.getDrawable(R.drawable.ic_tab_history)).setContent(intent);
-	    tabHost.addTab(spec);
+		intent = new Intent().setClass(this, HistoryActivity.class);
+		spec = tabHost.newTabSpec("history").setIndicator("History",
+				res.getDrawable(R.drawable.ic_tab_history)).setContent(intent);
+		tabHost.addTab(spec);
 
-	    intent = new Intent().setClass(this, FavouritesActivity.class);
-	    spec = tabHost.newTabSpec("favourites").setIndicator("Favourites",
-	    		res.getDrawable(R.drawable.ic_tab_fav)).setContent(intent);
-	    tabHost.addTab(spec);
+		intent = new Intent().setClass(this, FavouritesActivity.class);
+		spec = tabHost.newTabSpec("favourites").setIndicator("Favourites",
+				res.getDrawable(R.drawable.ic_tab_fav)).setContent(intent);
+		tabHost.addTab(spec);
 
-	    tabHost.setCurrentTab(0);
+		tabHost.setCurrentTab(0);
 	}
-    @Override
-    public void onPause() {
-    	super.onPause();
-    }    
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-      super.onConfigurationChanged(newConfig);
-    }
+
+	@Override
+	public void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}
 }

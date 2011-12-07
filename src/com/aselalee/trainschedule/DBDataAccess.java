@@ -29,52 +29,50 @@ import android.util.Log;
 
 public class DBDataAccess extends SQLiteOpenHelper {
 
-	/* public DBDataAccess(Context context, String name, CursorFactory factory,
-			int version) { */
 	public DBDataAccess(Context context) {
 		super(context, Constants.DB_NAME, null, Constants.DB_VER);
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + Constants.TABLE_HIS + " ("
-        		+ BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-        		+ Constants.COL_START_STATION_TXT + " TEXT,"
-        		+ Constants.COL_START_STATION_VAL + " TEXT,"
-        		+ Constants.COL_END_STATION_TXT + " TEXT,"
-        		+ Constants.COL_END_STATION_VAL + " TEXT,"
-        		+ Constants.COL_START_TIME_TXT + " TEXT,"
-        		+ Constants.COL_START_TIME_VAL + " TEXT,"
-        		+ Constants.COL_END_TIME_TXT + " TEXT,"
-        		+ Constants.COL_END_TIME_VAL + " TEXT"
-        		+ ");");
-        db.execSQL("CREATE TABLE " + Constants.TABLE_FAV + " ("
-        		+ BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-        		+ Constants.COL_START_STATION_TXT + " TEXT,"
-        		+ Constants.COL_START_STATION_VAL + " TEXT,"
-        		+ Constants.COL_END_STATION_TXT + " TEXT,"
-        		+ Constants.COL_END_STATION_VAL + " TEXT,"
-        		+ Constants.COL_START_TIME_TXT + " TEXT,"
-        		+ Constants.COL_START_TIME_VAL + " TEXT,"
-        		+ Constants.COL_END_TIME_TXT + " TEXT,"
-        		+ Constants.COL_END_TIME_VAL + " TEXT,"
-        		+ Constants.COL_FAV_NAME + " TEXT"
-        		+ ");");
+		db.execSQL("CREATE TABLE " + Constants.TABLE_HIS + " ("
+				+ BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+ Constants.COL_START_STATION_TXT + " TEXT,"
+				+ Constants.COL_START_STATION_VAL + " TEXT,"
+				+ Constants.COL_END_STATION_TXT + " TEXT,"
+				+ Constants.COL_END_STATION_VAL + " TEXT,"
+				+ Constants.COL_START_TIME_TXT + " TEXT,"
+				+ Constants.COL_START_TIME_VAL + " TEXT,"
+				+ Constants.COL_END_TIME_TXT + " TEXT,"
+				+ Constants.COL_END_TIME_VAL + " TEXT"
+				+ ");");
+		db.execSQL("CREATE TABLE " + Constants.TABLE_FAV + " ("
+				+ BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+ Constants.COL_START_STATION_TXT + " TEXT,"
+				+ Constants.COL_START_STATION_VAL + " TEXT,"
+				+ Constants.COL_END_STATION_TXT + " TEXT,"
+				+ Constants.COL_END_STATION_VAL + " TEXT,"
+				+ Constants.COL_START_TIME_TXT + " TEXT,"
+				+ Constants.COL_START_TIME_VAL + " TEXT,"
+				+ Constants.COL_END_TIME_TXT + " TEXT,"
+				+ Constants.COL_END_TIME_VAL + " TEXT,"
+				+ Constants.COL_FAV_NAME + " TEXT"
+				+ ");");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to "
-                + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_HIS);
-        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_FAV);
-        onCreate(db);
+		Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to "
+				+ newVersion + ", which will destroy all old data");
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_HIS);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_FAV);
+		onCreate(db);
 	}
-	
+
 	public boolean PushDataHistory(String start_st_txt, String start_st_val,
-							String end_st_txt, String end_st_val,
-							String start_time_txt, String start_time_val,
-							String end_time_txt, String end_time_val ) {
+			String end_st_txt, String end_st_val,
+			String start_time_txt, String start_time_val,
+			String end_time_txt, String end_time_val) {
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
 		long rowID = -1;
@@ -83,7 +81,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return false;
 		}
@@ -99,12 +97,12 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		keyValPairs.put(Constants.COL_END_TIME_VAL, end_time_val);
 		db.beginTransaction();
 		try {
-			if( db.insert(Constants.TABLE_HIS, null, keyValPairs) < 0 ) {
+			if(db.insert(Constants.TABLE_HIS, null, keyValPairs) < 0) {
 				Log.e(Constants.LOG_TAG, "Error writing to DB");
 				db.close();
 				return false;
 			}
-		}catch ( Exception e) {
+		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
 			db.endTransaction();
 			db.close();
@@ -114,32 +112,32 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.endTransaction();
 		try {
 			myCur = db.query(Constants.TABLE_HIS, new String [] {"_ID"}, null, null, null, null, null);
-			if( myCur == null) {
+			if(myCur == null) {
 				Log.e(Constants.LOG_TAG, "Select operation failed");
 				db.close();
 				return false;
 			}
-		} catch ( Exception e) {
+		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
 			db.close();
 			return false;
 		}
 		db.beginTransaction();
 		myCur.moveToFirst();
-		for( int i = myCur.getCount(); i > Constants.MAX_HIS_COUNT; i--) {
+		for(int i = myCur.getCount(); i > Constants.MAX_HIS_COUNT; i--) {
 			try {
 				rowID = myCur.getLong(0);
-				if( rowID < 0 ) {
+				if(rowID < 0) {
 					db.close();
 					myCur.close();
 					Log.e(Constants.LOG_TAG, "Errornous row ID value= " + rowID);
 					return false;
 				}
 				int delCount = db.delete(Constants.TABLE_HIS, "_ID = " + rowID, null);
-				if( delCount <= 0) {
+				if(delCount <= 0) {
 					Log.w(Constants.LOG_TAG, "Extra row not deleted...");
 				}
-			} catch (Exception e) {
+			} catch(Exception e) {
 				db.endTransaction();
 				myCur.close();
 				db.close();
@@ -160,24 +158,23 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		paramsList = null;
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
-		
 		try {
 			db = this.getWritableDatabase();
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return null;
 		}
 		try {
 			myCur = db.query(Constants.TABLE_HIS, new String [] {"*"}, null, null, null, null, null);
-			if( myCur == null) {
+			if(myCur == null) {
 				Log.e(Constants.LOG_TAG, "Select operation failed");
 				db.close();
 				return null;
 			}
-		} catch ( Exception e) {
+		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
 			db.close();
 			return null;
@@ -200,7 +197,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.close();
 		return paramsList;
 	}
-	
+
 	public void ClearHistoryTable() {
 		SQLiteDatabase db = null;
 		try {
@@ -209,7 +206,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 			return;
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return;
 		}
@@ -226,13 +223,12 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.endTransaction();
 		db.close();
 	}
-	
+
 	public boolean PushDataFavourites(String start_st_txt, String start_st_val,
 			String end_st_txt, String end_st_val,
 			String start_time_txt, String start_time_val,
 			String end_time_txt, String end_time_val,
 			String name, Handler handler ) {
-
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
 		int rowCount = Constants.MAX_FAV_COUNT;
@@ -240,7 +236,6 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		String msgStr = "Error... Restart application";
 		myMsg.obj = (Object)msgStr;
 		myMsg.arg1 = Constants.THREAD_PUSH_DATA_FAVOURITES;
-		
 		try {
 			db = this.getWritableDatabase();
 		} catch(Exception e) {
@@ -248,21 +243,20 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			handler.sendMessage(myMsg);
 			return false;
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			handler.sendMessage(myMsg);
 			return false;
 		}
-
 		try {
 			myCur = db.query(Constants.TABLE_FAV, new String [] {"_ID"}, null, null, null, null, null);
-			if( myCur == null) {
+			if(myCur == null) {
 				Log.e(Constants.LOG_TAG, "Select operation failed");
 				db.close();
 				handler.sendMessage(myMsg);
 				return false;
 			}
-		} catch ( Exception e) {
+		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
 			handler.sendMessage(myMsg);
 			return false;
@@ -272,7 +266,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		/**
 		 * If items in history table is less than the max count add data. Else return false.
 		 */
-		if( rowCount < Constants.MAX_FAV_COUNT ) {
+		if(rowCount < Constants.MAX_FAV_COUNT) {
 			ContentValues keyValPairs = new ContentValues(9);
 			keyValPairs.put(Constants.COL_START_STATION_TXT, start_st_txt);
 			keyValPairs.put(Constants.COL_START_STATION_VAL, start_st_val);
@@ -291,7 +285,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 					handler.sendMessage(myMsg);
 					return false;
 				}
-			}catch ( Exception e) {
+			} catch(Exception e) {
 				Log.e(Constants.LOG_TAG, "Error pushing data to DB " + e);
 				db.endTransaction();
 				db.close();
@@ -316,29 +310,29 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		handler.sendMessage(myMsg);
 		return true;
 	}
+
 	public ParameterSet [] GetFavourites() {
 		ParameterSet [] paramsList = null;
 		paramsList = null;
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
-		
 		try {
 			db = this.getWritableDatabase();
 		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return null;
 		}
 		try {
 			myCur = db.query(Constants.TABLE_FAV, new String [] {"*"}, null, null, null, null, null);
-			if( myCur == null) {
+			if(myCur == null) {
 				Log.e(Constants.LOG_TAG, "Select operation failed");
 				db.close();
 				return null;
 			}
-		} catch ( Exception e) {
+		} catch(Exception e) {
 			Log.e(Constants.LOG_TAG, "Error in db.query " + e);
 			db.close();
 			return null;
@@ -363,6 +357,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.close();
 		return paramsList;
 	}
+
 	public void ClearFavouritesTable() {
 		SQLiteDatabase db = null;
 		try {
@@ -371,7 +366,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 			return;
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return;
 		}
@@ -396,7 +391,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 			return false;
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return false;
 		}
@@ -414,6 +409,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.close();
 		return true;
 	}
+
 	public boolean RenameFavRecord(long id, String newName) {
 		SQLiteDatabase db = null;
 		try {
@@ -422,7 +418,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			Log.e(Constants.LOG_TAG, "Error in getWritableDatabase" + e);
 			return false;
 		}
-		if( db == null ) {
+		if(db == null) {
 			Log.e(Constants.LOG_TAG, "Cannot open writable DB");
 			return false;
 		}

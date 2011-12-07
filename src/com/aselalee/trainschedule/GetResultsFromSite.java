@@ -39,100 +39,100 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class GetResultsFromSite {
-	
+
 	public static String GetResultsJson(String station_from, String station_to,
-							 String time_from, String time_to, String date_today)
+			String time_from, String time_to, String date_today)
 	{
-	    /**
-	     * Create name value pairs to be sent the the above URL.
-	     * variable names were extracted manually from the site.
-	     */
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(7);
-        nameValuePairs.add(new BasicNameValuePair("lang", "en"));
-        nameValuePairs.add(new BasicNameValuePair("startStationCode", station_from));
-        nameValuePairs.add(new BasicNameValuePair("endStationCode", station_to));
-        nameValuePairs.add(new BasicNameValuePair("arrivalTime", time_from));
-        nameValuePairs.add(new BasicNameValuePair("depatureTime", time_to));
-        nameValuePairs.add(new BasicNameValuePair("currentDate", date_today));
-        nameValuePairs.add(new BasicNameValuePair("currentTime","01:00:00"));
-        String strParams =  URLEncodedUtils.format(nameValuePairs, "utf-8");
-        String url = Constants.JASONURL + "?" + strParams;
+		/**
+		 * Create name value pairs to be sent the the above URL.
+		 * variable names were extracted manually from the site.
+		 */
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(7);
+		nameValuePairs.add(new BasicNameValuePair("lang", "en"));
+		nameValuePairs.add(new BasicNameValuePair("startStationCode", station_from));
+		nameValuePairs.add(new BasicNameValuePair("endStationCode", station_to));
+		nameValuePairs.add(new BasicNameValuePair("arrivalTime", time_from));
+		nameValuePairs.add(new BasicNameValuePair("depatureTime", time_to));
+		nameValuePairs.add(new BasicNameValuePair("currentDate", date_today));
+		nameValuePairs.add(new BasicNameValuePair("currentTime","01:00:00"));
+		String strParams =  URLEncodedUtils.format(nameValuePairs, "utf-8");
+		String url = Constants.JASONURL + "?" + strParams;
 
-        /**
-         * HTML to be sent as the output. The results table will be appended
-         * to this variable.
-         */
-	    String htmlOutput = "";
-	    htmlOutput += "<html><head>";
-	    htmlOutput += "<style type=\"text/css\">";
-	    htmlOutput += 	"tr {background-color:#CBCBCB;}";
-	    htmlOutput += 	"tr.alt {background-color:#E8E8EA;}";
-	    htmlOutput += 	"td {border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
-	    htmlOutput += 	"th {background-color:#3C3C3D;color:white;border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
-	    htmlOutput += 	"table {font-size:10px;border-width:1px;border-collapse:collapse;border-color:black;border-style:outset;}";
-	    htmlOutput += "</style>";
-	    htmlOutput += "</head><body>";
+		/**
+		 * HTML to be sent as the output. The results table will be appended
+		 * to this variable.
+		 */
+		String htmlOutput = "";
+		htmlOutput += "<html><head>";
+		htmlOutput += "<style type=\"text/css\">";
+		htmlOutput += 	"tr {background-color:#CBCBCB;}";
+		htmlOutput += 	"tr.alt {background-color:#E8E8EA;}";
+		htmlOutput += 	"td {border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
+		htmlOutput += 	"th {background-color:#3C3C3D;color:white;border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
+		htmlOutput += 	"table {font-size:10px;border-width:1px;border-collapse:collapse;border-color:black;border-style:outset;}";
+		htmlOutput += "</style>";
+		htmlOutput += "</head><body>";
 
-	    /**
-	     * In case an error occurs this HTML string will be returned.
-	     */
-	    String htmlHTTPErr = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
-	    String htmlIOErr = "<html><head></head><body><h1>IO Stream Error. Close Application and Try Again.</h1></body></html>";
+		/**
+		 * In case an error occurs this HTML string will be returned.
+		 */
+		String htmlHTTPErr = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
+		String htmlIOErr = "<html><head></head><body><h1>IO Stream Error. Close Application and Try Again.</h1></body></html>";
 
-        /**
-         * Setup networking.
-         * Then set HTTP POST data.
-         */
-        HttpGet httpGet = new HttpGet(url);
-	    HttpClient httpClient = new DefaultHttpClient();
-        HttpResponse response = null;
+		/**
+		 * Setup networking.
+		 * Then set HTTP POST data.
+		 */
+		HttpGet httpGet = new HttpGet(url);
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = null;
 
-        /**
-         * Send HTTP POST request.
-         */
-	    try {
-	        response = httpClient.execute(httpGet);
-	    } catch (ClientProtocolException e) {
-	    	Log.e(Constants.LOG_TAG, "HTTPERROR : ClientProtocolException : "+e);
-	    	return htmlHTTPErr;
-	    } catch (IOException e) {
-	    	Log.e(Constants.LOG_TAG, "HTTPERROR : IOException : "+e);
-	    	return htmlHTTPErr;
-	    }
+		/**
+		 * Send HTTP POST request.
+		 */
+		try {
+			response = httpClient.execute(httpGet);
+		} catch(ClientProtocolException e) {
+			Log.e(Constants.LOG_TAG, "HTTPERROR : ClientProtocolException : "+e);
+			return htmlHTTPErr;
+		} catch(IOException e) {
+			Log.e(Constants.LOG_TAG, "HTTPERROR : IOException : "+e);
+			return htmlHTTPErr;
+		}
 
-	    /**
-	     * Get output from response.
-	     */
-	    InputStream ips = null;
-	    try {
-	    	ips = response.getEntity().getContent();
-	    } catch (IOException e) {
-	    	Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException : "+e);
-	    	return htmlIOErr;
-	    } catch (IllegalStateException e) {
-	    	Log.e(Constants.LOG_TAG, "InputStreamERROR : IllegalStateException : "+e);
-	    	return htmlIOErr;
-	    }
-	    /**
-	     * Read output result from server.
-	     */
-    	StringBuilder strBuilder = new StringBuilder();
-	    try {
-	    	char[] bytes = new char[1024];
-	    	int numRead = 0;
-	    	BufferedReader reader = new BufferedReader(new InputStreamReader(ips, "UTF-8"));
-	    	while ((numRead = reader.read(bytes)) > 0) {
-	    		strBuilder.append(new String(bytes, 0, numRead));
-	    	}
-	 	} catch (IOException e) {
-	 		Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException - Read Error: "+e);
-	 		return htmlIOErr;
-	 	}    
-	    htmlOutput += JSONToHTMLTable(strBuilder.toString());
-	    htmlOutput += "<br/><br/><br/></body></html>";
-	    //Log.i(Constants.LOG_TAG, htmlOutput);
-	    return htmlOutput;
+		/**
+		 * Get output from response.
+		 */
+		InputStream ips = null;
+		try {
+			ips = response.getEntity().getContent();
+		} catch(IOException e) {
+			Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException : "+e);
+			return htmlIOErr;
+		} catch(IllegalStateException e) {
+			Log.e(Constants.LOG_TAG, "InputStreamERROR : IllegalStateException : "+e);
+			return htmlIOErr;
+		}
+		/**
+		 * Read output result from server.
+		 */
+		StringBuilder strBuilder = new StringBuilder();
+		try {
+			char[] bytes = new char[1024];
+			int numRead = 0;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ips, "UTF-8"));
+			while((numRead = reader.read(bytes)) > 0) {
+				strBuilder.append(new String(bytes, 0, numRead));
+			}
+		} catch(IOException e) {
+			Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException - Read Error: "+e);
+			return htmlIOErr;
+		}
+		htmlOutput += JSONToHTMLTable(strBuilder.toString());
+		htmlOutput += "<br/><br/><br/></body></html>";
+		return htmlOutput;
 	}
+
 	private static String JSONToHTMLTable(String strJSON) {
 		String htmlTable = "";
 		JSONObject jObject;
@@ -143,27 +143,27 @@ public class GetResultsFromSite {
 		String endStation;
 		try {
 			jObject = new JSONObject(strJSON); 
-		} catch (JSONException e) {
+		} catch(JSONException e) {
 			Log.e(Constants.LOG_TAG, "Error Parsing JSON string:"+e);
 			return "<h1>Error Parsing JSON string</h1>";
 		}
 		try {
 			trainsArray = jObject.getJSONArray("trains");
-		} catch (JSONException e) {
+		} catch(JSONException e) {
 			Log.e(Constants.LOG_TAG, "Error Parsing JSON object:"+e);
 			return "<h1>Error Parsing JSON object</h1>";
 		}
-		if( trainsArray.length() < 1 ) {
+		if(trainsArray.length() < 1) {
 			return "<h1>Results Not Found.</h1>";
 		}
 		try {
 				startStation = trainsArray.getJSONObject(0).getString("startStationName").toString().trim();
 				endStation = trainsArray.getJSONObject(0).getString("endStationName").toString().trim();
-		} catch (JSONException e) {
+		} catch(JSONException e) {
 			Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
 			return "<h1>Error Parsing JSON array object</h1>";
 		}
-		
+
 		htmlTable += "<table width=\"100%\" align=\"center\">";
 		htmlTable += "<thead><tr>";
 		htmlTable += "<th><a>Arriving at</a><br/><a>" + startStation + "</a></th>";
@@ -174,12 +174,11 @@ public class GetResultsFromSite {
 		htmlTable += "<th><a>Train</a><br/><a>Type</a></th>";
 		htmlTable += "</tr></thead>";
 		htmlTable += "<tbody>";
+
 		for(int i = 0; i < trainsArray.length(); i++) {
 			if(i%2 == 0) {
 				style = "class=\"alt\"";
-			}
-			else
-			{
+			} else {
 				style = "";
 			}
 			try {
@@ -212,7 +211,7 @@ public class GetResultsFromSite {
 				htmlTable +=  strTmp;
 				htmlTable += "</td>";
 				htmlTable += "</tr>";
-			} catch (JSONException e) {
+			} catch(JSONException e) {
 				Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
 				return "<h1>Error Parsing JSON array object</h1>";
 			}
@@ -221,17 +220,18 @@ public class GetResultsFromSite {
 		htmlTable += "</table>";
 		return htmlTable;
 	}
+
 	private static String chop(String strIn) {
 		String strOut;
-	    if (strIn == null) {
-	    	return null;
-	    }
-	    int strLen = strIn.length();
-	    if (strLen < 4) {
-	    	return "";
-	    }
-	    int lastIdx = strLen - 3;
-	    strOut = strIn.substring(0, lastIdx);
+		if(strIn == null) {
+			return null;
+			}
+		int strLen = strIn.length();
+		if(strLen < 4) {
+			return "";
+		}
+		int lastIdx = strLen - 3;
+		strOut = strIn.substring(0, lastIdx);
 		return strOut;
 	}
 }
