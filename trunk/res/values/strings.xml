@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Train Schedule</string>
-	<string name="results">Schedule</string>
-	<string name="user_input">Input Search Parameters</string>
-	<string name="history">History</string>
-	<string name="favourites">Favourites</string>
+    <string name="app_name">Train Schedule</string>
+    <string name="results">Schedule</string>
+    <string name="user_input">Input Search Parameters</string>
+    <string name="history">History</string>
+    <string name="favourites">Favourites</string>
     <string name="stations_from">Departing\nStation</string>
     <string name="stations_to">Destination\nStation</string>
     <string name="time_desc">Trains Departing Within</string>
-	<string name="to">To</string>
-	<string name="schedule">Get Filtered Schedule</string>
-	<string name="full_schedule">Get Full Schedule</string>
-	<string name="swap">Swap\nStations</string>
-	<string name="add_to_fav_txt">Add To Favourites</string>
-	<string name="clear_his_txt">Clear History</string>
-	<string name="list_from_txt">From:</string>
-	<string name="list_to_txt">To:</string>
-	<string name="to_txt">To</string>
-	<string name="clear_fav_txt">Clear Favourites</string>
-	<string name="rename_fav_txt">Rename</string>
-	<string name="delete_fav_txt">Delete</string>
-	<string name="add_filter_txt">Include time filter</string>
+    <string name="to">To</string>
+    <string name="schedule">Get Filtered Schedule</string>
+    <string name="full_schedule">Get Full Schedule</string>
+    <string name="swap">Swap\nStations</string>
+    <string name="add_to_fav_txt">Add To Favourites</string>
+    <string name="clear_his_txt">Clear History</string>
+    <string name="list_from_txt">From:</string>
+    <string name="list_to_txt">To:</string>
+    <string name="to_txt">To</string>
+    <string name="clear_fav_txt">Clear Favourites</string>
+    <string name="rename_fav_txt">Rename</string>
+    <string name="delete_fav_txt">Delete</string>
+    <string name="add_filter_txt">Include time filter</string>
 
     <string-array name="stations_array">
         <item>ABANPOLA</item>
@@ -665,7 +665,7 @@
         <item>23.00</item>
     </string-array>
 
-    <string-array name="times_to_array">                    	
+    <string-array name="times_to_array">
         <item>01.00</item>
         <item>02.00</item>
         <item>03.00</item>
