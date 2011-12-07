@@ -17,6 +17,6 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/clear_fav"
-          android:title="@string/clear_fav_txt" 
-          android:icon="@drawable/ic_menu_clear_his"/>
+        android:title="@string/clear_fav_txt"
+        android:icon="@drawable/ic_menu_clear_his"/>
 </menu>

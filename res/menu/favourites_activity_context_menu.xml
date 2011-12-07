@@ -17,7 +17,7 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/rename_fav"
-          android:title="@string/rename_fav_txt" />
+        android:title="@string/rename_fav_txt" />
     <item android:id="@+id/delete_fav"
-          android:title="@string/delete_fav_txt" />
+        android:title="@string/delete_fav_txt" />
 </menu>
