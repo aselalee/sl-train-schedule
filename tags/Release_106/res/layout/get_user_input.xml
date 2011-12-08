@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+* @copyright	Copyright (C) 2011 Asela Leelaratne
+* @license		GNU/GPL Version 3
+* 
+* This Application is released to the public under the GNU General Public License.
+*
+* GNU/GPL V3 Extract. 
+* 15. Disclaimer of Warranty.
+* THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+* EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+* PROVIDE THE PROGRAM AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+* PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+* NECESSARY SERVICING, REPAIR OR CORRECTION.
+-->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal" >
+    <LinearLayout
+        android:id="@+id/lin_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true"
+        android:layout_gravity="center_horizontal" >
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" >
+                <TableRow >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stations_from"
+                        android:layout_gravity="center_vertical" />
+                    <AutoCompleteTextView
+                        android:id="@+id/stations_from"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:completionThreshold="1"
+                        android:inputType="text"
+                        android:selectAllOnFocus="true" />
+                </TableRow>
+                <TableRow >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stations_to"
+                        android:layout_gravity="center_vertical" />
+                    <AutoCompleteTextView
+                        android:id="@+id/stations_to"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:completionThreshold="1"
+                        android:inputType="text"
+                        android:selectAllOnFocus="true" />
+                </TableRow>
+            </TableLayout>
+            <Button
+                android:id="@+id/swap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_swap_btn_med"
+                android:layout_gravity="center" />
+        </LinearLayout>
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*" >
+            <TableRow >
+                <Button
+                    android:id="@+id/get_all"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/full_schedule"
+                    android:layout_span="3" />
+            </TableRow>
+            <TableRow
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/time_desc"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_span="3" />
+            </TableRow>
+            <TableRow>
+                <Spinner
+                    android:id="@+id/times_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/to" />
+                <Spinner
+                    android:id="@+id/times_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+            <TableRow >
+                <Button
+                    android:id="@+id/get_given"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule"
+                   android:layout_span="3" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</ScrollView>
