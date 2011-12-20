@@ -86,7 +86,7 @@ public class HistoryActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.clear_his:
+			case R.id.history_menu_clear_his:
 				DBDataAccess myDBAcc = new DBDataAccess(this);
 				myDBAcc.ClearHistoryTable();
 				myDBAcc.close();

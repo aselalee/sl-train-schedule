@@ -18,12 +18,11 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal" >
     <LinearLayout
-        android:id="@+id/lin_lay"
+        android:id="@+id/search_lin_lay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -45,7 +44,7 @@
                         android:text="@string/stations_from"
                         android:layout_gravity="center_vertical" />
                     <AutoCompleteTextView
-                        android:id="@+id/stations_from"
+                        android:id="@+id/search_stations_from"
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:completionThreshold="1"
@@ -59,7 +58,7 @@
                         android:text="@string/stations_to"
                         android:layout_gravity="center_vertical" />
                     <AutoCompleteTextView
-                        android:id="@+id/stations_to"
+                        android:id="@+id/search_stations_to"
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:completionThreshold="1"
@@ -68,7 +67,7 @@
                 </TableRow>
             </TableLayout>
             <Button
-                android:id="@+id/swap"
+                android:id="@+id/search_swap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_swap_btn_med"
@@ -80,7 +79,7 @@
             android:stretchColumns="*" >
             <TableRow >
                 <Button
-                    android:id="@+id/get_all"
+                    android:id="@+id/search_get_all"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/full_schedule"
@@ -97,7 +96,7 @@
             </TableRow>
             <TableRow>
                 <Spinner
-                    android:id="@+id/times_from"
+                    android:id="@+id/search_times_from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <TextView
@@ -106,13 +105,13 @@
                     android:gravity="center_horizontal"
                     android:text="@string/to" />
                 <Spinner
-                    android:id="@+id/times_to"
+                    android:id="@+id/search_times_to"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
             <TableRow >
                 <Button
-                    android:id="@+id/get_given"
+                    android:id="@+id/search_get_given"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/schedule"

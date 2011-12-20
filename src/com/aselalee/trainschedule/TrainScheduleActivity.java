@@ -85,8 +85,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		 * Setup "AutoCompleteText" views
 		 */
 		populateStations();
-		actv_from = (AutoCompleteTextView)findViewById(R.id.stations_from);
-		actv_to = (AutoCompleteTextView)findViewById(R.id.stations_to);
+		actv_from = (AutoCompleteTextView)findViewById(R.id.search_stations_from);
+		actv_to = (AutoCompleteTextView)findViewById(R.id.search_stations_to);
 		adapter = new ArrayAdapter<Station>(this, R.layout.list_item, stations);
 		actv_from.setAdapter(adapter);
 		actv_to.setAdapter(adapter);
@@ -99,19 +99,19 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		adapter_times_from = ArrayAdapter.createFromResource(
 				this, R.array.times_from_array, android.R.layout.simple_spinner_item);
 		adapter_times_from.setDropDownViewResource(R.layout.list_item);
-		spinner_times_from = (Spinner)findViewById(R.id.times_from);
+		spinner_times_from = (Spinner)findViewById(R.id.search_times_from);
 		spinner_times_from.setAdapter(adapter_times_from);
 
 		adapter_times_to = ArrayAdapter.createFromResource(
 				this, R.array.times_to_array, android.R.layout.simple_spinner_item);
 		adapter_times_to.setDropDownViewResource(R.layout.list_item);
-		spinner_times_to = (Spinner)findViewById(R.id.times_to);
+		spinner_times_to = (Spinner)findViewById(R.id.search_times_to);
 		spinner_times_to.setAdapter(adapter_times_to);
 
 		/**
 		 * Setup submit buttons.
 		 */
-		get_given_btn = (Button)findViewById(R.id.get_given);
+		get_given_btn = (Button)findViewById(R.id.search_get_given);
 		get_given_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
@@ -121,7 +121,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 				show_results();
 				}
 			});
-		get_all_btn = (Button)findViewById(R.id.get_all);
+		get_all_btn = (Button)findViewById(R.id.search_get_all);
 		get_all_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				/**
@@ -143,11 +143,11 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		/**
 		 * Get Layout handle.
 		 */
-		lin_lay = (LinearLayout)findViewById(R.id.lin_lay);
+		lin_lay = (LinearLayout)findViewById(R.id.search_lin_lay);
 		/**
 		 * Setup swap button.
 		 */
-		swap_btn = (Button)findViewById(R.id.swap);
+		swap_btn = (Button)findViewById(R.id.search_swap);
 		swap_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				lin_lay.requestFocusFromTouch();
@@ -374,7 +374,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.add_to_fav:
+			case R.id.search_menu_add_to_fav:
 				getNewFavName();
 				return true;
 			default:
@@ -396,8 +396,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		}
 		LayoutInflater factory = LayoutInflater.from(this);
 		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
-		final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
-		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.isTimeFilterOnCB);
+		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
+		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.dialog_isTimeFilterOnCB);
 		et.setText(station_from_txt + " - " + station_to_txt);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(textEntryView);

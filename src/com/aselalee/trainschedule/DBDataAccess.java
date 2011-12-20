@@ -313,7 +313,6 @@ public class DBDataAccess extends SQLiteOpenHelper {
 
 	public ParameterSet [] GetFavourites() {
 		ParameterSet [] paramsList = null;
-		paramsList = null;
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
 		try {

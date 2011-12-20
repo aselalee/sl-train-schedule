@@ -40,7 +40,7 @@ import android.util.Log;
 
 public class GetResultsFromSite {
 
-	public static String GetResultsJson(String station_from, String station_to,
+	public static Result [] GetResultsJson(String station_from, String station_to,
 			String time_from, String time_to, String date_today)
 	{
 		/**
@@ -59,27 +59,6 @@ public class GetResultsFromSite {
 		String url = Constants.JASONURL + "?" + strParams;
 
 		/**
-		 * HTML to be sent as the output. The results table will be appended
-		 * to this variable.
-		 */
-		String htmlOutput = "";
-		htmlOutput += "<html><head>";
-		htmlOutput += "<style type=\"text/css\">";
-		htmlOutput += 	"tr {background-color:#CBCBCB;}";
-		htmlOutput += 	"tr.alt {background-color:#E8E8EA;}";
-		htmlOutput += 	"td {border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
-		htmlOutput += 	"th {background-color:#3C3C3D;color:white;border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
-		htmlOutput += 	"table {font-size:10px;border-width:1px;border-collapse:collapse;border-color:black;border-style:outset;}";
-		htmlOutput += "</style>";
-		htmlOutput += "</head><body>";
-
-		/**
-		 * In case an error occurs this HTML string will be returned.
-		 */
-		String htmlHTTPErr = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
-		String htmlIOErr = "<html><head></head><body><h1>IO Stream Error. Close Application and Try Again.</h1></body></html>";
-
-		/**
 		 * Setup networking.
 		 * Then set HTTP POST data.
 		 */
@@ -94,10 +73,10 @@ public class GetResultsFromSite {
 			response = httpClient.execute(httpGet);
 		} catch(ClientProtocolException e) {
 			Log.e(Constants.LOG_TAG, "HTTPERROR : ClientProtocolException : "+e);
-			return htmlHTTPErr;
+			return null;
 		} catch(IOException e) {
 			Log.e(Constants.LOG_TAG, "HTTPERROR : IOException : "+e);
-			return htmlHTTPErr;
+			return null;
 		}
 
 		/**
@@ -108,10 +87,10 @@ public class GetResultsFromSite {
 			ips = response.getEntity().getContent();
 		} catch(IOException e) {
 			Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException : "+e);
-			return htmlIOErr;
+			return null;
 		} catch(IllegalStateException e) {
 			Log.e(Constants.LOG_TAG, "InputStreamERROR : IllegalStateException : "+e);
-			return htmlIOErr;
+			return null;
 		}
 		/**
 		 * Read output result from server.
@@ -126,105 +105,63 @@ public class GetResultsFromSite {
 			}
 		} catch(IOException e) {
 			Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException - Read Error: "+e);
-			return htmlIOErr;
+			return null;
 		}
-		htmlOutput += JSONToHTMLTable(strBuilder.toString());
-		htmlOutput += "<br/><br/><br/></body></html>";
-		return htmlOutput;
+		return JSONToResultsList(strBuilder.toString());
 	}
 
-	private static String JSONToHTMLTable(String strJSON) {
-		String htmlTable = "";
+	private static  Result [] JSONToResultsList(String strJSON) {
 		JSONObject jObject;
 		JSONArray trainsArray;
-		String strTmp = "";
-		String style = "";
-		String startStation;
-		String endStation;
+		String strTmp;
+		Result [] results = null;
+
 		try {
 			jObject = new JSONObject(strJSON); 
 		} catch(JSONException e) {
 			Log.e(Constants.LOG_TAG, "Error Parsing JSON string:"+e);
-			return "<h1>Error Parsing JSON string</h1>";
+			return null;
 		}
 		try {
 			trainsArray = jObject.getJSONArray("trains");
 		} catch(JSONException e) {
 			Log.e(Constants.LOG_TAG, "Error Parsing JSON object:"+e);
-			return "<h1>Error Parsing JSON object</h1>";
+			return null;
 		}
 		if(trainsArray.length() < 1) {
-			return "<h1>Results Not Found.</h1>";
+			return null;
 		}
-		try {
-				startStation = trainsArray.getJSONObject(0).getString("startStationName").toString().trim();
-				endStation = trainsArray.getJSONObject(0).getString("endStationName").toString().trim();
-		} catch(JSONException e) {
-			Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
-			return "<h1>Error Parsing JSON array object</h1>";
-		}
-
-		htmlTable += "<table width=\"100%\" align=\"center\">";
-		htmlTable += "<thead><tr>";
-		htmlTable += "<th><a>Arriving at</a><br/><a>" + startStation + "</a></th>";
-		htmlTable += "<th><a>Departing from</a><br/><a>" + startStation + "</a></th>";
-		htmlTable += "<th><a>Train</a><br/><a>Frequency</a></th>";
-		htmlTable += "<th><a>Arriving at<a><br/><a>Destination</a><br/><a>(" + endStation + ")</a></th>";
-		htmlTable += "<th><a>Final</a><br/><a>Destination</a></th>";
-		htmlTable += "<th><a>Train</a><br/><a>Type</a></th>";
-		htmlTable += "</tr></thead>";
-		htmlTable += "<tbody>";
-
+		results = new Result[trainsArray.length()];
 		for(int i = 0; i < trainsArray.length(); i++) {
-			if(i%2 == 0) {
-				style = "class=\"alt\"";
-			} else {
-				style = "";
-			}
 			try {
-				htmlTable += "<tr " + style + ">";
-				htmlTable += "<td>";
+				results[i] = new Result();
+				results[i].name = trainsArray.getJSONObject(i).getString("name").toString().trim();
 				strTmp = trainsArray.getJSONObject(i).getString("arrivalTime").toString().trim();
-				strTmp = chop(strTmp);
-				htmlTable += strTmp;
-				htmlTable += "</td>";
-				htmlTable += "<td>";
+				results[i].arrivalTime = chop(strTmp);
 				strTmp = trainsArray.getJSONObject(i).getString("depatureTime").toString().trim();
-				strTmp = chop(strTmp);
-				htmlTable +=  strTmp;
-				htmlTable += "</td>";
-				htmlTable += "<td>";
-				strTmp = trainsArray.getJSONObject(i).getString("fDescription").toString().trim();
-				htmlTable +=  strTmp;
-				htmlTable += "</td>";
-				htmlTable += "<td>";
+				results[i].depatureTime = chop(strTmp);
 				strTmp = trainsArray.getJSONObject(i).getString("arrivalAtDestinationTime").toString().trim();
-				strTmp = chop(strTmp);
-				htmlTable +=  strTmp;
-				htmlTable += "</td>";
-				htmlTable += "<td>";
-				strTmp = trainsArray.getJSONObject(i).getString("toTrStationName").toString().trim();
-				htmlTable +=  strTmp;
-				htmlTable += "</td>";
-				htmlTable += "<td>";
-				strTmp = trainsArray.getJSONObject(i).getString("tyDescription").toString().trim();
-				htmlTable +=  strTmp;
-				htmlTable += "</td>";
-				htmlTable += "</tr>";
+				results[i].arrivalAtDestinationTime = chop(strTmp);
+				strTmp = trainsArray.getJSONObject(i).getString("delayTime").toString().trim();
+				results[i].delayTime = chop(strTmp);
+				results[i].comment = trainsArray.getJSONObject(i).getString("comment").toString().trim();
+				results[i].startStationName = trainsArray.getJSONObject(i).getString("startStationName").toString().trim();
+				results[i].endStationName = trainsArray.getJSONObject(i).getString("endStationName").toString().trim();
+				results[i].toTrStationName = trainsArray.getJSONObject(i).getString("toTrStationName").toString().trim();
+				results[i].fDescription = trainsArray.getJSONObject(i).getString("fDescription").toString().trim();
+				results[i].tyDescription = trainsArray.getJSONObject(i).getString("tyDescription").toString().trim();
 			} catch(JSONException e) {
 				Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
-				return "<h1>Error Parsing JSON array object</h1>";
+				return null;
 			}
 		}
-		htmlTable += "</tbody>";
-		htmlTable += "</table>";
-		return htmlTable;
+		return results;
 	}
 
 	private static String chop(String strIn) {
 		String strOut;
 		if(strIn == null) {
-			return null;
+			return "";
 			}
 		int strLen = strIn.length();
 		if(strLen < 4) {
