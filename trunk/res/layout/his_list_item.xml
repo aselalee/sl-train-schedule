@@ -32,7 +32,7 @@
             android:text="@string/list_from_txt"
             android:gravity="right" />
         <TextView
-            android:id="@+id/start_station_name"
+            android:id="@+id/hist_list_item_start_station_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
@@ -50,14 +50,14 @@
             android:text="@string/list_to_txt"
             android:gravity="right"/>
         <TextView
-            android:id="@+id/end_station_name"
+            android:id="@+id/hist_list_item_end_station_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="#ffffff" />
     </LinearLayout>
     <TextView
-        android:id="@+id/filter_time"
+        android:id="@+id/hist_list_item_filter_time"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="6dp"

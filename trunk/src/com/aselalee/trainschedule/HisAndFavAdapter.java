@@ -86,9 +86,9 @@ public class HisAndFavAdapter extends BaseAdapter {
 			super(context);
 			LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view=layoutInflater.inflate(R.layout.his_list_item, this, true);
-			startStationTV = (TextView)view.findViewById(R.id.start_station_name);
-			endStationTV = (TextView)view.findViewById(R.id.end_station_name);
-			filterTV = (TextView)view.findViewById(R.id.filter_time);
+			startStationTV = (TextView)view.findViewById(R.id.hist_list_item_start_station_name);
+			endStationTV = (TextView)view.findViewById(R.id.hist_list_item_end_station_name);
+			filterTV = (TextView)view.findViewById(R.id.hist_list_item_filter_time);
 			setParams(params);
 		}
 		public void setParams(ParameterSet params) {
@@ -111,10 +111,10 @@ public class HisAndFavAdapter extends BaseAdapter {
 			super(context);
 			LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view=layoutInflater.inflate(R.layout.fav_list_item, this, true);
-			startStationTV = (TextView)view.findViewById(R.id.start_station_name);
-			endStationTV = (TextView)view.findViewById(R.id.end_station_name);
-			filterTV = (TextView)view.findViewById(R.id.filter_time);
-			nameTV = (TextView)view.findViewById(R.id.item_name);
+			startStationTV = (TextView)view.findViewById(R.id.fav_start_station_name);
+			endStationTV = (TextView)view.findViewById(R.id.fav_end_station_name);
+			filterTV = (TextView)view.findViewById(R.id.fav_filter_time);
+			nameTV = (TextView)view.findViewById(R.id.fav_item_name);
 			setParams(params);
 		}
 		

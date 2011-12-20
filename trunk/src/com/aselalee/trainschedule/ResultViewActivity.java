@@ -20,6 +20,7 @@ package com.aselalee.trainschedule;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -31,9 +32,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ResultViewActivity extends Activity implements Runnable {
@@ -46,18 +48,23 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private String time_to;
 	private String time_to_txt;
 	private String date_today;
-	private String result;
 	private boolean isThreadFavourites = false;
 	private String name_txt = "";
-	private WebView mWebView = null;
 	private ProgressDialog pd;
 	private Thread thread = null;
 	private volatile boolean isStop = false;
+	
+	private ListView listView = null;
+	private TextView tv_from = null;
+	private TextView tv_to = null;
+	private volatile Result [] results = null;
+	private Context myContext = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.result_table);
+		myContext = this;
 
 		/**
 		 * Read data passed from the calling activity.
@@ -74,13 +81,17 @@ public class ResultViewActivity extends Activity implements Runnable {
 			time_to_txt = extras.getString("time_to_txt");
 			date_today = extras.getString("date_today");
 		}
-
+		isStop = false;
 		/**
-		 * Get the webview handle.
+		 * Get the required handles.
+		 * Update start station and end station
 		 */
-		mWebView = (WebView)findViewById(R.id.webview);
-		mWebView.getSettings().setBuiltInZoomControls(true);
-
+		listView = (ListView) findViewById(android.R.id.list);
+		tv_from = (TextView) findViewById(R.id.res_table_start_station_name);
+		tv_from.setText(station_from_txt);
+		tv_to = (TextView) findViewById(R.id.res_table_end_station_name);
+		tv_to.setText(station_to_txt);
+		
 		/**
 		 * Display progress Dialog.
 		 */
@@ -109,7 +120,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 			/**
 			 * Call the "GetResults" method to retrieve data from server.
 			 */
-			result= GetResultsFromSite.GetResultsJson(station_from, station_to, time_from, time_to, date_today);
+			results = GetResultsFromSite.GetResultsJson(station_from, station_to, time_from, time_to, date_today);
 			/**
 			 * This will send message to the calling thread to continue and display data.
 			 */
@@ -137,12 +148,8 @@ public class ResultViewActivity extends Activity implements Runnable {
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
 				pd.dismiss();
-				if(mWebView != null && result != null && isStop == false) {
-					try {
-						mWebView.loadDataWithBaseURL("", result,"text/html", "UTF-8", null);
-					} catch(Exception e) {
-						Log.e(Constants.LOG_TAG, "Eror occurred in loadDataWithBaseURL " + e);
-					}
+				if(results != null && isStop == false) {
+					listView.setAdapter(new ResultViewAdapter(myContext, results));
 				} else {
 					Log.i(Constants.LOG_TAG, "Thread exited by force.");
 				}
@@ -162,9 +169,6 @@ public class ResultViewActivity extends Activity implements Runnable {
 	public void onDestroy() {
 		super.onStop();
 		isStop = true;
-		if(mWebView != null) {
-			mWebView.destroy();
-		}
 	}
 
 	@Override
@@ -187,7 +191,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.add_to_fav:
+		case R.id.fav_menu_clear_fav:
 			getNewFavName();
 			return true;
 		default:
@@ -198,8 +202,8 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private void getNewFavName() {
 		LayoutInflater factory = LayoutInflater.from(this);
 		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
-		final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
-		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.isTimeFilterOnCB);
+		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
+		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.dialog_isTimeFilterOnCB);
 		cb.setVisibility(View.GONE);
 		et.setText(station_from_txt + " - " + station_to_txt);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);

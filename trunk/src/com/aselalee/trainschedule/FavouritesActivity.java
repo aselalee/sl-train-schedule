@@ -96,7 +96,7 @@ public class FavouritesActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.clear_fav:
+			case R.id.fav_menu_clear_fav:
 				DBDataAccess myDBAcc = new DBDataAccess(this);
 				myDBAcc.ClearFavouritesTable();
 				myDBAcc.close();
@@ -122,11 +122,11 @@ public class FavouritesActivity extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		DBDataAccess myDBAcc = null;
 		switch (item.getItemId()) {
-			case R.id.rename_fav:
+			case R.id.fav_ctx_menu_rename_fav:
 				myDBAcc = new DBDataAccess(this);
 				renameFavItem(info.position, myDBAcc);
 				break;
-			case R.id.delete_fav:
+			case R.id.fav_ctx_menu_delete_fav:
 				myDBAcc = new DBDataAccess(this);
 				myDBAcc.DeleteFavRecord(paramsList[info.position].id);
 				break;
@@ -152,7 +152,7 @@ public class FavouritesActivity extends ListActivity {
 	private void renameFavItem(final int itemPosition, final DBDataAccess myDBAcc) {
 		LayoutInflater factory = LayoutInflater.from(this);
 		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
-		final EditText et = (EditText)textEntryView.findViewById(R.id.new_name);
+		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
 		et.setText(paramsList[itemPosition].name);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(textEntryView);

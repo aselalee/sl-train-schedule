@@ -16,8 +16,8 @@
 * NECESSARY SERVICING, REPAIR OR CORRECTION.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/rename_fav"
+    <item android:id="@+id/fav_ctx_menu_rename_fav"
         android:title="@string/rename_fav_txt" />
-    <item android:id="@+id/delete_fav"
+    <item android:id="@+id/fav_ctx_menu_delete_fav"
         android:title="@string/delete_fav_txt" />
 </menu>
