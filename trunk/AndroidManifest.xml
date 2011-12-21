@@ -25,7 +25,8 @@
             android:name=".ResultViewActivity" 
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden"
-            android:configChanges="keyboardHidden|orientation" >
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" >
         </activity>
 
         <activity

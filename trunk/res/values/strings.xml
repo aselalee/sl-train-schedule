@@ -20,7 +20,12 @@
     <string name="rename_fav_txt">Rename</string>
     <string name="delete_fav_txt">Delete</string>
     <string name="add_filter_txt">Include time filter</string>
-    <string name="results_table_head">Departure | Arrival</string>
+    <string name="results_table_head_dept">Departure</string>
+    <string name="results_table_head_arr">Arrival</string>
+    <string name="results_table_head_dur">Duration</string>
+    <string name="results_table_head_sep">|</string>
+    <string name="more">more&#8230;</string>
+    <string name="no_result">"---/---"</string>
 
     <string-array name="stations_array">
         <item>ABANPOLA</item>

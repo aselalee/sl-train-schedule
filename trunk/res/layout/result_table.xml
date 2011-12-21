@@ -37,7 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:paddingLeft="5dp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -56,7 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:paddingLeft="5dp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -68,7 +70,34 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="#000000"
-            android:text="@string/results_table_head" />
+            android:text="@string/results_table_head_dept"
+            android:padding="5dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:text="@string/results_table_head_sep" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:text="@string/results_table_head_arr"
+            android:padding="5dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:text="@string/results_table_head_sep" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:text="@string/results_table_head_dur"
+            android:padding="5dp" />
     </LinearLayout>
     <ListView
         android:id="@android:id/list"
