@@ -68,17 +68,45 @@ public class ResultViewAdapter extends BaseAdapter {
 	private class ResultItemView extends LinearLayout {
 		private TextView startTime = null;
 		private TextView endTime = null;
+		private TextView duration = null;
 		public ResultItemView(Context context, Result result) {
 			super(context);
 			LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view=layoutInflater.inflate(R.layout.result_list_item, this, true);
 			startTime = (TextView)view.findViewById(R.id.res_list_item_start_time);
 			endTime = (TextView)view.findViewById(R.id.res_list_item_end_time);
+			duration = (TextView)view.findViewById(R.id.res_list_item_duration);
 			setParams(result);
 		}
 		public void setParams(Result result) {
 			startTime.setText(result.depatureTime);
 			endTime.setText(result.arrivalAtDestinationTime);
+			String durationStr = "";
+			long startTimeInMins = (Integer.parseInt(result.depatureTime.substring(0, 2)) * 60) +  
+					(Integer.parseInt(result.depatureTime.substring(3,5)));
+			long endTimeInMins = (Integer.parseInt(result.arrivalAtDestinationTime.substring(0, 2)) * 60) +  
+					(Integer.parseInt(result.arrivalAtDestinationTime.substring(3,5)));
+			long durationInMins = endTimeInMins - startTimeInMins;
+			if(durationInMins > 0) {
+				int hours = (int)(durationInMins/60);
+				if(hours < 9) {
+					durationStr = "0" + String.valueOf(hours);
+				} else {
+					durationStr = String.valueOf(hours);
+				}
+				durationStr += ":"; 
+				int mins = (int)(durationInMins%60);
+				if(mins < 9) {
+					durationStr += "0" + String.valueOf(mins);
+				} else {
+					durationStr += String.valueOf(mins);
+				}
+				
+				duration.setText(durationStr);
+			} else {
+				endTime.setText(R.string.no_result);
+				duration.setText(R.string.no_result);
+			}
 		}
 	}
 }
