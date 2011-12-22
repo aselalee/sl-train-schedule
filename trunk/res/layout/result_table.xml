@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="#848284"
             android:text="@string/list_from_txt"
             android:gravity="right" />
@@ -36,7 +36,7 @@
             android:id="@+id/res_table_start_station_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="#000000"
             android:paddingLeft="5dp" />
     </LinearLayout>
@@ -48,7 +48,7 @@
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="#848284"
             android:text="@string/list_to_txt"
             android:gravity="right"/>
@@ -56,7 +56,7 @@
             android:id="@+id/res_table_end_station_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="#000000"
             android:paddingLeft="5dp" />
     </LinearLayout>
@@ -71,37 +71,41 @@
             android:textSize="14sp"
             android:textColor="#000000"
             android:text="@string/results_table_head_dept"
-            android:padding="5dp" />
+            android:padding="10dp"
+            android:layout_gravity="center" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#848284"
+            android:layout_gravity="center"
+            android:paddingLeft="5dp" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:text="@string/results_table_head_arr"
+                android:layout_gravity="center" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:text="@string/results_table_head_dur"
+                android:layout_gravity="center" />
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="#000000"
-            android:text="@string/results_table_head_sep" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#000000"
-            android:text="@string/results_table_head_arr"
-            android:padding="5dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#000000"
-            android:text="@string/results_table_head_sep" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#000000"
-            android:text="@string/results_table_head_dur"
-            android:padding="5dp" />
+            android:text="@string/results_table_head_freq"
+            android:padding="10dp"
+            android:layout_gravity="center" />
     </LinearLayout>
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
-
 </LinearLayout>

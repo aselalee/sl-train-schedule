@@ -23,7 +23,8 @@
     <string name="results_table_head_dept">Departure</string>
     <string name="results_table_head_arr">Arrival</string>
     <string name="results_table_head_dur">Duration</string>
-    <string name="results_table_head_sep">|</string>
+    <string name="results_table_head_freq">Frequency</string>
+    <string name="dummy">####</string>
     <string name="more">more&#8230;</string>
     <string name="no_result">"---/---"</string>
 

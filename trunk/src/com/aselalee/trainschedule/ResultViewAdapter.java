@@ -69,6 +69,7 @@ public class ResultViewAdapter extends BaseAdapter {
 		private TextView startTime = null;
 		private TextView endTime = null;
 		private TextView duration = null;
+		private TextView freq = null;
 		public ResultItemView(Context context, Result result) {
 			super(context);
 			LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -76,6 +77,7 @@ public class ResultViewAdapter extends BaseAdapter {
 			startTime = (TextView)view.findViewById(R.id.res_list_item_start_time);
 			endTime = (TextView)view.findViewById(R.id.res_list_item_end_time);
 			duration = (TextView)view.findViewById(R.id.res_list_item_duration);
+			freq = (TextView)view.findViewById(R.id.res_list_item_freq);
 			setParams(result);
 		}
 		public void setParams(Result result) {
@@ -107,6 +109,22 @@ public class ResultViewAdapter extends BaseAdapter {
 				endTime.setText(R.string.no_result);
 				duration.setText(R.string.no_result);
 			}
+			if( result.fDescription.length() > 12) {
+				int firstSpace = -1;
+				int secondSpace = -1;
+				firstSpace = result.fDescription.indexOf(" ");
+				if(firstSpace > 0) {
+					secondSpace = result.fDescription.indexOf(" ", firstSpace + 1);
+				}
+				if(secondSpace > 0) {
+					char [] charArray = new char[result.fDescription.length()];
+					result.fDescription.getChars(0, result.fDescription.length(), charArray, 0);
+					charArray[secondSpace] = '\n';
+					result.fDescription = null;
+					result.fDescription = new String(charArray);
+				}
+			}
+			freq.setText(result.fDescription);
 		}
 	}
 }

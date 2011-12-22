@@ -32,6 +32,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -87,6 +89,12 @@ public class ResultViewActivity extends Activity implements Runnable {
 		 * Update start station and end station
 		 */
 		listView = (ListView) findViewById(android.R.id.list);
+		listView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+					show_details(position);
+			}
+		});
 		tv_from = (TextView) findViewById(R.id.res_table_start_station_name);
 		tv_from.setText(station_from_txt);
 		tv_to = (TextView) findViewById(R.id.res_table_end_station_name);
@@ -112,6 +120,26 @@ public class ResultViewActivity extends Activity implements Runnable {
 		thread.start();
 	}
 
+	private void show_details(int pos) {
+		LayoutInflater factory = LayoutInflater.from(this);
+		View detailsView = factory.inflate(R.layout.result_details_dialog, null);
+		TextView tv = (TextView)detailsView.findViewById(R.id.result_details_dialog_details);
+		tv.setText( "From: " + results[pos].startStationName + "\n" +
+					"To: " + results[pos].endStationName + "\n" +
+					"Arrival at " + results[pos].startStationName + ":" + results[pos].arrivalTime + "\n" +
+					"Departing from " + results[pos].startStationName + ":" + results[pos].depatureTime + "\n" +
+					"Arrival at Destination (" + results[pos].endStationName + "):" + results[pos].arrivalAtDestinationTime + "\n");
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(detailsView);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		builder.setTitle("Details...");
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 	/**
 	 * run() method that must be implemented when implementing "Runnable" class.
 	 */
