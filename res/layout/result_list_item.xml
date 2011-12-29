@@ -48,8 +48,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="#848284"
-            android:text="@string/dummy" />
+            android:background="@drawable/results_view_duration_backgroud"
+            android:textColor="#000000"
+            android:text="@string/dummy"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp" />
     </LinearLayout>
     <TextView
         android:id="@+id/res_list_item_freq"

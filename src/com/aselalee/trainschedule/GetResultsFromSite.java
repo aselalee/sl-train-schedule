@@ -148,8 +148,9 @@ public class GetResultsFromSite {
 				results[i].startStationName = trainsArray.getJSONObject(i).getString("startStationName").toString().trim();
 				results[i].endStationName = trainsArray.getJSONObject(i).getString("endStationName").toString().trim();
 				results[i].toTrStationName = trainsArray.getJSONObject(i).getString("toTrStationName").toString().trim();
-				results[i].fDescription = trainsArray.getJSONObject(i).getString("fDescription").toString().trim();
+				results[i].fDescription = formatFrequency(trainsArray.getJSONObject(i).getString("fDescription").toString().trim());
 				results[i].tyDescription = trainsArray.getJSONObject(i).getString("tyDescription").toString().trim();
+				results[i].duration = calcDuration(results[i].depatureTime, results[i].arrivalAtDestinationTime);
 			} catch(JSONException e) {
 				Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
 				return null;
@@ -158,6 +159,52 @@ public class GetResultsFromSite {
 		return results;
 	}
 
+	private static String formatFrequency(String frequency) {
+		String result = frequency;
+		int freqLength = frequency.length();
+		if( freqLength > 12) {
+			int firstSpace = -1;
+			int secondSpace = -1;
+			firstSpace = frequency.indexOf(" ");
+			if(firstSpace > 0) {
+				secondSpace = frequency.indexOf(" ", firstSpace + 1);
+			}
+			if(secondSpace > 0) {
+				char [] charArray = new char[freqLength];
+				frequency.getChars(0, freqLength, charArray, 0);
+				charArray[secondSpace] = '\n';
+				result = null;
+				result = new String(charArray);
+			}
+		}
+		return result;
+	}
+	private static String calcDuration(String depatureTime, String arrAtDestinationTime) {
+		String durationStr = "";
+		long startTimeInMins = (Integer.parseInt(depatureTime.substring(0, 2)) * 60) +  
+				(Integer.parseInt(depatureTime.substring(3,5)));
+		long endTimeInMins = (Integer.parseInt(arrAtDestinationTime.substring(0, 2)) * 60) +  
+				(Integer.parseInt(arrAtDestinationTime.substring(3,5)));
+		long durationInMins = endTimeInMins - startTimeInMins;
+		if(durationInMins > 0) {
+			int hours = (int)(durationInMins/60);
+			if(hours < 9) {
+				durationStr = "0" + String.valueOf(hours);
+			} else {
+				durationStr = String.valueOf(hours);
+			}
+			durationStr += ":"; 
+			int mins = (int)(durationInMins%60);
+			if(mins < 9) {
+				durationStr += "0" + String.valueOf(mins);
+			} else {
+				durationStr += String.valueOf(mins);
+			}
+		} else {
+			durationStr = "---/---";
+		}
+		return durationStr;
+	}
 	private static String chop(String strIn) {
 		String strOut;
 		if(strIn == null) {
