@@ -29,4 +29,5 @@ public class Result {
 	public String toTrStationName; /* Final destination of train*/
 	public String fDescription; /* Train frequency */
 	public String tyDescription; /* Train type */
+	public String duration; /* Traveling time. Calculated locally. */
 }

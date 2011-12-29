@@ -83,47 +83,7 @@ public class ResultViewAdapter extends BaseAdapter {
 		public void setParams(Result result) {
 			startTime.setText(result.depatureTime);
 			endTime.setText(result.arrivalAtDestinationTime);
-			String durationStr = "";
-			long startTimeInMins = (Integer.parseInt(result.depatureTime.substring(0, 2)) * 60) +  
-					(Integer.parseInt(result.depatureTime.substring(3,5)));
-			long endTimeInMins = (Integer.parseInt(result.arrivalAtDestinationTime.substring(0, 2)) * 60) +  
-					(Integer.parseInt(result.arrivalAtDestinationTime.substring(3,5)));
-			long durationInMins = endTimeInMins - startTimeInMins;
-			if(durationInMins > 0) {
-				int hours = (int)(durationInMins/60);
-				if(hours < 9) {
-					durationStr = "0" + String.valueOf(hours);
-				} else {
-					durationStr = String.valueOf(hours);
-				}
-				durationStr += ":"; 
-				int mins = (int)(durationInMins%60);
-				if(mins < 9) {
-					durationStr += "0" + String.valueOf(mins);
-				} else {
-					durationStr += String.valueOf(mins);
-				}
-				
-				duration.setText(durationStr);
-			} else {
-				endTime.setText(R.string.no_result);
-				duration.setText(R.string.no_result);
-			}
-			if( result.fDescription.length() > 12) {
-				int firstSpace = -1;
-				int secondSpace = -1;
-				firstSpace = result.fDescription.indexOf(" ");
-				if(firstSpace > 0) {
-					secondSpace = result.fDescription.indexOf(" ", firstSpace + 1);
-				}
-				if(secondSpace > 0) {
-					char [] charArray = new char[result.fDescription.length()];
-					result.fDescription.getChars(0, result.fDescription.length(), charArray, 0);
-					charArray[secondSpace] = '\n';
-					result.fDescription = null;
-					result.fDescription = new String(charArray);
-				}
-			}
+			duration.setText(result.duration);
 			freq.setText(result.fDescription);
 		}
 	}
