@@ -23,10 +23,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -174,7 +178,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		stations = new Station[stationsText.length];
 		int index = 0;
 		for(index = 0; index < stationsText.length; index++) {
-			stations[index] = new Station(stationsText[index],stationsVal[index]);
+			stations[index] = new Station( Constants.toTitleCase(stationsText[index]),stationsVal[index]);
 		}
 	}
 	/**
@@ -286,10 +290,25 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	 * Read spinner positions from preference file.
 	 */
 	private void readCurrentState(Context c) {
+		PackageManager manager = this.getPackageManager();
+		PackageInfo info = null;
+		int version_code = 0;
+		try {
+			info = manager.getPackageInfo(this.getPackageName(), 0);
+			version_code = info.versionCode;
+		} catch (NameNotFoundException e) {
+			Log.e(Constants.LOG_TAG, "Package name not found" + e);
+		}
 		/**
 		 * Get the SharedPreferences object for this application
 		 */
 		SharedPreferences p = c.getSharedPreferences(Constants.PREFERENCES_FILE, MODE_WORLD_READABLE);
+//		if( p.getInt(Constants.APP_VERSION_CODE, -1) != version_code) {
+//			SharedPreferences.Editor e = p.edit();
+//			e.putInt(Constants.APP_VERSION_CODE, version_code);
+//			e.commit();
+//			return;
+//		}
 		/**
 		 * Get the position and value of the spinner from the file
 		 */
@@ -480,7 +499,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 
 	private int searchString(String strArray[], String strSrc) {
 		for(int i = 0; i < strArray.length; i++) {
-			if( strArray[i].equals(strSrc) ) {
+			if( strSrc.equals(Constants.toTitleCase(strArray[i]))) {
 				return i;
 			}
 		}

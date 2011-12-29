@@ -46,6 +46,11 @@ public final class Constants {
 	 * Site to fetch results from.
 	 */
 	public static final String JASONURL = "http://mobile.icta.lk/services/railwayservice/getSchedule.php";
+	
+	/**
+	 * Application version code save in to preferences file.
+	 */
+	public static final String APP_VERSION_CODE = "app_version_code";
 
 	/**
 	 * Database constants
@@ -99,8 +104,23 @@ public final class Constants {
 		intent.putExtra("date_today", date_today);
 		return;
 	}
-    public static final void HideSoftKeyboard(View view, Context context) {
+	public static final void HideSoftKeyboard(View view, Context context) {
 		InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
+	}
+
+	public static final String toTitleCase(String string) {
+		String [] words = string.split(" ");
+		String result  = "";
+		for(int i = 0; i < words.length; i++) {
+			result += toInitialCap( words[i] ) + " ";
+		}
+		return result.trim();
+	}
+	public static final String toInitialCap(String word) {
+		if( word != null && word.length() > 1) {
+			return String.valueOf(word.toUpperCase().charAt(0)) + word.substring(1).toLowerCase();
+		}
+		return "";
+	}
 }

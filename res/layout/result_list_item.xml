@@ -39,7 +39,7 @@
             android:id="@+id/res_list_item_end_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textColor="#ffffff"
             android:text="@string/dummy"
             android:paddingBottom="1dp" />
@@ -47,7 +47,7 @@
             android:id="@+id/res_list_item_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:background="@drawable/results_view_duration_backgroud"
             android:textColor="#000000"
             android:text="@string/dummy"
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="#ffffff"
         android:text="@string/dummy"
         android:layout_gravity="center" />

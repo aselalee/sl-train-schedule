@@ -96,9 +96,9 @@ public class ResultViewActivity extends Activity implements Runnable {
 			}
 		});
 		tv_from = (TextView) findViewById(R.id.res_table_start_station_name);
-		tv_from.setText(station_from_txt);
+		tv_from.setText( Constants.toTitleCase(station_from_txt));
 		tv_to = (TextView) findViewById(R.id.res_table_end_station_name);
-		tv_to.setText(station_to_txt);
+		tv_to.setText( Constants.toTitleCase(station_to_txt));
 		
 		/**
 		 * Display progress Dialog.
@@ -128,7 +128,8 @@ public class ResultViewActivity extends Activity implements Runnable {
 					"To: " + results[pos].endStationName + "\n" +
 					"Arrival at " + results[pos].startStationName + ":" + results[pos].arrivalTime + "\n" +
 					"Departing from " + results[pos].startStationName + ":" + results[pos].depatureTime + "\n" +
-					"Arrival at Destination (" + results[pos].endStationName + "):" + results[pos].arrivalAtDestinationTime + "\n");
+					"Arrival at Destination (" + results[pos].endStationName + "):" + results[pos].arrivalAtDestinationTime + "\n" +
+					"Train Type: " + results[pos].tyDescription + "\n");
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(detailsView);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -219,7 +220,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.fav_menu_clear_fav:
+		case R.id.search_menu_add_to_fav:
 			getNewFavName();
 			return true;
 		default:
