@@ -39,8 +39,10 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class GetResultsFromSite {
+	private int errorCode = Constants.ERR_NO_ERROR;
+	private String errorString = "No Error";
 
-	public static Result [] GetResultsJson(String station_from, String station_to,
+	public Result [] GetResultsViaJASON(String station_from, String station_to,
 			String time_from, String time_to, String date_today)
 	{
 		/**
@@ -72,10 +74,14 @@ public class GetResultsFromSite {
 		try {
 			response = httpClient.execute(httpGet);
 		} catch(ClientProtocolException e) {
-			Log.e(Constants.LOG_TAG, "HTTPERROR : ClientProtocolException : "+e);
+			errorCode = Constants.ERR_NETWORK_ERROR;
+			errorString = "HTTPERROR : ClientProtocolException : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		} catch(IOException e) {
-			Log.e(Constants.LOG_TAG, "HTTPERROR : IOException : "+e);
+			errorCode = Constants.ERR_NETWORK_ERROR;
+			errorString = "HTTPERROR : IOException : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		}
 
@@ -86,10 +92,14 @@ public class GetResultsFromSite {
 		try {
 			ips = response.getEntity().getContent();
 		} catch(IOException e) {
-			Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException : "+e);
+			errorCode = Constants.ERR_ERROR;
+			errorString = "getEntity.getContentERROR : IOException : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		} catch(IllegalStateException e) {
-			Log.e(Constants.LOG_TAG, "InputStreamERROR : IllegalStateException : "+e);
+			errorCode = Constants.ERR_ERROR;
+			errorString = "getEntity.getContentERROR : IllegalStateException : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		}
 		/**
@@ -104,13 +114,14 @@ public class GetResultsFromSite {
 				strBuilder.append(new String(bytes, 0, numRead));
 			}
 		} catch(IOException e) {
-			Log.e(Constants.LOG_TAG, "InputStreamERROR : IOException - Read Error: "+e);
+			errorCode = Constants.ERR_ERROR;
+			errorString = "InputStreamReaderERROR : IOException - Read Error : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		}
 		return JSONToResultsList(strBuilder.toString());
 	}
-
-	private static  Result [] JSONToResultsList(String strJSON) {
+	private Result [] JSONToResultsList(String strJSON) {
 		JSONObject jObject;
 		JSONArray trainsArray;
 		String strTmp;
@@ -119,16 +130,22 @@ public class GetResultsFromSite {
 		try {
 			jObject = new JSONObject(strJSON); 
 		} catch(JSONException e) {
-			Log.e(Constants.LOG_TAG, "Error Parsing JSON string:"+e);
+			errorCode = Constants.ERR_JASON_ERROR;
+			errorString =  "JASONObjectERROR : Error Parsing JSON string : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		}
 		try {
 			trainsArray = jObject.getJSONArray("trains");
 		} catch(JSONException e) {
-			Log.e(Constants.LOG_TAG, "Error Parsing JSON object:"+e);
+			errorCode = Constants.ERR_JASON_ERROR;
+			errorString = "getJASONArrayERROR : Error Parsing JSON object :" + e;
+			Log.e(Constants.LOG_TAG, errorString);
 			return null;
 		}
 		if(trainsArray.length() < 1) {
+			errorCode = Constants.ERR_NO_RESULTS_FOUND_ERROR;
+			errorString = "No Results Found";
 			return null;
 		}
 		results = new Result[trainsArray.length()];
@@ -157,14 +174,15 @@ public class GetResultsFromSite {
 						trainsArray.getJSONObject(i).getString("tyDescription").toString().trim());
 				results[i].duration = calcDuration(results[i].depatureTime, results[i].arrivalAtDestinationTime);
 			} catch(JSONException e) {
-				Log.e(Constants.LOG_TAG, "Error Parsing JSON array object:"+e);
+				errorCode = Constants.ERR_JASON_ERROR;
+				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
+				Log.e(Constants.LOG_TAG, errorString);
 				return null;
 			}
 		}
 		return results;
 	}
-
-	private static String formatFrequency(String frequency) {
+	private String formatFrequency(String frequency) {
 		String result = frequency;
 		int freqLength = frequency.length();
 		if( freqLength > 12) {
@@ -184,7 +202,7 @@ public class GetResultsFromSite {
 		}
 		return result;
 	}
-	private static String calcDuration(String depatureTime, String arrAtDestinationTime) {
+	private String calcDuration(String depatureTime, String arrAtDestinationTime) {
 		String durationStr = "";
 		long startTimeInMins = (Integer.parseInt(depatureTime.substring(0, 2)) * 60) +  
 				(Integer.parseInt(depatureTime.substring(3,5)));
@@ -210,7 +228,7 @@ public class GetResultsFromSite {
 		}
 		return durationStr;
 	}
-	private static String chop(String strIn) {
+	private String chop(String strIn) {
 		String strOut;
 		if(strIn == null) {
 			return "";
@@ -222,5 +240,13 @@ public class GetResultsFromSite {
 		int lastIdx = strLen - 3;
 		strOut = strIn.substring(0, lastIdx);
 		return strOut;
+	}
+
+	public int GetErrorCode() {
+		return errorCode;
+	}
+
+	public String GetErrorString() {
+		return errorString;
 	}
 }

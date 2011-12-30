@@ -34,8 +34,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +63,8 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private TextView tv_to = null;
 	private volatile Result [] results = null;
 	private Context myContext = null;
+	
+	private volatile int errorCode = Constants.ERR_NO_ERROR;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -149,7 +153,11 @@ public class ResultViewActivity extends Activity implements Runnable {
 			/**
 			 * Call the "GetResults" method to retrieve data from server.
 			 */
-			results = GetResultsFromSite.GetResultsJson(station_from, station_to, time_from, time_to, date_today);
+			GetResultsFromSite getResults = new GetResultsFromSite(); 
+			results = getResults.GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
+			if(results == null) {
+				errorCode = getResults.GetErrorCode();
+			}
 			/**
 			 * This will send message to the calling thread to continue and display data.
 			 */
@@ -172,15 +180,19 @@ public class ResultViewActivity extends Activity implements Runnable {
 	 * 2. Display the resultant HTML
 	 */
 	private Handler handler = new Handler() {
-
 		@Override
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
 				pd.dismiss();
-				if(results != null && isStop == false) {
-					listView.setAdapter(new ResultViewAdapter(myContext, results));
+				if(isStop == false) {
+					if(results != null) {
+						listView.setAdapter(new ResultViewAdapter(myContext, results));
+					} else {
+						setNoResultsState();
+						Log.e(Constants.LOG_TAG, "No Results");
+					}
 				} else {
-					Log.i(Constants.LOG_TAG, "Thread exited by force.");
+					Log.i(Constants.LOG_TAG, "Thread Exited by Force.");
 				}
 			} else {
 				String msgStr = (String)msg.obj;
@@ -189,6 +201,36 @@ public class ResultViewActivity extends Activity implements Runnable {
 		}
 	};
 
+	private void setNoResultsState() {
+		LinearLayout linlay_root = (LinearLayout) findViewById(R.id.res_table_root_linlay);
+		LinearLayout linlay_table_head = (LinearLayout) linlay_root.findViewById(R.id.res_table_table_head);
+		linlay_table_head.setVisibility(View.GONE);
+		LayoutInflater factory = LayoutInflater.from(this);
+		View errorView = factory.inflate(R.layout.result_error, null);
+		TextView tv = (TextView) errorView.findViewById(R.id.results_error_msg);
+		Button bv = (Button) errorView.findViewById(R.id.results_error_button);
+		linlay_root.addView(errorView);
+		switch(errorCode) {
+			case Constants.ERR_NO_RESULTS_FOUND_ERROR:
+				tv.setText("No Results ...");
+				bv.setText("Back");
+				bv.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+							finish();
+						}
+					});
+				break;
+			default:
+				tv.setText("Network Error ...");
+				bv.setText("Retry");
+				bv.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						Bundle tempBundle = new Bundle();
+						onCreate(tempBundle);
+						}
+					});
+		}
+	}
 	@Override
 	public void onPause() {
 		super.onPause();

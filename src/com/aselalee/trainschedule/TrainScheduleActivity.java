@@ -178,7 +178,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		stations = new Station[stationsText.length];
 		int index = 0;
 		for(index = 0; index < stationsText.length; index++) {
-			stations[index] = new Station( Constants.toTitleCase(stationsText[index]),stationsVal[index]);
+			stations[index] = new Station( stationsText[index],stationsVal[index]);
 		}
 	}
 	/**
@@ -303,12 +303,12 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		 * Get the SharedPreferences object for this application
 		 */
 		SharedPreferences p = c.getSharedPreferences(Constants.PREFERENCES_FILE, MODE_WORLD_READABLE);
-//		if( p.getInt(Constants.APP_VERSION_CODE, -1) != version_code) {
-//			SharedPreferences.Editor e = p.edit();
-//			e.putInt(Constants.APP_VERSION_CODE, version_code);
-//			e.commit();
-//			return;
-//		}
+		if( p.getInt(Constants.APP_VERSION_CODE, -1) != version_code) {
+			SharedPreferences.Editor e = p.edit();
+			e.putInt(Constants.APP_VERSION_CODE, version_code);
+			e.commit();
+			return;
+		}
 		/**
 		 * Get the position and value of the spinner from the file
 		 */
@@ -499,7 +499,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 
 	private int searchString(String strArray[], String strSrc) {
 		for(int i = 0; i < strArray.length; i++) {
-			if( strSrc.equals(Constants.toTitleCase(strArray[i]))) {
+			if( strSrc.equals(strArray[i])) {
 				return i;
 			}
 		}
