@@ -85,7 +85,16 @@ public final class Constants {
 	 * Indicates message is sent from DBDataAccess.PushDataFavourites thread.
 	 */
 	public static final int THREAD_PUSH_DATA_FAVOURITES = 1;
-	
+	/**
+	 * Error Codes
+	 */
+	public static final int ERR_NO_ERROR = 1;
+	public static final int ERR_ERROR = 0;
+	public static final int ERR_NETWORK_ERROR = -1;
+	public static final int ERR_NO_RESULTS_FOUND_ERROR = -2;
+	public static final int ERR_JASON_ERROR = -3;
+	public static final int ERR_PROCESSING_ERROR = -4;
+
 	public static final void PupulateIntentForResultsActivity(
 			String station_from_val, String station_from_txt,
 			String station_to_val, String station_to_txt,
