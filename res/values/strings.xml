@@ -27,6 +27,7 @@
     <string name="dummy">####</string>
     <string name="more">more&#8230;</string>
     <string name="no_result">"---/---"</string>
+    <string name="results_view_details_dialog_back_btn">Back</string>
 
     <string-array name="stations_array">
         <item>Abanpola</item>

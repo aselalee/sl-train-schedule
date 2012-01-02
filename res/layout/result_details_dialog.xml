@@ -18,14 +18,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="3dp"
+    android:background="@drawable/results_view_details_dialog_backgroud"
+    android:layout_gravity="center" >
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#ffffff"
         android:layout_gravity="center" >
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -36,7 +38,7 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_arr_at_start_val"
@@ -46,11 +48,10 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -61,8 +62,8 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="2dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_depart_from_start_val"
@@ -72,14 +73,13 @@
                 android:textColor="#ff0000"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="2dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:gravity="center_vertical"
                 android:textStyle="bold"
                 android:textSize="16sp" />
         </TableRow>
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -90,7 +90,7 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_reach_dest_val"
@@ -100,11 +100,10 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -115,8 +114,8 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="2dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_freq_val"
@@ -126,12 +125,11 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="2dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -142,7 +140,7 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_dur_val"
@@ -152,11 +150,10 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -167,8 +164,8 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_final_dest_val"
@@ -178,12 +175,11 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
         <TableRow
-            android:padding="2dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" >
             <TextView
@@ -194,7 +190,7 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/result_table_details_train_type_val"
@@ -204,7 +200,7 @@
                 android:textColor="#ffffff"
                 android:padding="5dp"
                 android:background="#000000"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
     </TableLayout>
