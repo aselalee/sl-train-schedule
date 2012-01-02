@@ -19,6 +19,7 @@ package com.aselalee.trainschedule;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -125,55 +126,59 @@ public class ResultViewActivity extends Activity implements Runnable {
 	}
 
 	private void show_details(int pos) {
-		LayoutInflater factory = LayoutInflater.from(this);
-		View detailsView = factory.inflate(R.layout.result_details_dialog, null);
+//		LayoutInflater factory = LayoutInflater.from(this);
+//		View detailsView = factory.inflate(R.layout.result_details_dialog, null);
 		TextView tv = null;
 
+		Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+		dialog.setContentView(R.layout.result_details_dialog);
+
 		/* Arrival at start */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_arr_at_start_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
 		tv.setText("Arrival at\n" + results[pos].startStationName);
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_arr_at_start_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_val);
 		tv.setText(results[pos].arrivalTime);
 		/* Departing from start */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_depart_from_start_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_txt);
 		tv.setText("Departing from\n" + results[pos].startStationName);
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_depart_from_start_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_val);
 		tv.setText(results[pos].depatureTime);
 		/* Reaching end */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_reach_dest_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_txt);
 		tv.setText("Reaching\n" + results[pos].endStationName);
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_reach_dest_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_val);
 		tv.setText(results[pos].arrivalAtDestinationTime);
 		/* Duration */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_freq_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_txt);
 		tv.setText("Frequency");
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_freq_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_val);
 		tv.setText(results[pos].fDescription);
 		/* Duration */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_dur_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_txt);
 		tv.setText("Duration");
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_dur_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_val);
 		tv.setText(results[pos].duration);
 		/* Final destination */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_final_dest_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_txt);
 		tv.setText("Final\nDestination");
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_final_dest_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_val);
 		tv.setText(results[pos].toTrStationName);
 		/* Train Type */
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_train_type_txt);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_txt);
 		tv.setText("Train Type");
-		tv = (TextView)detailsView.findViewById(R.id.result_table_details_train_type_val);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_val);
 		tv.setText(results[pos].tyDescription);
+		dialog.show();
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setView(detailsView);
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
-			}
-		});
-		AlertDialog alert = builder.create();
-		alert.show();
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		builder.setView(detailsView);
+//		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int id) {
+//				dialog.cancel();
+//			}
+//		});
+//		AlertDialog alert = builder.create();
+//		alert.show();
 	}
 	/**
 	 * run() method that must be implemented when implementing "Runnable" class.
