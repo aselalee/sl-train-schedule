@@ -22,8 +22,5 @@
     <solid
         android:color="#d0d0d0"/>
     <corners
-        android:bottomRightRadius="5dp"
-        android:bottomLeftRadius="5dp"
-        android:topLeftRadius="5dp"
-        android:topRightRadius="5dp"/>
+        android:radius="5dp" />
 </shape>
