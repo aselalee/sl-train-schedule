@@ -25,7 +25,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#ffffff" >
+        android:background="#d0d0d0" >
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#ffffff" >
+        android:background="#d0d0d0" >
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
@@ -66,7 +66,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#848284" >
+        android:padding="5dp"
+        android:background="@drawable/results_view_table_head_background" >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#848284"
             android:layout_gravity="center"
             android:paddingLeft="5dp" >
             <TextView
@@ -95,7 +95,9 @@
                 android:textSize="14sp"
                 android:textColor="#000000"
                 android:text="@string/results_table_head_dur"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:padding="2dp"
+                android:background="@drawable/results_view_duration_backgroud" />
         </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
