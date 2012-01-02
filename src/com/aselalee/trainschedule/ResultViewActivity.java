@@ -127,13 +127,44 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private void show_details(int pos) {
 		LayoutInflater factory = LayoutInflater.from(this);
 		View detailsView = factory.inflate(R.layout.result_details_dialog, null);
-		TextView tv = (TextView)detailsView.findViewById(R.id.result_details_dialog_details);
-		tv.setText( "From: " + results[pos].startStationName + "\n" +
-					"To: " + results[pos].endStationName + "\n" +
-					"Arrival at " + results[pos].startStationName + ":" + results[pos].arrivalTime + "\n" +
-					"Departing from " + results[pos].startStationName + ":" + results[pos].depatureTime + "\n" +
-					"Arrival at Destination (" + results[pos].endStationName + "):" + results[pos].arrivalAtDestinationTime + "\n" +
-					"Train Type: " + results[pos].tyDescription + "\n");
+		TextView tv = null;
+
+		/* Arrival at start */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_arr_at_start_txt);
+		tv.setText("Arrival at\n" + results[pos].startStationName);
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_arr_at_start_val);
+		tv.setText(results[pos].arrivalTime);
+		/* Departing from start */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_depart_from_start_txt);
+		tv.setText("Departing from\n" + results[pos].startStationName);
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_depart_from_start_val);
+		tv.setText(results[pos].depatureTime);
+		/* Reaching end */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_reach_dest_txt);
+		tv.setText("Reaching\n" + results[pos].endStationName);
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_reach_dest_val);
+		tv.setText(results[pos].arrivalAtDestinationTime);
+		/* Duration */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_freq_txt);
+		tv.setText("Frequency");
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_freq_val);
+		tv.setText(results[pos].fDescription);
+		/* Duration */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_dur_txt);
+		tv.setText("Duration");
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_dur_val);
+		tv.setText(results[pos].duration);
+		/* Final destination */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_final_dest_txt);
+		tv.setText("Final\nDestination");
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_final_dest_val);
+		tv.setText(results[pos].toTrStationName);
+		/* Train Type */
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_train_type_txt);
+		tv.setText("Train Type");
+		tv = (TextView)detailsView.findViewById(R.id.result_table_details_train_type_val);
+		tv.setText(results[pos].tyDescription);
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(detailsView);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -141,7 +172,6 @@ public class ResultViewActivity extends Activity implements Runnable {
 				dialog.cancel();
 			}
 		});
-		builder.setTitle("Details...");
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
