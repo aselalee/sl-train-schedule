@@ -232,10 +232,10 @@ public class ResultViewActivity extends Activity implements Runnable {
 	
 	@Override
 	public void onAttachedToWindow() {
-	    super.onAttachedToWindow();
-	    Window window = getWindow();
-	    window.setFormat(PixelFormat.RGBA_8888);
-	    window.getDecorView().getBackground().setDither(true);
+		super.onAttachedToWindow();
+		Window window = getWindow();
+		window.setFormat(PixelFormat.RGBA_8888);
+		window.getDecorView().getBackground().setDither(true);
 	}
 	
 	@Override

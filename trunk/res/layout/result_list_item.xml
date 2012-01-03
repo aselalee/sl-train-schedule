@@ -68,7 +68,8 @@
         android:contentDescription="@string/more"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
+        android:layout_gravity="center_vertical"
+        android:gravity="right"
         android:adjustViewBounds="true" />
 <!--     <TextView -->
 <!--         android:layout_width="fill_parent" -->
