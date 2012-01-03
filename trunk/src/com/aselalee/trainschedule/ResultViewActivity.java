@@ -24,6 +24,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -58,14 +60,15 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private ProgressDialog pd;
 	private Thread thread = null;
 	private volatile boolean isStop = false;
+	private int activePosition = 0;
 	
 	private ListView listView = null;
-	private TextView tv_from = null;
-	private TextView tv_to = null;
+	private TextView tv = null;
 	private volatile Result [] results = null;
 	private Context myContext = null;
 	
 	private volatile int errorCode = Constants.ERR_NO_ERROR;
+	private static final int DIALOG_DETAILS = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -97,13 +100,13 @@ public class ResultViewActivity extends Activity implements Runnable {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-					show_details(position);
+					activePosition = position;
+					showDialog(DIALOG_DETAILS);
 			}
 		});
-		tv_from = (TextView) findViewById(R.id.res_table_start_station_name);
-		tv_from.setText( Constants.toTitleCase(station_from_txt));
-		tv_to = (TextView) findViewById(R.id.res_table_end_station_name);
-		tv_to.setText( Constants.toTitleCase(station_to_txt));
+		tv = (TextView) findViewById(R.id.res_table_station_names);
+		tv.setText( Constants.toTitleCase(station_from_txt) + " - " +
+					Constants.toTitleCase(station_to_txt));
 		
 		/**
 		 * Display progress Dialog.
@@ -125,61 +128,6 @@ public class ResultViewActivity extends Activity implements Runnable {
 		thread.start();
 	}
 
-	private void show_details(int pos) {
-//		LayoutInflater factory = LayoutInflater.from(this);
-//		View detailsView = factory.inflate(R.layout.result_details_dialog, null);
-		TextView tv = null;
-
-		Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
-		dialog.setContentView(R.layout.result_details_dialog);
-
-		/* Arrival at start */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
-		tv.setText("Arrival at\n" + results[pos].startStationName);
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_val);
-		tv.setText(results[pos].arrivalTime);
-		/* Departing from start */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_txt);
-		tv.setText("Departing from\n" + results[pos].startStationName);
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_val);
-		tv.setText(results[pos].depatureTime);
-		/* Reaching end */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_txt);
-		tv.setText("Reaching\n" + results[pos].endStationName);
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_val);
-		tv.setText(results[pos].arrivalAtDestinationTime);
-		/* Duration */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_txt);
-		tv.setText("Frequency");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_val);
-		tv.setText(results[pos].fDescription);
-		/* Duration */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_txt);
-		tv.setText("Duration");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_val);
-		tv.setText(results[pos].duration);
-		/* Final destination */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_txt);
-		tv.setText("Final\nDestination");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_val);
-		tv.setText(results[pos].toTrStationName);
-		/* Train Type */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_txt);
-		tv.setText("Train Type");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_val);
-		tv.setText(results[pos].tyDescription);
-		dialog.show();
-
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setView(detailsView);
-//		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int id) {
-//				dialog.cancel();
-//			}
-//		});
-//		AlertDialog alert = builder.create();
-//		alert.show();
-	}
 	/**
 	 * run() method that must be implemented when implementing "Runnable" class.
 	 */
@@ -281,7 +229,15 @@ public class ResultViewActivity extends Activity implements Runnable {
 	public void onResume() {
 		super.onResume();
 	}
-
+	
+	@Override
+	public void onAttachedToWindow() {
+	    super.onAttachedToWindow();
+	    Window window = getWindow();
+	    window.setFormat(PixelFormat.RGBA_8888);
+	    window.getDecorView().getBackground().setDither(true);
+	}
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -305,6 +261,74 @@ public class ResultViewActivity extends Activity implements Runnable {
 		}
 	}
 
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch(id) {
+			case DIALOG_DETAILS:
+				dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+				dialog.setContentView(R.layout.result_details_dialog);
+				Button button = (Button) dialog.findViewById(R.id.result_table_details_ok_btn);
+				button.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						dismissDialog(DIALOG_DETAILS);
+					}
+				});
+				break;
+		default:
+			dialog = null;
+		}
+		return dialog;
+	}
+
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		switch(id) {
+			case DIALOG_DETAILS:
+				set_dialog_details(dialog, activePosition);
+				break;
+			default:
+				return;
+		}
+	}
+
+	private void set_dialog_details(Dialog dialog, int pos) {
+		TextView tv = null;
+		/* Arrival at start */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
+		tv.setText("Arrival at\n" + results[pos].startStationName);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_val);
+		tv.setText(results[pos].arrivalTime);
+		/* Departing from start */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_txt);
+		tv.setText("Departing from\n" + results[pos].startStationName);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_val);
+		tv.setText(results[pos].depatureTime);
+		/* Reaching end */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_txt);
+		tv.setText("Reaching\n" + results[pos].endStationName);
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_val);
+		tv.setText(results[pos].arrivalAtDestinationTime);
+		/* Duration */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_txt);
+		tv.setText("Frequency");
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_val);
+		tv.setText(results[pos].fDescription);
+		/* Duration */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_txt);
+		tv.setText("Duration");
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_val);
+		tv.setText(results[pos].duration);
+		/* Final destination */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_txt);
+		tv.setText("Final\nDestination");
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_val);
+		tv.setText(results[pos].toTrStationName);
+		/* Train Type */
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_txt);
+		tv.setText("Train Type");
+		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_val);
+		tv.setText(results[pos].tyDescription);
+	}
+
 	private void getNewFavName() {
 		LayoutInflater factory = LayoutInflater.from(this);
 		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
@@ -314,13 +338,13 @@ public class ResultViewActivity extends Activity implements Runnable {
 		et.setText(station_from_txt + " - " + station_to_txt);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(textEntryView);
-		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				addParamsToFavs(et.getEditableText().toString());
 				Constants.HideSoftKeyboard(et, getBaseContext());
 			}
 		});
-		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				Constants.HideSoftKeyboard(et, getBaseContext());
 				dialog.cancel();
