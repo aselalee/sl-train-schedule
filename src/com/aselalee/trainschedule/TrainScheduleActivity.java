@@ -252,7 +252,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			isThreadHistory = true;
 			thread.start();
 
-			Intent intent = new Intent(this, ResultViewActivity.class);
+			Intent intent = Constants.GetResultViewIntent(this);
 			Constants.PupulateIntentForResultsActivity(
 					station_from_val, station_from_txt,
 					station_to_val, station_to_txt,
@@ -396,6 +396,9 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			case R.id.search_menu_add_to_fav:
 				getNewFavName();
 				return true;
+			case R.id.search_menu_switch_result_view:
+				Constants.GetResultsViewChoiceFromUser(this);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -489,9 +492,15 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	 * Utility functions.
 	 */
 	private boolean validateStations() {
-		if((searchString(stationsText, actv_from.getText().toString()) > -1) &&
-				(searchString(stationsText, actv_to.getText().toString()) > -1)) {
-			return true;
+		int from = searchString(stationsText, actv_from.getText().toString());
+		int to = searchString(stationsText, actv_to.getText().toString());
+		if(( from > -1) && (to > -1)){
+			if( from == to) {
+				Toast.makeText(this, "Station Names are Same", Toast.LENGTH_LONG).show();
+				return false;
+			} else {
+				return true;
+			}
 		}
 		Toast.makeText(this, "Invalid Station Names", Toast.LENGTH_LONG).show();
 		return false;

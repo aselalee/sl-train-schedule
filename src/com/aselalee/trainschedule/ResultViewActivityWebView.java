@@ -19,12 +19,9 @@ package com.aselalee.trainschedule;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,18 +31,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class ResultViewActivity extends Activity implements Runnable {
+public class ResultViewActivityWebView extends Activity implements Runnable {
 	private String station_from;
 	private String station_from_txt;
 	private String station_to;
@@ -57,24 +48,19 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private String date_today;
 	private boolean isThreadFavourites = false;
 	private String name_txt = "";
+	private WebView mWebView = null;
 	private ProgressDialog pd;
 	private Thread thread = null;
 	private volatile boolean isStop = false;
-	private int activePosition = 0;
+	private String resultHTML = "<html><head><title>Test</title></head><body><h1>Dummy</h1></body></html>";
 	
-	private ListView listView = null;
-	private TextView tv = null;
 	private volatile Result [] results = null;
-	private Context myContext = null;
-	
 	private volatile int errorCode = Constants.ERR_NO_ERROR;
-	private static final int DIALOG_DETAILS = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.result_table);
-		myContext = this;
+		setContentView(R.layout.result_table_web_view);
 
 		/**
 		 * Read data passed from the calling activity.
@@ -91,23 +77,13 @@ public class ResultViewActivity extends Activity implements Runnable {
 			time_to_txt = extras.getString("time_to_txt");
 			date_today = extras.getString("date_today");
 		}
-		isStop = false;
+
 		/**
-		 * Get the required handles.
-		 * Update start station and end station
+		 * Get the webview handle.
 		 */
-		listView = (ListView) findViewById(android.R.id.list);
-		listView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-					activePosition = position;
-					showDialog(DIALOG_DETAILS);
-			}
-		});
-		tv = (TextView) findViewById(R.id.res_table_station_names);
-		tv.setText( Constants.toTitleCase(station_from_txt) + " - " +
-					Constants.toTitleCase(station_to_txt));
-		
+		mWebView = (WebView)findViewById(R.id.result_table_web_view);
+		mWebView.getSettings().setBuiltInZoomControls(true);
+
 		/**
 		 * Display progress Dialog.
 		 */
@@ -163,16 +139,27 @@ public class ResultViewActivity extends Activity implements Runnable {
 	 * 2. Display the resultant HTML
 	 */
 	private Handler handler = new Handler() {
+
 		@Override
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
 				pd.dismiss();
 				if(isStop == false) {
 					if(results != null) {
-						listView.setAdapter(new ResultViewAdapter(myContext, results));
+						resultHTML = createHTMLFromResults(results);
 					} else {
-						setNoResultsState();
+						resultHTML = createHTMLErrorState(errorCode);
 						Log.e(Constants.LOG_TAG, "No Results");
+					}
+					if(mWebView != null) {
+						try {
+							mWebView.loadDataWithBaseURL("", resultHTML,"text/html", "UTF-8", null);
+						} catch(Exception e) {
+							Log.e(Constants.LOG_TAG, "Eror occurred in loadDataWithBaseURL " + e);
+							finish();
+						}
+					} else {
+						finish();
 					}
 				} else {
 					Log.i(Constants.LOG_TAG, "Thread Exited by Force.");
@@ -184,36 +171,6 @@ public class ResultViewActivity extends Activity implements Runnable {
 		}
 	};
 
-	private void setNoResultsState() {
-		LinearLayout linlay_root = (LinearLayout) findViewById(R.id.res_table_root_linlay);
-		LinearLayout linlay_table_head = (LinearLayout) linlay_root.findViewById(R.id.res_table_table_head);
-		linlay_table_head.setVisibility(View.GONE);
-		LayoutInflater factory = LayoutInflater.from(this);
-		View errorView = factory.inflate(R.layout.result_error, null);
-		TextView tv = (TextView) errorView.findViewById(R.id.results_error_msg);
-		Button bv = (Button) errorView.findViewById(R.id.results_error_button);
-		linlay_root.addView(errorView);
-		switch(errorCode) {
-			case Constants.ERR_NO_RESULTS_FOUND_ERROR:
-				tv.setText("No Results ...");
-				bv.setText("Back");
-				bv.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-							finish();
-						}
-					});
-				break;
-			default:
-				tv.setText("Network Error ...");
-				bv.setText("Retry");
-				bv.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-						Bundle tempBundle = new Bundle();
-						onCreate(tempBundle);
-						}
-					});
-		}
-	}
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -223,21 +180,16 @@ public class ResultViewActivity extends Activity implements Runnable {
 	public void onDestroy() {
 		super.onStop();
 		isStop = true;
+		if(mWebView != null) {
+			mWebView.destroy();
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 	}
-	
-	@Override
-	public void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		Window window = getWindow();
-		window.setFormat(PixelFormat.RGBA_8888);
-		window.getDecorView().getBackground().setDither(true);
-	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -264,72 +216,73 @@ public class ResultViewActivity extends Activity implements Runnable {
 		}
 	}
 
-	protected Dialog onCreateDialog(int id) {
-		Dialog dialog;
-		switch(id) {
-			case DIALOG_DETAILS:
-				dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
-				dialog.setContentView(R.layout.result_details_dialog);
-				Button button = (Button) dialog.findViewById(R.id.result_table_details_ok_btn);
-				button.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-						dismissDialog(DIALOG_DETAILS);
-					}
-				});
-				break;
+	private String createHTMLFromResults(Result results[]) {
+		String htmlOutput = "";
+		String style = "";
+		String strTmp = "";
+		htmlOutput += "<html><head>";
+		htmlOutput += "<style type=\"text/css\">";
+		htmlOutput += 	"tr {background-color:#CBCBCB;}";
+		htmlOutput += 	"tr.alt {background-color:#E8E8EA;}";
+		htmlOutput += 	"td {border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
+		htmlOutput += 	"th {background-color:#3C3C3D;color:white;border-width:1px;padding:2px;border-color:black;border-style:outset;text-align:center;}";
+		htmlOutput += 	"table {font-size:10px;border-width:1px;border-collapse:collapse;border-color:black;border-style:outset;}";
+		htmlOutput += "</style>";
+		htmlOutput += "</head><body>";
+		htmlOutput += "<table width=\"100%\" align=\"center\">";
+		htmlOutput += "<thead><tr>";
+		htmlOutput += "<th><a>Arriving at</a><br/><a>" + results[0].startStationName + "</a></th>";
+		htmlOutput += "<th><a>Departing from</a><br/><a>" + results[0].startStationName + "</a></th>";
+		htmlOutput += "<th><a>Train</a><br/><a>Frequency</a></th>";
+		htmlOutput += "<th><a>Arriving at<a><br/><a>Destination</a><br/><a>(" + results[0].endStationName + ")</a></th>";
+		htmlOutput += "<th><a>Final</a><br/><a>Destination</a></th>";
+		htmlOutput += "<th><a>Train</a><br/><a>Type</a></th>";
+		htmlOutput += "</tr></thead>";
+		htmlOutput += "<tbody>";
+		for(int i = 0; i < results.length; i++) {
+			if(i%2 == 0) {
+				style = "class=\"alt\"";
+			} else {
+				style = "";
+			}
+			htmlOutput += "<tr " + style + ">";
+			htmlOutput += "<td>";
+			htmlOutput += results[i].arrivalTime;
+			htmlOutput += "</td>";
+			htmlOutput += "<td>";
+			htmlOutput +=  results[i].depatureTime;
+			htmlOutput += "</td>";
+			htmlOutput += "<td>";
+			htmlOutput +=  results[i].fDescription;
+			htmlOutput += "</td>";
+			htmlOutput += "<td>";
+			htmlOutput +=  results[i].arrivalAtDestinationTime;
+			htmlOutput += "</td>";
+			htmlOutput += "<td>";
+			htmlOutput +=  results[i].toTrStationName;
+			htmlOutput += "</td>";
+			htmlOutput += "<td>";
+			strTmp = results[i].tyDescription;
+			htmlOutput +=  strTmp;
+			htmlOutput += "</td>";
+			htmlOutput += "</tr>";
+		}
+		htmlOutput += "</tbody>";
+		htmlOutput += "</table>";
+		htmlOutput += "<br/><br/><br/></body></html>";
+		return htmlOutput;
+	}
+
+	private String createHTMLErrorState(int errorCode) {
+		String htmlOutput = "";
+		switch(errorCode) {
+		case Constants.ERR_NO_RESULTS_FOUND_ERROR:	
+			htmlOutput = "<html><head></head><body><h1>Results Not Found.</h1></body></html>";
+			break;
 		default:
-			dialog = null;
+			htmlOutput = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
 		}
-		return dialog;
-	}
-
-	protected void onPrepareDialog(int id, Dialog dialog) {
-		switch(id) {
-			case DIALOG_DETAILS:
-				set_dialog_details(dialog, activePosition);
-				break;
-			default:
-				return;
-		}
-	}
-
-	private void set_dialog_details(Dialog dialog, int pos) {
-		TextView tv = null;
-		/* Arrival at start */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
-		tv.setText("Arrival at\n" + results[pos].startStationName);
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_val);
-		tv.setText(results[pos].arrivalTime);
-		/* Departing from start */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_txt);
-		tv.setText("Departing from\n" + results[pos].startStationName);
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_val);
-		tv.setText(results[pos].depatureTime);
-		/* Reaching end */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_txt);
-		tv.setText("Reaching\n" + results[pos].endStationName);
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_val);
-		tv.setText(results[pos].arrivalAtDestinationTime);
-		/* Duration */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_txt);
-		tv.setText("Frequency");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_val);
-		tv.setText(results[pos].fDescription);
-		/* Duration */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_txt);
-		tv.setText("Duration");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_val);
-		tv.setText(results[pos].duration);
-		/* Final destination */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_txt);
-		tv.setText("Final\nDestination");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_val);
-		tv.setText(results[pos].toTrStationName);
-		/* Train Type */
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_txt);
-		tv.setText("Train Type");
-		tv = (TextView)dialog.findViewById(R.id.result_table_details_train_type_val);
-		tv.setText(results[pos].tyDescription);
+		return htmlOutput;
 	}
 
 	private void getNewFavName() {
@@ -341,13 +294,13 @@ public class ResultViewActivity extends Activity implements Runnable {
 		et.setText(station_from_txt + " - " + station_to_txt);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(textEntryView);
-		builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				addParamsToFavs(et.getEditableText().toString());
 				Constants.HideSoftKeyboard(et, getBaseContext());
 			}
 		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				Constants.HideSoftKeyboard(et, getBaseContext());
 				dialog.cancel();
