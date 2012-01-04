@@ -17,8 +17,11 @@
 
 package com.aselalee.trainschedule;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -30,12 +33,15 @@ public final class Constants {
 	/**
 	 * Keys to be saved/read in the TrainScheduleActivity.
 	 */
+	public static final int TRUE = 1;
+	public static final int FALSE = 0;
 	public static final String TIME_FROM_POS = "time_from_pos";
 	public static final String TIME_TO_POS = "time_to_pos";
 	public static final String STATION_FROM_TXT = "station_from_txt";
 	public static final String STATION_FROM_VAL = "station_from_val";
 	public static final String STATION_TO_TXT = "station_to_txt";
 	public static final String STATION_TO_VAL = "station_to_val";
+	public static final String IS_RESULTS_WEB_VIEW = "is_results_web_view";
 
 	/**
 	 * LOG Tag
@@ -113,6 +119,7 @@ public final class Constants {
 		intent.putExtra("date_today", date_today);
 		return;
 	}
+
 	public static final void HideSoftKeyboard(View view, Context context) {
 		InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -126,10 +133,53 @@ public final class Constants {
 		}
 		return result.trim();
 	}
-	public static final String toInitialCap(String word) {
+
+	private static final String toInitialCap(String word) {
 		if( word != null && word.length() > 1) {
 			return String.valueOf(word.toUpperCase().charAt(0)) + word.substring(1).toLowerCase();
 		}
 		return "";
+	}
+
+	public static Intent GetResultViewIntent(Context packageContext) {
+		Intent intent = null;
+		SharedPreferences pref = packageContext.getSharedPreferences(Constants.PREFERENCES_FILE,
+													android.content.Context.MODE_WORLD_READABLE);
+		if(pref.getInt(Constants.IS_RESULTS_WEB_VIEW, Constants.FALSE) == Constants.FALSE) {		
+			intent = new Intent(packageContext, ResultViewActivity.class);
+		} else {
+			intent = new Intent(packageContext, ResultViewActivityWebView.class);
+		}
+		return intent;
+	}
+
+	public static void GetResultsViewChoiceFromUser(final Context packageContext) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(packageContext);
+		SharedPreferences pref = packageContext.getSharedPreferences(Constants.PREFERENCES_FILE,
+				android.content.Context.MODE_WORLD_READABLE);
+		int current_choice = pref.getInt(Constants.IS_RESULTS_WEB_VIEW, -1);
+		CharSequence[] choice = {"New List View\n(Fast and Looks Cool)",
+								"Old Web View\n(Slow and Looks ...old)"};
+		builder.setSingleChoiceItems(choice, current_choice, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if(which == 0) {
+					SetResultsViewState(packageContext, Constants.FALSE);
+				} else {
+					SetResultsViewState(packageContext, Constants.TRUE);
+				}
+				dialog.cancel();
+			}
+		});
+		builder.setTitle("Select Reuslts View");
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private static void SetResultsViewState(Context packageContext, int isResultWebView) {
+		SharedPreferences pref = packageContext.getSharedPreferences(Constants.PREFERENCES_FILE,
+				android.content.Context.MODE_WORLD_READABLE);
+		SharedPreferences.Editor e = pref.edit();
+		e.putInt(Constants.IS_RESULTS_WEB_VIEW, isResultWebView);
+		e.commit();
 	}
 }

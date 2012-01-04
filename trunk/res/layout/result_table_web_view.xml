@@ -15,11 +15,9 @@
 * PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
 * NECESSARY SERVICING, REPAIR OR CORRECTION.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/search_menu_add_to_fav"
-        android:title="@string/add_to_fav_txt"
-        android:icon="@drawable/ic_menu_add"/>
-    <item android:id="@+id/search_menu_switch_result_view"
-        android:title="@string/switch_result_view"
-        android:icon="@drawable/ic_menu_switch_view"/>
-</menu>
+
+<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/result_table_web_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+</WebView>
