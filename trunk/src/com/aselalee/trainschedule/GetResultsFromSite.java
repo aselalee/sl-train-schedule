@@ -162,15 +162,15 @@ public class GetResultsFromSite {
 				strTmp = trainsArray.getJSONObject(i).getString("delayTime").toString().trim();
 				results[i].delayTime = chop(strTmp);
 				results[i].comment = trainsArray.getJSONObject(i).getString("comment").toString().trim();
-				results[i].startStationName = Constants.toTitleCase(
+				results[i].startStationName = Constants.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("startStationName").toString().trim());
-				results[i].endStationName = Constants.toTitleCase(
+				results[i].endStationName = Constants.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("endStationName").toString().trim());
-				results[i].toTrStationName = Constants.toTitleCase(
+				results[i].toTrStationName = Constants.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("toTrStationName").toString().trim());
 				results[i].fDescription = formatFrequency(
-						Constants.toTitleCase(trainsArray.getJSONObject(i).getString("fDescription").toString().trim()));
-				results[i].tyDescription = Constants.toTitleCase(
+						Constants.ToTitleCase(trainsArray.getJSONObject(i).getString("fDescription").toString().trim()));
+				results[i].tyDescription = Constants.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("tyDescription").toString().trim());
 				results[i].duration = calcDuration(results[i].depatureTime, results[i].arrivalAtDestinationTime);
 			} catch(JSONException e) {

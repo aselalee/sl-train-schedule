@@ -18,7 +18,6 @@
 package com.aselalee.trainschedule;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -26,14 +25,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Toast;
 
 public class ResultViewActivityWebView extends Activity implements Runnable {
@@ -46,8 +41,6 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	private String time_to;
 	private String time_to_txt;
 	private String date_today;
-	private boolean isThreadFavourites = false;
-	private String name_txt = "";
 	private WebView mWebView = null;
 	private ProgressDialog pd;
 	private Thread thread = null;
@@ -100,7 +93,6 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 		 * This will execute the "run" method in a new thread.
 		 */
 		thread = new Thread(this);
-		isThreadFavourites = false;
 		thread.start();
 	}
 
@@ -108,30 +100,20 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	 * run() method that must be implemented when implementing "Runnable" class.
 	 */
 	public void run() {
-		if(isThreadFavourites == false ) {
-			/**
-			 * Call the "GetResults" method to retrieve data from server.
-			 */
-			GetResultsFromSite getResults = new GetResultsFromSite(); 
-			results = getResults.GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
-			if(results == null) {
-				errorCode = getResults.GetErrorCode();
-			}
-			/**
-			 * This will send message to the calling thread to continue and display data.
-			 */
-			Message myMsg = new Message();
-			myMsg.arg1 = Constants.THREAD_GET_RESULTS;
-			handler.sendMessage(myMsg);
-		} else {
-			DBDataAccess myDBAcc = new DBDataAccess(this);
-			myDBAcc.PushDataFavourites(station_from_txt, station_from,
-					station_to_txt, station_to,
-					time_from_txt, time_from,
-					time_to_txt, time_to,
-					name_txt, handler );
-			myDBAcc.close();
+		/**
+		 * Call the "GetResults" method to retrieve data from server.
+		 */
+		GetResultsFromSite getResults = new GetResultsFromSite(); 
+		results = getResults.GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
+		if(results == null) {
+			errorCode = getResults.GetErrorCode();
 		}
+		/**
+		 * This will send message to the calling thread to continue and display data.
+		 */
+		Message myMsg = new Message();
+		myMsg.arg1 = Constants.THREAD_GET_RESULTS;
+		handler.sendMessage(myMsg);
 	}
 	/**
 	 * Handler variable which is used to handle processing after results are received.
@@ -139,7 +121,6 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	 * 2. Display the resultant HTML
 	 */
 	private Handler handler = new Handler() {
-
 		@Override
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
@@ -206,7 +187,11 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
-			getNewFavName();
+			Constants.GetNewFavNameAndAddToFavs(this, true,
+					station_from_txt, station_from,
+					station_to_txt, station_to,
+					time_from_txt, time_from,
+					time_to_txt, time_to, handler);
 			return true;
 		case R.id.search_menu_switch_result_view:
 			Constants.GetResultsViewChoiceFromUser(this);
@@ -283,42 +268,5 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 			htmlOutput = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
 		}
 		return htmlOutput;
-	}
-
-	private void getNewFavName() {
-		LayoutInflater factory = LayoutInflater.from(this);
-		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
-		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
-		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.dialog_isTimeFilterOnCB);
-		cb.setVisibility(View.GONE);
-		et.setText(station_from_txt + " - " + station_to_txt);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setView(textEntryView);
-		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				addParamsToFavs(et.getEditableText().toString());
-				Constants.HideSoftKeyboard(et, getBaseContext());
-			}
-		});
-		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				Constants.HideSoftKeyboard(et, getBaseContext());
-				dialog.cancel();
-			}
-		});
-		builder.setTitle("Enter New Name");
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-
-	private void addParamsToFavs(String newName) {
-		Thread thread = new Thread(this);
-		isThreadFavourites = true;
-		name_txt = newName;
-		if(name_txt.length() == 0) {
-			Toast.makeText(this, "Invalid name", Toast.LENGTH_LONG).show();
-			return;
-		}
-		thread.start();
 	}
 }
