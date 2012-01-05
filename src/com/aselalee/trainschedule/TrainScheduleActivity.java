@@ -18,9 +18,7 @@
 package com.aselalee.trainschedule;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -31,7 +29,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,8 +39,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -71,8 +66,6 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	private String time_to_txt = "";
 	private String time_from_val = "";
 	private String time_to_val = "";
-	private String name_txt = "";
-	private boolean isThreadHistory = true;
 
 	/**
 	 * Default values.
@@ -118,8 +111,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		get_given_btn = (Button)findViewById(R.id.search_get_given);
 		get_given_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
-				time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
+				time_from_val = Constants.MapTimeFrom(spinner_times_from.getSelectedItemPosition());
+				time_to_val = Constants.MapTimeTo(spinner_times_to.getSelectedItemPosition());
 				time_from_txt = spinner_times_from.getSelectedItem().toString();
 				time_to_txt = spinner_times_to.getSelectedItem().toString();
 				show_results();
@@ -132,10 +125,10 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 				 * To get the full schedule, times are mapped to least starting time and
 				 * most ending time.
 				 */
-				time_from_val = map_time_from(0);
-				time_to_val = map_time_to(spinner_times_to.getCount() - 1);
-				time_from_txt = spinner_times_from.getItemAtPosition(0).toString();
-				time_to_txt = spinner_times_to.getItemAtPosition(spinner_times_to.getCount() - 1).toString();
+				time_from_val = Constants.MapTimeFrom(0);
+				time_to_val = Constants.MapTimeTo(-1);
+				time_from_txt = getString(R.string.earliest_from_time);
+				time_to_txt = getString(R.string.latest_to_time);
 				show_results();
 			}
 		});
@@ -249,7 +242,6 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			 * This is done in a separate thread.
 			 */
 			Thread thread = new Thread(this);
-			isThreadHistory = true;
 			thread.start();
 
 			Intent intent = Constants.GetResultViewIntent(this);
@@ -262,28 +254,6 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			startActivity(intent);
 		}
 		return;
-	}
-
-	/**
-	 * Match "from time" in spinner to actual string received by the server.
-	 */
-	private String map_time_from(int pos) {
-		String time_from[] = {"00:00:01","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00",
-				"06:00:00","07:00:00","08:00:00","09:00:00","10:00:00","11:00:00",
-				"11:59:59","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00",
-				"18:00:00","19:00:00","20:00:00","21:00:0,","22:00:00","23:00:00"};
-		return time_from[pos];
-	}
-
-	/**
-	 * Match "to time" in spinner to actual string received by the server.
-	 */
-	private String map_time_to(int pos) {
-		String time_to[] = {"01:00:00","02:00:00","03:00:00","04:00:00","05:00:00","06:00:00","07:00:00",
-				"08:00:00","09:00:00","10:00:00","11:00:00","11:59:59","13:00:00","14:00:00",
-				"15:00:00","16:00:00","17:00:00","18:00:00","19:00:00","20:00:00","21:00:00",
-				"22:00:0,","23:00:00","23:59:59"};
-		return time_to[pos];
 	}
 
 	/**
@@ -368,18 +338,10 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 
 	public void run() {
 		DBDataAccess myDBAcc = new DBDataAccess(this);
-		if(isThreadHistory == true) {
-			myDBAcc.PushDataHistory(station_from_txt, station_from_val,
-					station_to_txt, station_to_val,
-					time_from_txt, time_from_val,
-					time_to_txt, time_to_val);
-		} else {
-			myDBAcc.PushDataFavourites(station_from_txt, station_from_val,
-					station_to_txt, station_to_val,
-					time_from_txt, time_from_val,
-					time_to_txt, time_to_val,
-					name_txt, handler );
-		}
+		myDBAcc.PushDataHistory(station_from_txt, station_from_val,
+				station_to_txt, station_to_val,
+				time_from_txt, time_from_val,
+				time_to_txt, time_to_val);
 		myDBAcc.close();
 	}
 
@@ -394,7 +356,18 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.search_menu_add_to_fav:
-				getNewFavName();
+				if(validateStations() == false) {
+					return true;
+				}
+				time_from_val = Constants.MapTimeFrom(spinner_times_from.getSelectedItemPosition());
+				time_to_val = Constants.MapTimeTo(spinner_times_to.getSelectedItemPosition());
+				time_from_txt = spinner_times_from.getSelectedItem().toString();
+				time_to_txt = spinner_times_to.getSelectedItem().toString();
+				Constants.GetNewFavNameAndAddToFavs(this, false,
+						station_from_txt, station_from_val,
+						station_to_txt, station_to_val,
+						time_from_txt, time_from_val,
+						time_to_txt, time_to_val, handler);
 				return true;
 			case R.id.search_menu_switch_result_view:
 				Constants.GetResultsViewChoiceFromUser(this);
@@ -411,56 +384,6 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			Toast.makeText(getBaseContext(), msgStr, Toast.LENGTH_SHORT).show();
 		}
 	};
-
-	private void getNewFavName() {
-		if(validateStations() == false) {
-			return;
-		}
-		LayoutInflater factory = LayoutInflater.from(this);
-		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
-		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
-		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.dialog_isTimeFilterOnCB);
-		et.setText(station_from_txt + " - " + station_to_txt);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setView(textEntryView);
-		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				addParamsToFavs(et.getEditableText().toString(), cb.isChecked());
-				Constants.HideSoftKeyboard(et, getBaseContext());
-			}
-		});
-		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				Constants.HideSoftKeyboard(actv_to, getBaseContext());
-				dialog.cancel();
-			}
-		});
-		builder.setTitle("Enter New Name");
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-
-	private void addParamsToFavs(String newName, Boolean isTimeFilterOn) {
-		Thread thread = new Thread(this);
-		isThreadHistory = false;
-		if( isTimeFilterOn == true) {
-			time_from_val = map_time_from(spinner_times_from.getSelectedItemPosition());
-			time_to_val = map_time_to(spinner_times_to.getSelectedItemPosition());
-			time_from_txt = spinner_times_from.getSelectedItem().toString();
-			time_to_txt = spinner_times_to.getSelectedItem().toString();
-		}else {
-			time_from_val = map_time_from(0);
-			time_to_val = map_time_to(spinner_times_to.getCount() - 1);
-			time_from_txt = spinner_times_from.getItemAtPosition(0).toString();
-			time_to_txt = spinner_times_to.getItemAtPosition(spinner_times_to.getCount() - 1).toString();
-		}
-		name_txt = newName;
-		if(name_txt.length() == 0) {
-			Toast.makeText(this, "Invalid name", Toast.LENGTH_LONG).show();
-			return;
-		}
-		thread.start();
-	}
 
 	/**
 	 * Private class to hold stations data.

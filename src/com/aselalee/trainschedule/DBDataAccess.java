@@ -183,9 +183,9 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		myCur.moveToLast();
 		for(int i = 0; i < myCur.getCount(); i++) {
 			paramsList[i] = new ParameterSet();
-			paramsList[i].start_station_txt =  Constants.toTitleCase(myCur.getString(1));
+			paramsList[i].start_station_txt =  Constants.ToTitleCase(myCur.getString(1));
 			paramsList[i].start_station_val = myCur.getString(2);
-			paramsList[i].end_station_txt =  Constants.toTitleCase(myCur.getString(3));
+			paramsList[i].end_station_txt =  Constants.ToTitleCase(myCur.getString(3));
 			paramsList[i].end_station_val = myCur.getString(4);
 			paramsList[i].start_time_txt = myCur.getString(5);
 			paramsList[i].start_time_val = myCur.getString(6);
@@ -341,9 +341,9 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		for(int i = 0; i < myCur.getCount(); i++) {
 			paramsList[i] = new ParameterSet();
 			paramsList[i].id = myCur.getLong(0);
-			paramsList[i].start_station_txt =  Constants.toTitleCase(myCur.getString(1));
+			paramsList[i].start_station_txt =  Constants.ToTitleCase(myCur.getString(1));
 			paramsList[i].start_station_val = myCur.getString(2);
-			paramsList[i].end_station_txt =  Constants.toTitleCase(myCur.getString(3));
+			paramsList[i].end_station_txt =  Constants.ToTitleCase(myCur.getString(3));
 			paramsList[i].end_station_val = myCur.getString(4);
 			paramsList[i].start_time_txt = myCur.getString(5);
 			paramsList[i].start_time_val = myCur.getString(6);
