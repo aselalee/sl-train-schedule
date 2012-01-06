@@ -71,7 +71,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_swap_btn_med"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:background="@drawable/button_get_user_input_activity_swap" />
         </LinearLayout>
         <TableLayout
             android:layout_width="wrap_content"
@@ -83,7 +84,9 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/full_schedule"
-                    android:layout_span="3" />
+                    android:layout_span="3"
+                    android:background="@drawable/button_get_user_input_activity_search"
+                    android:layout_margin="10dp" />
             </TableRow>
             <TableRow
                 android:layout_marginTop="10dp">
@@ -115,7 +118,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/schedule"
-                   android:layout_span="3" />
+                    android:layout_span="3"
+                    android:background="@drawable/button_get_user_input_activity_search"
+                    android:layout_margin="10dp" />
             </TableRow>
         </TableLayout>
     </LinearLayout>
