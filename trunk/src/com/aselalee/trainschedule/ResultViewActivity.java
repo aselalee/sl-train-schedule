@@ -56,6 +56,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private Thread thread = null;
 	private volatile boolean isStop = false;
 	private int activePosition = 0;
+	private boolean isAddToFavsActive = true;
 	
 	private ListView listView = null;
 	private TextView tv = null;
@@ -153,8 +154,10 @@ public class ResultViewActivity extends Activity implements Runnable {
 				pd.dismiss();
 				if(isStop == false) {
 					if(results != null) {
+						isAddToFavsActive = true;
 						listView.setAdapter(new ResultViewAdapter(myContext, results));
 					} else {
+						isAddToFavsActive = false;
 						setNoResultsState();
 						Log.e(Constants.LOG_TAG, "No Results");
 					}
@@ -250,6 +253,16 @@ public class ResultViewActivity extends Activity implements Runnable {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if(isAddToFavsActive == false) {
+			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(false);
+		} else {
+			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(true);
+		}
+		return true;
 	}
 
 	protected Dialog onCreateDialog(int id) {
