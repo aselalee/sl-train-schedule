@@ -45,6 +45,7 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	private ProgressDialog pd;
 	private Thread thread = null;
 	private volatile boolean isStop = false;
+	private boolean isAddToFavsActive = true;
 	private String resultHTML = "<html><head><title>Test</title></head><body><h1>Dummy</h1></body></html>";
 	
 	private volatile Result [] results = null;
@@ -127,8 +128,10 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 				pd.dismiss();
 				if(isStop == false) {
 					if(results != null) {
+						isAddToFavsActive = true;
 						resultHTML = createHTMLFromResults(results);
 					} else {
+						isAddToFavsActive = false;
 						resultHTML = createHTMLErrorState(errorCode);
 						Log.e(Constants.LOG_TAG, "No Results");
 					}
@@ -140,6 +143,7 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 							finish();
 						}
 					} else {
+						Log.e(Constants.LOG_TAG, "WebView is NULL");
 						finish();
 					}
 				} else {
@@ -199,6 +203,16 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if(isAddToFavsActive == false) {
+			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(false);
+		} else {
+			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(true);
+		}
+		return true;
 	}
 
 	private String createHTMLFromResults(Result results[]) {
