@@ -15,13 +15,39 @@
 * PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
 * NECESSARY SERVICING, REPAIR OR CORRECTION.
 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <gradient
-        android:startColor="#e0e0e0"
-        android:endColor="#cfcfcfcf"
-        android:angle="270" />
-    <corners
-        android:radius="5dp" />
-</shape>
+    <item android:state_pressed="true" >
+        <shape
+            android:shape="rectangle">
+            <gradient
+                android:startColor="#cfcfcfcf"
+                android:endColor="#e0e0e0"
+                android:angle="270" />
+            <corners
+                android:radius="5dp" />
+        </shape>
+    </item>
+    <item android:state_focused="true" >
+        <shape
+            android:shape="rectangle">
+            <gradient
+                android:startColor="#cfcfcfcf"
+                android:endColor="#e0e0e0"
+                android:angle="270" />
+            <corners
+                android:radius="5dp" />
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="rectangle">
+            <gradient
+                android:endColor="#cfcfcfcf"
+                android:startColor="#e0e0e0"
+                android:angle="270" />
+            <corners
+                android:radius="5dp" />
+        </shape>
+    </item>
+</selector>
