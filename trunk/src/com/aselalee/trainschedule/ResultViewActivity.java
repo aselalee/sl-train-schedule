@@ -115,6 +115,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 						finish();
 					}
 				});
+		pd.setCanceledOnTouchOutside(false);
 
 		/**
 		 * This will execute the "run" method in a new thread.
@@ -151,7 +152,9 @@ public class ResultViewActivity extends Activity implements Runnable {
 		@Override
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
-				pd.dismiss();
+				if(pd.isShowing() == true) {
+					pd.dismiss();
+				}
 				if(isStop == false) {
 					if(results != null) {
 						isAddToFavsActive = true;
