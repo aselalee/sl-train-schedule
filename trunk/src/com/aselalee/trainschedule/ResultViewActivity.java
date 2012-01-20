@@ -42,7 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ResultViewActivity extends Activity implements Runnable {
+public class ResultViewActivity extends Activity{
 	private String station_from;
 	private String station_from_txt;
 	private String station_to;
@@ -53,24 +53,24 @@ public class ResultViewActivity extends Activity implements Runnable {
 	private String time_to_txt;
 	private String date_today;
 	private ProgressDialog pd;
-	private Thread thread = null;
-	private volatile boolean isStop = false;
+	private GetResultsFromSite resultsThread = null;
+	private boolean isStop = false;
 	private int activePosition = 0;
 	private boolean isAddToFavsActive = true;
-	
 	private ListView listView = null;
 	private TextView tv = null;
-	private volatile Result [] results = null;
+	private Result [] results = null;
 	private Context myContext = null;
-	
-	private volatile int errorCode = Constants.ERR_NO_ERROR;
+	private int errorCode = Constants.ERR_NO_ERROR;
+
 	private static final int DIALOG_DETAILS = 1;
+	private static final int DIALOG_PROGRESS = 2;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.result_table);
-		myContext = this;
+		myContext = ResultViewActivity.this;
 
 		/**
 		 * Read data passed from the calling activity.
@@ -107,42 +107,18 @@ public class ResultViewActivity extends Activity implements Runnable {
 		/**
 		 * Display progress Dialog.
 		 */
-		pd = ProgressDialog.show(this, "Working..",
-				"Fetching Results...",
-				true, true,
-				new DialogInterface.OnCancelListener(){
-					public void onCancel(DialogInterface dialog) {
-						finish();
-					}
-				});
-		pd.setCanceledOnTouchOutside(false);
+		showDialog(DIALOG_PROGRESS);
 
 		/**
 		 * This will execute the "run" method in a new thread.
 		 */
-		thread = new Thread(this);
-		thread.start();
+		resultsThread = new GetResultsFromSite(handler,
+				station_from, station_to,
+				time_from, time_to,
+				date_today);
+		resultsThread.start();
 	}
 
-	/**
-	 * run() method that must be implemented when implementing "Runnable" class.
-	 */
-	public void run() {
-		/**
-		 * Call the "GetResults" method to retrieve data from server.
-		 */
-		GetResultsFromSite getResults = new GetResultsFromSite(); 
-		results = getResults.GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
-		if(results == null) {
-			errorCode = getResults.GetErrorCode();
-		}
-		/**
-		 * This will send message to the calling thread to continue and display data.
-		 */
-		Message myMsg = new Message();
-		myMsg.arg1 = Constants.THREAD_GET_RESULTS;
-		handler.sendMessage(myMsg);
-	}
 	/**
 	 * Handler variable which is used to handle processing after results are received.
 	 * 1. Remove the progress dialog
@@ -153,16 +129,18 @@ public class ResultViewActivity extends Activity implements Runnable {
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
 				if(pd.isShowing() == true) {
-					pd.dismiss();
+					dismissDialog(DIALOG_PROGRESS);
 				}
 				if(isStop == false) {
+					results = resultsThread.GetResults();
+					errorCode = resultsThread.GetErrorCode();
 					if(results != null) {
 						isAddToFavsActive = true;
 						listView.setAdapter(new ResultViewAdapter(myContext, results));
 					} else {
 						isAddToFavsActive = false;
 						setNoResultsState();
-						Log.e(Constants.LOG_TAG, "No Results");
+						Log.i(Constants.LOG_TAG, "No Results");
 					}
 				} else {
 					Log.i(Constants.LOG_TAG, "Thread Exited by Force.");
@@ -178,7 +156,7 @@ public class ResultViewActivity extends Activity implements Runnable {
 		LinearLayout linlay_root = (LinearLayout) findViewById(R.id.res_table_root_linlay);
 		LinearLayout linlay_table_head = (LinearLayout) linlay_root.findViewById(R.id.res_table_table_head);
 		linlay_table_head.setVisibility(View.GONE);
-		LayoutInflater factory = LayoutInflater.from(this);
+		LayoutInflater factory = LayoutInflater.from(ResultViewActivity.this);
 		View errorView = factory.inflate(R.layout.result_error, null);
 		TextView tv = (TextView) errorView.findViewById(R.id.results_error_msg);
 		Button bv = (Button) errorView.findViewById(R.id.results_error_button);
@@ -244,14 +222,14 @@ public class ResultViewActivity extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
-			Constants.GetNewFavNameAndAddToFavs(this, true,
+			Constants.GetNewFavNameAndAddToFavs(ResultViewActivity.this, true,
 					station_from_txt, station_from,
 					station_to_txt, station_to,
 					time_from_txt, time_from,
 					time_to_txt, time_to, handler);
 			return true;
 		case R.id.search_menu_switch_result_view:
-			Constants.GetResultsViewChoiceFromUser(this);
+			Constants.GetResultsViewChoiceFromUser(ResultViewActivity.this);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -269,10 +247,10 @@ public class ResultViewActivity extends Activity implements Runnable {
 	}
 
 	protected Dialog onCreateDialog(int id) {
-		Dialog dialog;
+		Dialog dialog = null;
 		switch(id) {
 			case DIALOG_DETAILS:
-				dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+				dialog = new Dialog(ResultViewActivity.this, android.R.style.Theme_Translucent_NoTitleBar);
 				dialog.setContentView(R.layout.result_details_dialog);
 				Button button = (Button) dialog.findViewById(R.id.result_table_details_ok_btn);
 				button.setOnClickListener(new View.OnClickListener() {
@@ -280,6 +258,19 @@ public class ResultViewActivity extends Activity implements Runnable {
 						dismissDialog(DIALOG_DETAILS);
 					}
 				});
+				break;
+			case DIALOG_PROGRESS:
+				pd = new ProgressDialog(ResultViewActivity.this);
+				pd.setMessage("Fetching Results...");
+				pd.setCancelable(true);
+				pd.setCanceledOnTouchOutside(false);
+				pd.setOnCancelListener(
+						new DialogInterface.OnCancelListener(){
+							public void onCancel(DialogInterface dialog) {
+								finish();
+							}
+						});
+				dialog = pd;
 				break;
 		default:
 			dialog = null;
@@ -291,6 +282,8 @@ public class ResultViewActivity extends Activity implements Runnable {
 		switch(id) {
 			case DIALOG_DETAILS:
 				set_dialog_details(dialog, activePosition);
+				break;
+			case DIALOG_PROGRESS:
 				break;
 			default:
 				return;

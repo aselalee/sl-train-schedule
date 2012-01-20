@@ -18,6 +18,7 @@
 package com.aselalee.trainschedule;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -31,7 +32,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-public class ResultViewActivityWebView extends Activity implements Runnable {
+public class ResultViewActivityWebView extends Activity {
 	private String station_from;
 	private String station_from_txt;
 	private String station_to;
@@ -43,13 +44,14 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	private String date_today;
 	private WebView mWebView = null;
 	private ProgressDialog pd;
-	private Thread thread = null;
-	private volatile boolean isStop = false;
+	private GetResultsFromSite resultsThread = null;
+	private boolean isStop = false;
 	private boolean isAddToFavsActive = true;
 	private String resultHTML = "<html><head><title>Test</title></head><body><h1>Dummy</h1></body></html>";
+	private Result [] results = null;
+	private int errorCode = Constants.ERR_NO_ERROR;
 	
-	private volatile Result [] results = null;
-	private volatile int errorCode = Constants.ERR_NO_ERROR;
+	private static final int DIALOG_PROGRESS = 2;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,47 +78,24 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 		 * Get the webview handle.
 		 */
 		mWebView = (WebView)findViewById(R.id.result_table_web_view);
+		mWebView.getSettings().setSupportZoom(true);
 		mWebView.getSettings().setBuiltInZoomControls(true);
 
 		/**
 		 * Display progress Dialog.
 		 */
-		pd = ProgressDialog.show(this, "Working..",
-				"Fetching Results...",
-				true, true,
-				new DialogInterface.OnCancelListener(){
-					public void onCancel(DialogInterface dialog) {
-						finish();
-					}
-				});
-		pd.setCanceledOnTouchOutside(false);
+		showDialog(DIALOG_PROGRESS);
 
 		/**
 		 * This will execute the "run" method in a new thread.
 		 */
-		thread = new Thread(this);
-		thread.start();
+		resultsThread = new GetResultsFromSite(handler,
+				station_from, station_to,
+				time_from, time_to,
+				date_today);
+		resultsThread.start();
 	}
 
-	/**
-	 * run() method that must be implemented when implementing "Runnable" class.
-	 */
-	public void run() {
-		/**
-		 * Call the "GetResults" method to retrieve data from server.
-		 */
-		GetResultsFromSite getResults = new GetResultsFromSite(); 
-		results = getResults.GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
-		if(results == null) {
-			errorCode = getResults.GetErrorCode();
-		}
-		/**
-		 * This will send message to the calling thread to continue and display data.
-		 */
-		Message myMsg = new Message();
-		myMsg.arg1 = Constants.THREAD_GET_RESULTS;
-		handler.sendMessage(myMsg);
-	}
 	/**
 	 * Handler variable which is used to handle processing after results are received.
 	 * 1. Remove the progress dialog
@@ -127,16 +106,18 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 		public void handleMessage(Message msg) {
 			if(msg.arg1 == Constants.THREAD_GET_RESULTS) {
 				if(pd.isShowing() == true) {
-					pd.dismiss();
+					dismissDialog(DIALOG_PROGRESS);
 				}
 				if(isStop == false) {
+					results = resultsThread.GetResults();
+					errorCode = resultsThread.GetErrorCode();
 					if(results != null) {
 						isAddToFavsActive = true;
 						resultHTML = createHTMLFromResults(results);
 					} else {
 						isAddToFavsActive = false;
 						resultHTML = createHTMLErrorState(errorCode);
-						Log.e(Constants.LOG_TAG, "No Results");
+						Log.i(Constants.LOG_TAG, "No Results");
 					}
 					if(mWebView != null) {
 						try {
@@ -194,14 +175,14 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
-			Constants.GetNewFavNameAndAddToFavs(this, true,
+			Constants.GetNewFavNameAndAddToFavs(ResultViewActivityWebView.this, true,
 					station_from_txt, station_from,
 					station_to_txt, station_to,
 					time_from_txt, time_from,
 					time_to_txt, time_to, handler);
 			return true;
 		case R.id.search_menu_switch_result_view:
-			Constants.GetResultsViewChoiceFromUser(this);
+			Constants.GetResultsViewChoiceFromUser(ResultViewActivityWebView.this);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -216,6 +197,26 @@ public class ResultViewActivityWebView extends Activity implements Runnable {
 			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(true);
 		}
 		return true;
+	}
+
+	protected Dialog onCreateDialog(int id) {
+		switch(id) {
+			case DIALOG_PROGRESS:
+				pd = new ProgressDialog(ResultViewActivityWebView.this);
+				pd.setMessage("Fetching Results...");
+				pd.setCancelable(true);
+				pd.setCanceledOnTouchOutside(false);
+				pd.setOnCancelListener(
+						new DialogInterface.OnCancelListener(){
+							public void onCancel(DialogInterface dialog) {
+								finish();
+							}
+						});
+				break;
+		default:
+			pd = null;
+		}
+		return pd;
 	}
 
 	private String createHTMLFromResults(Result results[]) {
