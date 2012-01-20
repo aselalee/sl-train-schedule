@@ -36,13 +36,43 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
-public class GetResultsFromSite {
-	private int errorCode = Constants.ERR_NO_ERROR;
+public class GetResultsFromSite extends Thread {
+	private Handler mHandler = null;
+	private String station_from;
+	private String station_to;
+	private String time_from;
+	private String time_to;
+	private String date_today;
+	private volatile Result [] results = null;
+	private volatile int errorCode = Constants.ERR_NO_ERROR;
+
 	private String errorString = "No Error";
 
-	public Result [] GetResultsViaJASON(String station_from, String station_to,
+	public GetResultsFromSite(Handler handle, String st_from, String st_to, String tm_from, String tm_to, String date) {
+		mHandler = handle;
+		station_from = st_from;
+		station_to = st_to;
+		time_from = tm_from;
+		time_to = tm_to;
+		date_today = date;
+	}
+	public void run() {
+		/**
+		 * Call the "GetResults" method to retrieve data from server.
+		 */ 
+		GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
+		/**
+		 * This will send message to the calling thread to continue and display data.
+		 */
+		Message myMsg = new Message();
+		myMsg.arg1 = Constants.THREAD_GET_RESULTS;
+		mHandler.sendMessage(myMsg);
+	}
+	private void GetResultsViaJASON(String station_from, String station_to,
 			String time_from, String time_to, String date_today)
 	{
 		/**
@@ -77,12 +107,14 @@ public class GetResultsFromSite {
 			errorCode = Constants.ERR_NETWORK_ERROR;
 			errorString = "HTTPERROR : ClientProtocolException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		} catch(IOException e) {
 			errorCode = Constants.ERR_NETWORK_ERROR;
 			errorString = "HTTPERROR : IOException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		}
 
 		/**
@@ -95,12 +127,14 @@ public class GetResultsFromSite {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "getEntity.getContentERROR : IOException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		} catch(IllegalStateException e) {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "getEntity.getContentERROR : IllegalStateException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		}
 		/**
 		 * Read output result from server.
@@ -117,15 +151,15 @@ public class GetResultsFromSite {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "InputStreamReaderERROR : IOException - Read Error : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		}
-		return JSONToResultsList(strBuilder.toString());
+		JSONToResultsList(strBuilder.toString());
 	}
-	private Result [] JSONToResultsList(String strJSON) {
+	private void JSONToResultsList(String strJSON) {
 		JSONObject jObject;
 		JSONArray trainsArray;
 		String strTmp;
-		Result [] results = null;
 
 		try {
 			jObject = new JSONObject(strJSON); 
@@ -133,7 +167,8 @@ public class GetResultsFromSite {
 			errorCode = Constants.ERR_JASON_ERROR;
 			errorString =  "JASONObjectERROR : Error Parsing JSON string : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		}
 		try {
 			trainsArray = jObject.getJSONArray("trains");
@@ -141,12 +176,14 @@ public class GetResultsFromSite {
 			errorCode = Constants.ERR_JASON_ERROR;
 			errorString = "getJASONArrayERROR : Error Parsing JSON object :" + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			return null;
+			results = null;
+			return;
 		}
 		if(trainsArray.length() < 1) {
 			errorCode = Constants.ERR_NO_RESULTS_FOUND_ERROR;
 			errorString = "No Results Found";
-			return null;
+			results = null;
+			return;
 		}
 		results = new Result[trainsArray.length()];
 		for(int i = 0; i < trainsArray.length(); i++) {
@@ -177,10 +214,10 @@ public class GetResultsFromSite {
 				errorCode = Constants.ERR_JASON_ERROR;
 				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
 				Log.e(Constants.LOG_TAG, errorString);
-				return null;
+				results = null;
+				return;
 			}
 		}
-		return results;
 	}
 	private String formatFrequency(String frequency) {
 		String result = frequency;
@@ -248,5 +285,9 @@ public class GetResultsFromSite {
 
 	public String GetErrorString() {
 		return errorString;
+	}
+	
+	public Result [] GetResults() {
+		return results;
 	}
 }
