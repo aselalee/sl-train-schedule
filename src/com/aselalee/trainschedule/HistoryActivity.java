@@ -98,8 +98,8 @@ public class HistoryActivity extends ListActivity {
 	}
 
 	private void getResults(ParameterSet paramSet) {
-		Intent intent = Constants.GetResultViewIntent(this);
-		Constants.PupulateIntentForResultsActivity(
+		Intent intent = CommonUtilities.GetResultViewIntent(this);
+		CommonUtilities.PupulateIntentForResultsActivity(
 				paramSet.start_station_val, paramSet.start_station_txt,
 				paramSet.end_station_val, paramSet.end_station_txt,
 				paramSet.start_time_val, paramSet.start_time_txt,

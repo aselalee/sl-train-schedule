@@ -18,6 +18,7 @@
 package com.aselalee.trainschedule;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,7 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class TrainScheduleActivity extends Activity implements Runnable {
+public class TrainScheduleActivity extends Activity {
 	private LinearLayout lin_lay;
 	private Button get_given_btn;
 	private Button get_all_btn;
@@ -66,6 +67,9 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	private String time_to_txt = "";
 	private String time_from_val = "";
 	private String time_to_val = "";
+	private CommonUtilities cu = null;	
+	private static final int DIALOG_ADD_TO_FAV = 3;
+	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
 
 	/**
 	 * Default values.
@@ -84,7 +88,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		populateStations();
 		actv_from = (AutoCompleteTextView)findViewById(R.id.search_stations_from);
 		actv_to = (AutoCompleteTextView)findViewById(R.id.search_stations_to);
-		adapter = new ArrayAdapter<Station>(this, R.layout.actv_drop_down_list_item, stations);
+		adapter = new ArrayAdapter<Station>(TrainScheduleActivity.this, R.layout.actv_drop_down_list_item, stations);
 		actv_from.setAdapter(adapter);
 		actv_to.setAdapter(adapter);
 		actv_from.setOnItemClickListener(new ACTVFromItemClickListner());
@@ -94,16 +98,18 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		 * Setup time "spinner"s
 		 */
 		adapter_times_from = ArrayAdapter.createFromResource(
-				this, R.array.times_from_array, R.layout.spinner);
+				TrainScheduleActivity.this, R.array.times_from_array, R.layout.spinner);
 		adapter_times_from.setDropDownViewResource(R.layout.spinner_drop_down_list_item);
 		spinner_times_from = (Spinner)findViewById(R.id.search_times_from);
 		spinner_times_from.setAdapter(adapter_times_from);
+		spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
 
 		adapter_times_to = ArrayAdapter.createFromResource(
-				this, R.array.times_to_array, R.layout.spinner);
+				TrainScheduleActivity.this, R.array.times_to_array, R.layout.spinner);
 		adapter_times_to.setDropDownViewResource(R.layout.spinner_drop_down_list_item);
 		spinner_times_to = (Spinner)findViewById(R.id.search_times_to);
 		spinner_times_to.setAdapter(adapter_times_to);
+		spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
 
 		/**
 		 * Setup submit buttons.
@@ -111,8 +117,8 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		get_given_btn = (Button)findViewById(R.id.search_get_given);
 		get_given_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				time_from_val = Constants.MapTimeFrom(spinner_times_from.getSelectedItemPosition());
-				time_to_val = Constants.MapTimeTo(spinner_times_to.getSelectedItemPosition());
+				time_from_val = CommonUtilities.MapTimeFrom(spinner_times_from.getSelectedItemPosition());
+				time_to_val = CommonUtilities.MapTimeTo(spinner_times_to.getSelectedItemPosition());
 				time_from_txt = spinner_times_from.getSelectedItem().toString();
 				time_to_txt = spinner_times_to.getSelectedItem().toString();
 				show_results();
@@ -125,18 +131,14 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 				 * To get the full schedule, times are mapped to least starting time and
 				 * most ending time.
 				 */
-				time_from_val = Constants.MapTimeFrom(0);
-				time_to_val = Constants.MapTimeTo(-1);
-				time_from_txt = getString(R.string.earliest_from_time);
-				time_to_txt = getString(R.string.latest_to_time);
+				time_from_val = CommonUtilities.MapTimeFrom(0);
+				time_to_val = CommonUtilities.MapTimeTo(-1);
+				time_from_txt = Constants.TIME_FIRST_FROM;
+				time_to_txt = Constants.TIME_LAST_TO;
 				show_results();
 			}
 		});
-		/**
-		 * Setup listeners for the time select spinners.
-		 */
-		spinner_times_from.setOnItemSelectedListener(new FromSpinnerOnItemSelectedListener());
-		spinner_times_to.setOnItemSelectedListener(new ToSpinnerOnItemSelectedListener());
+
 		/**
 		 * Get Layout handle.
 		 */
@@ -226,7 +228,7 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 			Station selectedStation = (Station) parent.getItemAtPosition(pos);
 			station_to_txt = selectedStation.getText();
 			station_to_val = selectedStation.getValue();
-			Constants.HideSoftKeyboard(actv_to, getBaseContext());
+			CommonUtilities.HideSoftKeyboard(actv_to, getBaseContext());
 			lin_lay.requestFocusFromTouch();
 		}
 	}
@@ -235,17 +237,20 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	 * Calls the next activity to display results.
 	 */
 	private void show_results() {
-		Constants.HideSoftKeyboard(actv_to, getBaseContext());
+		CommonUtilities.HideSoftKeyboard(actv_to, getBaseContext());
 		if(validateStations()) {
 			/**
 			 * Add params to history database.
-			 * This is done in a separate thread.
+			 * This is done in a separate thread inside the called function.
 			 */
-			Thread thread = new Thread(this);
-			thread.start();
+			CommonUtilities.AddParamsToHistory(TrainScheduleActivity.this,
+					station_from_txt, station_from_val,
+					station_to_txt, station_to_val,
+					time_from_txt, time_from_val,
+					time_to_txt, time_to_val);
 
-			Intent intent = Constants.GetResultViewIntent(this);
-			Constants.PupulateIntentForResultsActivity(
+			Intent intent = CommonUtilities.GetResultViewIntent(TrainScheduleActivity.this);
+			CommonUtilities.PupulateIntentForResultsActivity(
 					station_from_val, station_from_txt,
 					station_to_val, station_to_txt,
 					time_from_val, time_from_txt,
@@ -260,11 +265,11 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	 * Read spinner positions from preference file.
 	 */
 	private void readCurrentState(Context c) {
-		PackageManager manager = this.getPackageManager();
+		PackageManager manager = TrainScheduleActivity.this.getPackageManager();
 		PackageInfo info = null;
 		int version_code = 0;
 		try {
-			info = manager.getPackageInfo(this.getPackageName(), 0);
+			info = manager.getPackageInfo(TrainScheduleActivity.this.getPackageName(), 0);
 			version_code = info.versionCode;
 		} catch (NameNotFoundException e) {
 			Log.e(Constants.LOG_TAG, "Package name not found" + e);
@@ -319,30 +324,21 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(!writeCurrentState(this)) {
-			Toast.makeText(this, "Failed to save state!", Toast.LENGTH_LONG).show();
+		if(!writeCurrentState(TrainScheduleActivity.this)) {
+			Toast.makeText(TrainScheduleActivity.this, "Failed to save state!", Toast.LENGTH_LONG).show();
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		readCurrentState(this);
+		readCurrentState(TrainScheduleActivity.this);
 		lin_lay.requestFocusFromTouch();
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-	}
-
-	public void run() {
-		DBDataAccess myDBAcc = new DBDataAccess(this);
-		myDBAcc.PushDataHistory(station_from_txt, station_from_val,
-				station_to_txt, station_to_val,
-				time_from_txt, time_from_val,
-				time_to_txt, time_to_val);
-		myDBAcc.close();
 	}
 
 	@Override
@@ -359,22 +355,58 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 				if(validateStations() == false) {
 					return true;
 				}
-				time_from_val = Constants.MapTimeFrom(spinner_times_from.getSelectedItemPosition());
-				time_to_val = Constants.MapTimeTo(spinner_times_to.getSelectedItemPosition());
+				time_from_val = CommonUtilities.MapTimeFrom(spinner_times_from.getSelectedItemPosition());
+				time_to_val = CommonUtilities.MapTimeTo(spinner_times_to.getSelectedItemPosition());
 				time_from_txt = spinner_times_from.getSelectedItem().toString();
 				time_to_txt = spinner_times_to.getSelectedItem().toString();
-				Constants.GetNewFavNameAndAddToFavs(this, false,
-						station_from_txt, station_from_val,
-						station_to_txt, station_to_val,
-						time_from_txt, time_from_val,
-						time_to_txt, time_to_val, handler);
+				showDialog(DIALOG_ADD_TO_FAV);
 				return true;
 			case R.id.search_menu_switch_result_view:
-				Constants.GetResultsViewChoiceFromUser(this);
+				showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		switch(id) {
+			case DIALOG_ADD_TO_FAV:
+				/**
+				 * Add params to favourites database.
+				 * This is done in a separate thread inside the called function.
+				 */
+				cu = new CommonUtilities(TrainScheduleActivity.this);
+				dialog = cu.GetNewFavNameAndAddToFavs(false,
+						station_from_txt, station_from_val,
+						station_to_txt, station_to_val,
+						time_from_txt, time_from_val,
+						time_to_txt, time_to_val, handler);
+				break;
+			case DIALOG_CHANGE_RESULTS_VIEW:
+				dialog = CommonUtilities.GetResultsViewChoiceFromUser(TrainScheduleActivity.this);
+				break;
+			default:
+				dialog = null;
+		}
+		return dialog;
+	}
+
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		switch(id) {
+			case DIALOG_ADD_TO_FAV:
+				cu.UpdateFavParams(station_from_txt, station_from_val,
+						station_to_txt, station_to_val,
+						time_from_txt, time_from_val,
+						time_to_txt, time_to_val, dialog);
+				break;
+			case DIALOG_CHANGE_RESULTS_VIEW:
+				break;
+			default:
+				return;
+		}
+		return;
 	}
 
 	private Handler handler = new Handler() {
@@ -419,13 +451,13 @@ public class TrainScheduleActivity extends Activity implements Runnable {
 		int to = searchString(stationsText, actv_to.getText().toString());
 		if(( from > -1) && (to > -1)){
 			if( from == to) {
-				Toast.makeText(this, "Station Names are Same", Toast.LENGTH_LONG).show();
+				Toast.makeText(TrainScheduleActivity.this, "Station Names are Same", Toast.LENGTH_LONG).show();
 				return false;
 			} else {
 				return true;
 			}
 		}
-		Toast.makeText(this, "Invalid Station Names", Toast.LENGTH_LONG).show();
+		Toast.makeText(TrainScheduleActivity.this, "Invalid Station Names", Toast.LENGTH_LONG).show();
 		return false;
 	}
 

@@ -52,6 +52,8 @@ public class ResultViewActivityWebView extends Activity {
 	private int errorCode = Constants.ERR_NO_ERROR;
 	
 	private static final int DIALOG_PROGRESS = 2;
+	private static final int DIALOG_ADD_TO_FAV = 3;
+	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -175,14 +177,10 @@ public class ResultViewActivityWebView extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
-			Constants.GetNewFavNameAndAddToFavs(ResultViewActivityWebView.this, true,
-					station_from_txt, station_from,
-					station_to_txt, station_to,
-					time_from_txt, time_from,
-					time_to_txt, time_to, handler);
+			showDialog(DIALOG_ADD_TO_FAV);
 			return true;
 		case R.id.search_menu_switch_result_view:
-			Constants.GetResultsViewChoiceFromUser(ResultViewActivityWebView.this);
+			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -200,6 +198,7 @@ public class ResultViewActivityWebView extends Activity {
 	}
 
 	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
 		switch(id) {
 			case DIALOG_PROGRESS:
 				pd = new ProgressDialog(ResultViewActivityWebView.this);
@@ -212,11 +211,23 @@ public class ResultViewActivityWebView extends Activity {
 								finish();
 							}
 						});
+				dialog = pd;
+				break;
+			case DIALOG_ADD_TO_FAV:
+				CommonUtilities cu = new CommonUtilities(ResultViewActivityWebView.this);
+				dialog = cu.GetNewFavNameAndAddToFavs(true,
+						station_from_txt, station_from,
+						station_to_txt, station_to,
+						time_from_txt, time_from,
+						time_to_txt, time_to, handler);
+				break;
+			case DIALOG_CHANGE_RESULTS_VIEW:
+				dialog = CommonUtilities.GetResultsViewChoiceFromUser(ResultViewActivityWebView.this);
 				break;
 		default:
-			pd = null;
+			dialog = null;
 		}
-		return pd;
+		return dialog;
 	}
 
 	private String createHTMLFromResults(Result results[]) {
@@ -279,11 +290,11 @@ public class ResultViewActivityWebView extends Activity {
 	private String createHTMLErrorState(int errorCode) {
 		String htmlOutput = "";
 		switch(errorCode) {
-		case Constants.ERR_NO_RESULTS_FOUND_ERROR:	
-			htmlOutput = "<html><head></head><body><h1>Results Not Found.</h1></body></html>";
-			break;
-		default:
-			htmlOutput = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
+			case Constants.ERR_NO_RESULTS_FOUND_ERROR:	
+				htmlOutput = "<html><head></head><body><h1>Results Not Found.</h1></body></html>";
+				break;
+			default:
+				htmlOutput = "<html><head></head><body><h1>Network Error. Please Try Again.</h1></body></html>";
 		}
 		return htmlOutput;
 	}
