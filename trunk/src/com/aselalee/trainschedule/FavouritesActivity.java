@@ -139,8 +139,8 @@ public class FavouritesActivity extends ListActivity {
 	}
 
 	private void getResults(ParameterSet paramSet) {
-		Intent intent = Constants.GetResultViewIntent(this);
-		Constants.PupulateIntentForResultsActivity(
+		Intent intent = CommonUtilities.GetResultViewIntent(this);
+		CommonUtilities.PupulateIntentForResultsActivity(
 				paramSet.start_station_val, paramSet.start_station_txt,
 				paramSet.end_station_val, paramSet.end_station_txt,
 				paramSet.start_time_val, paramSet.start_time_txt,
@@ -165,13 +165,13 @@ public class FavouritesActivity extends ListActivity {
 				} else {
 					runToast("Invalid name.");
 				}
-				Constants.HideSoftKeyboard(et, getBaseContext());
+				CommonUtilities.HideSoftKeyboard(et, getBaseContext());
 				onResume();
 			}
 		});
 		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				Constants.HideSoftKeyboard(et, getBaseContext());
+				CommonUtilities.HideSoftKeyboard(et, getBaseContext());
 				dialog.cancel();
 			}
 		});

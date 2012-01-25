@@ -65,6 +65,8 @@ public class ResultViewActivity extends Activity{
 
 	private static final int DIALOG_DETAILS = 1;
 	private static final int DIALOG_PROGRESS = 2;
+	private static final int DIALOG_ADD_TO_FAV = 3;
+	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -101,8 +103,8 @@ public class ResultViewActivity extends Activity{
 			}
 		});
 		tv = (TextView) findViewById(R.id.res_table_station_names);
-		tv.setText( Constants.ToTitleCase(station_from_txt) + " - " +
-					Constants.ToTitleCase(station_to_txt));
+		tv.setText( CommonUtilities.ToTitleCase(station_from_txt) + " - " +
+				CommonUtilities.ToTitleCase(station_to_txt));
 		
 		/**
 		 * Display progress Dialog.
@@ -222,14 +224,10 @@ public class ResultViewActivity extends Activity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
-			Constants.GetNewFavNameAndAddToFavs(ResultViewActivity.this, true,
-					station_from_txt, station_from,
-					station_to_txt, station_to,
-					time_from_txt, time_from,
-					time_to_txt, time_to, handler);
+			showDialog(DIALOG_ADD_TO_FAV);
 			return true;
 		case R.id.search_menu_switch_result_view:
-			Constants.GetResultsViewChoiceFromUser(ResultViewActivity.this);
+			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -272,6 +270,17 @@ public class ResultViewActivity extends Activity{
 						});
 				dialog = pd;
 				break;
+			case DIALOG_ADD_TO_FAV:
+				CommonUtilities cu = new CommonUtilities(ResultViewActivity.this);
+				dialog = cu.GetNewFavNameAndAddToFavs(true,
+						station_from_txt, station_from,
+						station_to_txt, station_to,
+						time_from_txt, time_from,
+						time_to_txt, time_to, handler);
+				break;
+			case DIALOG_CHANGE_RESULTS_VIEW:
+				dialog = CommonUtilities.GetResultsViewChoiceFromUser(ResultViewActivity.this);
+				break;
 		default:
 			dialog = null;
 		}
@@ -284,10 +293,13 @@ public class ResultViewActivity extends Activity{
 				set_dialog_details(dialog, activePosition);
 				break;
 			case DIALOG_PROGRESS:
+			case DIALOG_ADD_TO_FAV:
+			case DIALOG_CHANGE_RESULTS_VIEW:
 				break;
 			default:
 				return;
 		}
+		return;
 	}
 
 	private void set_dialog_details(Dialog dialog, int pos) {
