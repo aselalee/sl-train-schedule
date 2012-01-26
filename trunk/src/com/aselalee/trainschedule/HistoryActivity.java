@@ -47,7 +47,7 @@ public class HistoryActivity extends ListActivity {
 				}
 			}
 		});
-		adapter = new HisAndFavAdapter(this, paramsList, true);
+		adapter = new HisAndFavAdapter(HistoryActivity.this, paramsList, true);
 		setListAdapter(adapter);
 	}
 
@@ -64,7 +64,7 @@ public class HistoryActivity extends ListActivity {
 		 * 2. Then show it in the list view.
 		 * 3. Call this when ever the database is updated.
 		 */
-		DBDataAccess myDBAcc = new DBDataAccess(this);
+		DBDataAccess myDBAcc = new DBDataAccess(HistoryActivity.this);
 		paramsList = myDBAcc.GetHistory();
 		adapter.paramSet = paramsList;
 		myDBAcc.close();
@@ -87,7 +87,7 @@ public class HistoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.history_menu_clear_his:
-				DBDataAccess myDBAcc = new DBDataAccess(this);
+				DBDataAccess myDBAcc = new DBDataAccess(HistoryActivity.this);
 				myDBAcc.ClearHistoryTable();
 				myDBAcc.close();
 				onResume();
@@ -98,7 +98,7 @@ public class HistoryActivity extends ListActivity {
 	}
 
 	private void getResults(ParameterSet paramSet) {
-		Intent intent = CommonUtilities.GetResultViewIntent(this);
+		Intent intent = CommonUtilities.GetResultViewIntent(HistoryActivity.this);
 		CommonUtilities.PupulateIntentForResultsActivity(
 				paramSet.start_station_val, paramSet.start_station_txt,
 				paramSet.end_station_val, paramSet.end_station_txt,
