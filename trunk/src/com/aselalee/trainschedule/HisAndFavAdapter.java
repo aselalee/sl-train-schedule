@@ -26,7 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class HisAndFavAdapter extends BaseAdapter {
-	private ParameterSet [] paramSet = null;
+	public ParameterSet [] paramSet = null;
 	private Context mContext = null;
 	private boolean isHistory = true;
 
@@ -37,7 +37,10 @@ public class HisAndFavAdapter extends BaseAdapter {
 	}
 
 	public int getCount() {
-		return paramSet.length;
+		if(paramSet != null) {
+			return paramSet.length;
+		}
+		return 0;
 	}
 
 	public Object getItem(int position) {

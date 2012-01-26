@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 public class FavouritesActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
+	private HisAndFavAdapter adapter = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class FavouritesActivity extends ListActivity {
 				}
 			}
 		});
+		adapter = new HisAndFavAdapter(this, paramsList, true);
+		setListAdapter(adapter);
 	}
 
 	@Override
@@ -73,12 +76,10 @@ public class FavouritesActivity extends ListActivity {
 		 */
 		DBDataAccess myDBAcc = new DBDataAccess(this);
 		paramsList = myDBAcc.GetFavourites();
-		if(paramsList == null) {
-			Log.e(Constants.LOG_TAG, "Parameter List not populated properly");
-			return;
-		}
+		adapter.paramSet = paramsList;
 		myDBAcc.close();
-		setListAdapter(new HisAndFavAdapter(this, paramsList, false));
+		adapter.notifyDataSetChanged();
+
 	}
 
 	@Override
