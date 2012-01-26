@@ -32,6 +32,7 @@ import android.widget.ListView;
 
 public class HistoryActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
+	private HisAndFavAdapter adapter = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +47,8 @@ public class HistoryActivity extends ListActivity {
 				}
 			}
 		});
+		adapter = new HisAndFavAdapter(this, paramsList, true);
+		setListAdapter(adapter);
 	}
 
 	@Override
@@ -63,12 +66,9 @@ public class HistoryActivity extends ListActivity {
 		 */
 		DBDataAccess myDBAcc = new DBDataAccess(this);
 		paramsList = myDBAcc.GetHistory();
-		if(paramsList == null) {
-			Log.e(Constants.LOG_TAG, "Parameter List not populated properly");
-			return;
-		}
+		adapter.paramSet = paramsList;
 		myDBAcc.close();
-		setListAdapter(new HisAndFavAdapter(this, paramsList, true));
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
