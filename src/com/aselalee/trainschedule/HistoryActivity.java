@@ -59,16 +59,8 @@ public class HistoryActivity extends ListActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		/**
-		 * 1. Get history from database.
-		 * 2. Then show it in the list view.
-		 * 3. Call this when ever the database is updated.
-		 */
-		DBDataAccess myDBAcc = new DBDataAccess(HistoryActivity.this);
-		paramsList = myDBAcc.GetHistory();
-		adapter.paramSet = paramsList;
-		myDBAcc.close();
-		adapter.notifyDataSetChanged();
+		updateHistoryList();
+
 	}
 
 	@Override
@@ -90,7 +82,7 @@ public class HistoryActivity extends ListActivity {
 				DBDataAccess myDBAcc = new DBDataAccess(HistoryActivity.this);
 				myDBAcc.ClearHistoryTable();
 				myDBAcc.close();
-				onResume();
+				updateHistoryList();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -106,5 +98,19 @@ public class HistoryActivity extends ListActivity {
 				paramSet.end_time_val, paramSet.end_time_txt,
 				intent);
 		startActivity(intent);
+	}
+
+	private void updateHistoryList() {
+		/**
+		 * 1. Get history from database.
+		 * 2. Then show it in the list view.
+		 * 3. Call this when ever the database is updated.
+		 */
+		DBDataAccess myDBAcc = new DBDataAccess(HistoryActivity.this);
+		paramsList = myDBAcc.GetHistory();
+		adapter.paramSet = paramsList;
+		myDBAcc.close();
+		adapter.notifyDataSetChanged();
+		return;
 	}
 }

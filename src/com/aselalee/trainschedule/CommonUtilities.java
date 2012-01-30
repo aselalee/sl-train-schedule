@@ -196,6 +196,7 @@ public class CommonUtilities {
 			cb.setVisibility(View.GONE);
 		}
 		et.setText(station_from_txt + " - " + station_to_txt);
+		et.setSelection(et.getText().length());
 		AlertDialog.Builder builder = new AlertDialog.Builder(packageContext);
 		builder.setView(textEntryView);
 		builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -272,6 +273,7 @@ public class CommonUtilities {
 		EditText et = null;
 		et = (EditText)dialog.findViewById(R.id.dialog_new_name);
 		et.setText(station_from_txt + " - " + station_to_txt);
+		et.setSelection(et.getText().length());
 
 		return;
 	}
