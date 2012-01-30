@@ -75,17 +75,7 @@ public class FavouritesActivity extends ListActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		/**
-		 * 1. Get favourites from database.
-		 * 2. Then show it in the list view.
-		 * 3. Call this when ever the database is updated.
-		 */
-		DBDataAccess myDBAcc = new DBDataAccess(FavouritesActivity.this);
-		paramsList = myDBAcc.GetFavourites();
-		adapter.paramSet = paramsList;
-		myDBAcc.close();
-		adapter.notifyDataSetChanged();
-
+		updateFavList();
 	}
 
 	@Override
@@ -107,7 +97,7 @@ public class FavouritesActivity extends ListActivity {
 				DBDataAccess myDBAcc = new DBDataAccess(FavouritesActivity.this);
 				myDBAcc.ClearFavouritesTable();
 				myDBAcc.close();
-				onResume();
+				updateFavList();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -140,8 +130,7 @@ public class FavouritesActivity extends ListActivity {
 			default:
 				return super.onContextItemSelected(item);
 		}
-		
-		onResume();
+		updateFavList();
 		return true;
 	}
 
@@ -161,6 +150,7 @@ public class FavouritesActivity extends ListActivity {
 			case DIALOG_RENAME_FAV:
 				EditText et = (EditText)dialog.findViewById(R.id.dialog_new_name);
 				et.setText(paramsList[postionToRename].name);
+				et.setSelection(et.getText().length());
 				break;
 			default:
 				return;
@@ -184,7 +174,8 @@ public class FavouritesActivity extends ListActivity {
 		LayoutInflater factory = LayoutInflater.from(FavouritesActivity.this);
 		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
 		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
-		et.setText(paramsList[postionToRename].name);
+		//et.setText(paramsList[postionToRename].name);
+		//et.setSelection(et.getText().length());
 		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.dialog_isTimeFilterOnCB);
 		cb.setVisibility(View.GONE);
 		AlertDialog.Builder builder = new AlertDialog.Builder(FavouritesActivity.this);
@@ -201,7 +192,7 @@ public class FavouritesActivity extends ListActivity {
 					Toast.makeText(thisContext, "Invalid name.", Toast.LENGTH_LONG).show();
 				}
 				CommonUtilities.HideSoftKeyboard(et, getBaseContext());
-				onResume();
+				updateFavList();
 			}
 		});
 		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -213,5 +204,19 @@ public class FavouritesActivity extends ListActivity {
 		builder.setTitle("Enter New Name");
 		AlertDialog alert = builder.create();
 		return alert;
+	}
+
+	private void updateFavList() {
+		/**
+		 * 1. Get favourites from database.
+		 * 2. Then show it in the list view.
+		 * 3. Call this when ever the database is updated.
+		 */
+		DBDataAccess myDBAcc = new DBDataAccess(FavouritesActivity.this);
+		paramsList = myDBAcc.GetFavourites();
+		adapter.paramSet = paramsList;
+		myDBAcc.close();
+		adapter.notifyDataSetChanged();
+		return;
 	}
 }
