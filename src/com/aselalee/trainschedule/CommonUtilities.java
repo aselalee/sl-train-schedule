@@ -151,6 +151,26 @@ public class CommonUtilities {
 		return;
 	}
 
+	public static void ShareApplication(Context mContext) {
+		Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		intent.putExtra(Intent.EXTRA_SUBJECT, "Search Sri Lanka Railway Time Table");
+		intent.putExtra(Intent.EXTRA_TITLE, "Search Sri Lanka Railway Time Table");
+		intent.putExtra(Intent.EXTRA_TEXT, "Search \"Sri Lanka Railway Time Table\" on your Android. http://market.android.com/details?id=com.aselalee.trainschedule");
+		mContext.startActivity(Intent.createChooser(intent, "Spread the word"));
+		return;
+	}
+	public static void ShareResult(Context mContext, String mResult) {
+		Intent intent=new Intent(android.content.Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		intent.putExtra(Intent.EXTRA_SUBJECT, "I'll be on this train");
+		intent.putExtra(Intent.EXTRA_TITLE, "I'll be on this train");
+		intent.putExtra(Intent.EXTRA_TEXT, mResult);
+		mContext.startActivity(Intent.createChooser(intent, "Send your result"));
+		return;
+	}
 	/**
 	 * **********************************************************************
 	 * Utilities methods that can be accessed via an instance of this class.

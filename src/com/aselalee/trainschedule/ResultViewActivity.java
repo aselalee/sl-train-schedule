@@ -62,6 +62,7 @@ public class ResultViewActivity extends Activity{
 	private Result [] results = null;
 	private Context myContext = null;
 	private int errorCode = Constants.ERR_NO_ERROR;
+	private String selectedResult = "";
 
 	private static final int DIALOG_DETAILS = 1;
 	private static final int DIALOG_PROGRESS = 2;
@@ -217,6 +218,8 @@ public class ResultViewActivity extends Activity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.search_activity_menu, menu);
+		menu.findItem(R.id.search_menu_share).setEnabled(false);
+		menu.findItem(R.id.search_menu_share).setVisible(false);
 		return true;
 	}
 
@@ -250,10 +253,16 @@ public class ResultViewActivity extends Activity{
 			case DIALOG_DETAILS:
 				dialog = new Dialog(ResultViewActivity.this, android.R.style.Theme_Translucent_NoTitleBar);
 				dialog.setContentView(R.layout.result_details_dialog);
-				Button button = (Button) dialog.findViewById(R.id.result_table_details_ok_btn);
+				Button button = (Button) dialog.findViewById(R.id.result_table_details_back_btn);
 				button.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						dismissDialog(DIALOG_DETAILS);
+					}
+				});
+				button = (Button) dialog.findViewById(R.id.result_table_details_send_btn);
+				button.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						CommonUtilities.ShareResult(ResultViewActivity.this, selectedResult);
 					}
 				});
 				break;
@@ -304,6 +313,18 @@ public class ResultViewActivity extends Activity{
 
 	private void set_dialog_details(Dialog dialog, int pos) {
 		TextView tv = null;
+		selectedResult = "";
+		selectedResult += "From: ";
+		selectedResult += results[pos].startStationName;
+		selectedResult += "\n";
+		selectedResult += "To: ";
+		selectedResult += results[pos].endStationName;
+		selectedResult += "\n";
+		selectedResult += "At: ";
+		selectedResult += results[pos].depatureTime;
+		selectedResult += "\n";
+		selectedResult += "Duration: ";
+		selectedResult += results[pos].duration;
 		/* Arrival at start */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
 		tv.setText("Arrival at\n" + results[pos].startStationName);

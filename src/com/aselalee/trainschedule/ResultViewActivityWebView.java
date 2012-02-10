@@ -170,6 +170,8 @@ public class ResultViewActivityWebView extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.search_activity_menu, menu);
+		menu.findItem(R.id.search_menu_share).setEnabled(false);
+		menu.findItem(R.id.search_menu_share).setVisible(false);
 		return true;
 	}
 

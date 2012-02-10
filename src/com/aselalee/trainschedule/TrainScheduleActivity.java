@@ -364,6 +364,9 @@ public class TrainScheduleActivity extends Activity {
 			case R.id.search_menu_switch_result_view:
 				showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 				return true;
+			case R.id.search_menu_share:
+				CommonUtilities.ShareApplication(TrainScheduleActivity.this);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
