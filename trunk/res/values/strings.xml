@@ -14,6 +14,7 @@
     <string name="full_schedule">Get Full Schedule</string>
     <string name="add_to_fav_txt">Add To Favourites</string>
     <string name="switch_result_view">Switch Results View</string>
+    <string name="share">Share</string>
     <string name="clear_his_txt">Clear History</string>
     <string name="list_from_txt">From:</string>
     <string name="list_to_txt">To:</string>
@@ -30,6 +31,7 @@
     <string name="more">more&#8230;</string>
     <string name="no_result">"---/---"</string>
     <string name="results_view_details_dialog_back_btn">Back</string>
+    <string name="results_view_details_dialog_send_btn">Send</string>
 
     <string-array name="stations_array">
         <item>Abanpola</item>

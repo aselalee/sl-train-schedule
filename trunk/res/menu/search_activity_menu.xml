@@ -22,4 +22,7 @@
     <item android:id="@+id/search_menu_switch_result_view"
         android:title="@string/switch_result_view"
         android:icon="@drawable/ic_menu_switch_view"/>
+    <item android:id="@+id/search_menu_share"
+        android:title="@string/share"
+        android:icon="@drawable/ic_menu_share"/>
 </menu>
