@@ -74,20 +74,30 @@
                 android:layout_gravity="center"
                 android:background="@drawable/button_get_user_input_activity_swap" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center" >
+                <Button
+                    android:id="@+id/search_get_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/full_schedule"
+                    android:background="@drawable/button_get_user_input_activity_search"
+                    android:layout_margin="10dp" />
+                <Button
+                    android:id="@+id/search_get_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next_train"
+                    android:background="@drawable/button_get_user_input_activity_search"
+                    android:layout_margin="10dp" />
+        </LinearLayout>
         <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:stretchColumns="*" >
-            <TableRow >
-                <Button
-                    android:id="@+id/search_get_all"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/full_schedule"
-                    android:layout_span="3"
-                    android:background="@drawable/button_get_user_input_activity_search"
-                    android:layout_margin="10dp" />
-            </TableRow>
             <TableRow
                 android:layout_marginTop="10dp">
                 <TextView

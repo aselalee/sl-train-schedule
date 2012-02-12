@@ -21,7 +21,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -187,17 +190,22 @@ public class GetResultsFromSite extends Thread {
 		}
 		results = new Result[trainsArray.length()];
 		for(int i = 0; i < trainsArray.length(); i++) {
+			SimpleDateFormat dateFormatterIn = new SimpleDateFormat("HH:mm:ss");
+			SimpleDateFormat dateFormatterOut = new SimpleDateFormat("HH:mm");
 			try {
 				results[i] = new Result();
 				results[i].name = trainsArray.getJSONObject(i).getString("name").toString().trim();
 				strTmp = trainsArray.getJSONObject(i).getString("arrivalTime").toString().trim();
-				results[i].arrivalTime = chop(strTmp);
+				results[i].arrivalTime_dt = dateFormatterIn.parse(strTmp);
+				results[i].arrivalTime_str = dateFormatterOut.format(results[i].arrivalTime_dt);
 				strTmp = trainsArray.getJSONObject(i).getString("depatureTime").toString().trim();
-				results[i].depatureTime = chop(strTmp);
+				results[i].depatureTime_dt = dateFormatterIn.parse(strTmp);
+				results[i].depatureTime_str = dateFormatterOut.format(results[i].depatureTime_dt);
 				strTmp = trainsArray.getJSONObject(i).getString("arrivalAtDestinationTime").toString().trim();
-				results[i].arrivalAtDestinationTime = chop(strTmp);
+				results[i].arrivalAtDestinationTime_dt = dateFormatterIn.parse(strTmp);
+				results[i].arrivalAtDestinationTime_str = dateFormatterOut.format(results[i].arrivalAtDestinationTime_dt);
 				strTmp = trainsArray.getJSONObject(i).getString("delayTime").toString().trim();
-				results[i].delayTime = chop(strTmp);
+				results[i].delayTime_str = chop(strTmp);
 				results[i].comment = trainsArray.getJSONObject(i).getString("comment").toString().trim();
 				results[i].startStationName = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("startStationName").toString().trim());
@@ -209,10 +217,17 @@ public class GetResultsFromSite extends Thread {
 						CommonUtilities.ToTitleCase(trainsArray.getJSONObject(i).getString("fDescription").toString().trim()));
 				results[i].tyDescription = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("tyDescription").toString().trim());
-				results[i].duration = calcDuration(results[i].depatureTime, results[i].arrivalAtDestinationTime);
+				results[i].duration_str = calcDuration(results[i].depatureTime_dt,
+						results[i].arrivalAtDestinationTime_dt);
 			} catch(JSONException e) {
 				errorCode = Constants.ERR_JASON_ERROR;
 				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
+				Log.e(Constants.LOG_TAG, errorString);
+				results = null;
+				return;
+			} catch(ParseException e) {
+				errorCode = Constants.ERR_DATE_STRING_PARSE_ERROR;
+				errorString = "dateFormatter.parse() : Error Parsing Time String : " + e;
 				Log.e(Constants.LOG_TAG, errorString);
 				results = null;
 				return;
@@ -239,22 +254,20 @@ public class GetResultsFromSite extends Thread {
 		}
 		return result;
 	}
-	private String calcDuration(String depatureTime, String arrAtDestinationTime) {
+	private String calcDuration(Date depatureTime, Date arrAtDestinationTime) {
 		String durationStr = "";
-		long startTimeInMins = (Integer.parseInt(depatureTime.substring(0, 2)) * 60) +  
-				(Integer.parseInt(depatureTime.substring(3,5)));
-		long endTimeInMins = (Integer.parseInt(arrAtDestinationTime.substring(0, 2)) * 60) +  
-				(Integer.parseInt(arrAtDestinationTime.substring(3,5)));
-		long durationInMins = endTimeInMins - startTimeInMins;
-		if(durationInMins > 0) {
-			int hours = (int)(durationInMins/60);
-			if(hours < 9) {
+		long startTimeInMilliSecs = depatureTime.getTime();
+		long endTimeInMilliSecs = arrAtDestinationTime.getTime();
+		long durationInMilliSecs = endTimeInMilliSecs - startTimeInMilliSecs;
+		if(durationInMilliSecs > 0) {
+			int hours = (int)(durationInMilliSecs/1000/60/60);
+			if(hours <= 9) {
 				durationStr = "0" + String.valueOf(hours);
 			} else {
 				durationStr = String.valueOf(hours);
 			}
 			durationStr += ":"; 
-			int mins = (int)(durationInMins%60);
+			int mins = (int)(durationInMilliSecs/1000/60)%60;
 			if(mins < 9) {
 				durationStr += "0" + String.valueOf(mins);
 			} else {
