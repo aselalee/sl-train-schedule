@@ -17,17 +17,22 @@
 
 package com.aselalee.trainschedule;
 
+import java.util.Date;
+
 public class Result {
 	public String name; /* Train Name */
-	public String arrivalTime; /* Arriving at starting station */
-	public String depatureTime; /* Departing from starting station */
-	public String arrivalAtDestinationTime; /* Arrival at destination */
-	public String delayTime; /* Train delay information (Sometimes empty) */
+	public String arrivalTime_str; /* Arriving at starting station */
+	public Date arrivalTime_dt;
+	public String depatureTime_str; /* Departing from starting station */
+	public Date depatureTime_dt;
+	public String arrivalAtDestinationTime_str; /* Arrival at destination */
+	public Date arrivalAtDestinationTime_dt;
+	public String delayTime_str; /* Train delay information (Sometimes empty) */
 	public String comment; /* Comments (Generally an empty string) */
 	public String startStationName; /* Staring station of user */
 	public String endStationName; /* Target destination of user */
 	public String toTrStationName; /* Final destination of train*/
 	public String fDescription; /* Train frequency */
 	public String tyDescription; /* Train type */
-	public String duration; /* Traveling time. Calculated locally. */
+	public String duration_str; /* Traveling time. Calculated locally. */
 }

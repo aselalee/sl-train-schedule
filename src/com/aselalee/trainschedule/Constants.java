@@ -97,6 +97,7 @@ public final class Constants {
 	public static final int ERR_NO_RESULTS_FOUND_ERROR = -2;
 	public static final int ERR_JASON_ERROR = -3;
 	public static final int ERR_PROCESSING_ERROR = -4;
+	public static final int ERR_DATE_STRING_PARSE_ERROR = -5;
 
 	/**
 	 * Strings to be displayed as first and last time stamp strings.

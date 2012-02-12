@@ -321,25 +321,25 @@ public class ResultViewActivity extends Activity{
 		selectedResult += results[pos].endStationName;
 		selectedResult += "\n";
 		selectedResult += "At: ";
-		selectedResult += results[pos].depatureTime;
+		selectedResult += results[pos].depatureTime_str;
 		selectedResult += "\n";
 		selectedResult += "Duration: ";
-		selectedResult += results[pos].duration;
+		selectedResult += results[pos].duration_str;
 		/* Arrival at start */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
 		tv.setText("Arrival at\n" + results[pos].startStationName);
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_val);
-		tv.setText(results[pos].arrivalTime);
+		tv.setText(results[pos].arrivalTime_str);
 		/* Departing from start */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_txt);
 		tv.setText("Departing from\n" + results[pos].startStationName);
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_depart_from_start_val);
-		tv.setText(results[pos].depatureTime);
+		tv.setText(results[pos].depatureTime_str);
 		/* Reaching end */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_txt);
 		tv.setText("Reaching\n" + results[pos].endStationName);
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_val);
-		tv.setText(results[pos].arrivalAtDestinationTime);
+		tv.setText(results[pos].arrivalAtDestinationTime_str);
 		/* Duration */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_txt);
 		tv.setText("Frequency");
@@ -349,7 +349,7 @@ public class ResultViewActivity extends Activity{
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_txt);
 		tv.setText("Duration");
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_dur_val);
-		tv.setText(results[pos].duration);
+		tv.setText(results[pos].duration_str);
 		/* Final destination */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_final_dest_txt);
 		tv.setText("Final\nDestination");

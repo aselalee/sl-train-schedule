@@ -263,16 +263,16 @@ public class ResultViewActivityWebView extends Activity {
 			}
 			htmlOutput += "<tr " + style + ">";
 			htmlOutput += "<td>";
-			htmlOutput += results[i].arrivalTime;
+			htmlOutput += results[i].arrivalTime_str;
 			htmlOutput += "</td>";
 			htmlOutput += "<td>";
-			htmlOutput +=  results[i].depatureTime;
+			htmlOutput +=  results[i].depatureTime_str;
 			htmlOutput += "</td>";
 			htmlOutput += "<td>";
 			htmlOutput +=  results[i].fDescription;
 			htmlOutput += "</td>";
 			htmlOutput += "<td>";
-			htmlOutput +=  results[i].arrivalAtDestinationTime;
+			htmlOutput +=  results[i].arrivalAtDestinationTime_str;
 			htmlOutput += "</td>";
 			htmlOutput += "<td>";
 			htmlOutput +=  results[i].toTrStationName;
