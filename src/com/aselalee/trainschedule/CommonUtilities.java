@@ -1,13 +1,18 @@
 package com.aselalee.trainschedule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -161,14 +166,30 @@ public class CommonUtilities {
 		mContext.startActivity(Intent.createChooser(intent, "Spread the word"));
 		return;
 	}
+
 	public static void ShareResult(Context mContext, String mResult) {
-		Intent intent=new Intent(android.content.Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-		intent.putExtra(Intent.EXTRA_SUBJECT, "I'll be on this train");
-		intent.putExtra(Intent.EXTRA_TITLE, "I'll be on this train");
-		intent.putExtra(Intent.EXTRA_TEXT, mResult);
-		mContext.startActivity(Intent.createChooser(intent, "Send your result"));
+		List<Intent> targetedShareIntents = new ArrayList<Intent>();
+		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+		shareIntent.setType("text/plain");
+		List<ResolveInfo> resInfo = mContext.getPackageManager().queryIntentActivities(shareIntent, 0);
+		if(!resInfo.isEmpty()) {
+			for(ResolveInfo resolveInfo : resInfo) {
+				String packageName = resolveInfo.activityInfo.packageName;
+				Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
+				targetedShareIntent.setType("text/plain");
+				targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "I'll be on this train");
+				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TITLE, "I'll be on this train");
+				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TEXT, mResult);
+				if(!packageName.toLowerCase().contains("com.facebook.katana") &&
+					!packageName.toLowerCase().contains("com.google.android.apps.docs")) {
+					targetedShareIntent.setPackage(packageName);
+					targetedShareIntents.add(targetedShareIntent);
+				}
+			}
+			Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), "Send your result");
+			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[]{}));
+			mContext.startActivity(chooserIntent);
+		}
 		return;
 	}
 	/**
