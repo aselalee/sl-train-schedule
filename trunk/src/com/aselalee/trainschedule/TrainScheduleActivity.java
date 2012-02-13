@@ -17,6 +17,10 @@
 
 package com.aselalee.trainschedule;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -48,6 +52,7 @@ public class TrainScheduleActivity extends Activity {
 	private LinearLayout lin_lay;
 	private Button get_given_btn;
 	private Button get_all_btn;
+	private Button get_next_btn;
 	private Button swap_btn;
 	private AutoCompleteTextView actv_from;
 	private AutoCompleteTextView actv_to;
@@ -138,6 +143,19 @@ public class TrainScheduleActivity extends Activity {
 				show_results();
 			}
 		});
+		get_next_btn = (Button)findViewById(R.id.search_get_next);
+		get_next_btn.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				DateFormat dateFormat_full = new SimpleDateFormat("HH:mm:ss");
+				DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+				Date date = new Date();
+				time_from_val = dateFormat_full.format(date);
+				time_to_val = CommonUtilities.MapTimeTo(-1);
+				time_from_txt = dateFormat.format(date);
+				time_to_txt = Constants.TIME_LAST_TO;;
+				show_results();
+				}
+			});
 
 		/**
 		 * Get Layout handle.
