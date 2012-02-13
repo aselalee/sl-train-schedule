@@ -267,13 +267,11 @@ public class ResultViewActivity extends Activity{
 					}
 				});
 				/**
-				 * Blur background.
+				 * Dim background.
 				 */
 				WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-				lp.alpha=0.8f;
 				lp.dimAmount=0.6f;  
 				dialog.getWindow().setAttributes(lp);  
-				dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 				dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 				break;
 			case DIALOG_PROGRESS:
