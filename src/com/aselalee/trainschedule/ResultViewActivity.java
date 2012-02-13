@@ -34,6 +34,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -265,6 +266,15 @@ public class ResultViewActivity extends Activity{
 						CommonUtilities.ShareResult(ResultViewActivity.this, selectedResult);
 					}
 				});
+				/**
+				 * Blur background.
+				 */
+				WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+				lp.alpha=0.8f;
+				lp.dimAmount=0.6f;  
+				dialog.getWindow().setAttributes(lp);  
+				dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+				dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 				break;
 			case DIALOG_PROGRESS:
 				pd = new ProgressDialog(ResultViewActivity.this);
