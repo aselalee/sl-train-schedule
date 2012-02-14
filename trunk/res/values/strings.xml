@@ -707,8 +707,8 @@
     <string name="version_info">
         Version 1.09\n
         &#160;1. Send/Share a search result\n
-        &#160;&#160;with friends\n
+        &#160;&#160;with friends.\n
         &#160;2. Ability to search for the\n
-        &#160;&#160;next departing train.
+        &#160;&#160;next scheduled train.
     </string>
 </resources>
