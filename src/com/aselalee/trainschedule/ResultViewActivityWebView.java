@@ -17,6 +17,8 @@
 
 package com.aselalee.trainschedule;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -50,6 +52,7 @@ public class ResultViewActivityWebView extends Activity {
 	private String resultHTML = "<html><head><title>Test</title></head><body><h1>Dummy</h1></body></html>";
 	private Result [] results = null;
 	private int errorCode = Constants.ERR_NO_ERROR;
+	GoogleAnalyticsTracker tracker;
 	
 	private static final int DIALOG_PROGRESS = 2;
 	private static final int DIALOG_ADD_TO_FAV = 3;
@@ -59,6 +62,13 @@ public class ResultViewActivityWebView extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.result_table_web_view);
+		/**
+		 * Setup analytics.
+		 */
+		tracker = GoogleAnalyticsTracker.getInstance();
+		tracker.setAnonymizeIp(true);
+		tracker.startNewSession("UA-29173474-1", 20, ResultViewActivityWebView.this);
+		tracker.trackPageView("/ResultViewActivityWebView");
 
 		/**
 		 * Read data passed from the calling activity.
@@ -145,11 +155,13 @@ public class ResultViewActivityWebView extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		tracker.dispatch();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onStop();
+		tracker.stopSession();
 		isStop = true;
 		if(mWebView != null) {
 			mWebView.destroy();

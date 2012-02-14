@@ -17,6 +17,8 @@
 
 package com.aselalee.trainschedule;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -45,18 +47,28 @@ public class FavouritesActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
 	private HisAndFavAdapter adapter = null;
 	private int postionToRename = 0;
+	GoogleAnalyticsTracker tracker;
 
 	private static final int DIALOG_RENAME_FAV = 5;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		/**
+		 * Setup analytics.
+		 */
+		tracker = GoogleAnalyticsTracker.getInstance();
+		tracker.setAnonymizeIp(true);
+		tracker.startNewSession("UA-29173474-1", 20, FavouritesActivity.this);
+		tracker.trackPageView("/FavouritesActivity");
+
 		ListView lv = getListView();
 		registerForContextMenu (lv);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> adv, View view,
 					int position, long id) {
 				if(paramsList != null) {
+					tracker.trackEvent("FavouritesAcitiviy", "Get_Results", "List_Item Click", 1);
 					getResults(paramsList[position]);
 				} else {
 					Log.w(Constants.LOG_TAG, "Favourites list is empty");
@@ -70,12 +82,19 @@ public class FavouritesActivity extends ListActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		tracker.dispatch();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		updateFavList();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onStop();
+		tracker.stopSession();
 	}
 
 	@Override

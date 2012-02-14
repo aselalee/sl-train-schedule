@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class TrainScheduleActivity extends Activity {
 	private LinearLayout lin_lay;
@@ -75,6 +76,7 @@ public class TrainScheduleActivity extends Activity {
 	private CommonUtilities cu = null;	
 	private static final int DIALOG_ADD_TO_FAV = 3;
 	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
+	GoogleAnalyticsTracker tracker;
 
 	/**
 	 * Default values.
@@ -87,6 +89,13 @@ public class TrainScheduleActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.get_user_input);
+		/**
+		 * Setup analytics.
+		 */
+		tracker = GoogleAnalyticsTracker.getInstance();
+		tracker.setAnonymizeIp(true);
+		tracker.startNewSession("UA-29173474-1", 20, TrainScheduleActivity.this);
+		tracker.trackPageView("/TrainScheduleActivity");
 		/**
 		 * Setup "AutoCompleteText" views
 		 */
@@ -126,6 +135,7 @@ public class TrainScheduleActivity extends Activity {
 				time_to_val = CommonUtilities.MapTimeTo(spinner_times_to.getSelectedItemPosition());
 				time_from_txt = spinner_times_from.getSelectedItem().toString();
 				time_to_txt = spinner_times_to.getSelectedItem().toString();
+				tracker.trackEvent("SearchPageButton", "Get_Filtered_Results", "Button Click", 1);
 				show_results();
 				}
 			});
@@ -140,6 +150,7 @@ public class TrainScheduleActivity extends Activity {
 				time_to_val = CommonUtilities.MapTimeTo(-1);
 				time_from_txt = Constants.TIME_FIRST_FROM;
 				time_to_txt = Constants.TIME_LAST_TO;
+				tracker.trackEvent("SearchPageButton", "Get_Full_Schedule", "Button Click", 1);
 				show_results();
 			}
 		});
@@ -152,7 +163,8 @@ public class TrainScheduleActivity extends Activity {
 				time_from_val = dateFormat_full.format(date);
 				time_to_val = CommonUtilities.MapTimeTo(-1);
 				time_from_txt = dateFormat.format(date);
-				time_to_txt = Constants.TIME_LAST_TO;;
+				time_to_txt = Constants.TIME_LAST_TO;
+				tracker.trackEvent("SearchPageButton", "Get_Next_Train", "Button Click", 1);
 				show_results();
 				}
 			});
@@ -346,6 +358,7 @@ public class TrainScheduleActivity extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		tracker.dispatch();
 		if(!writeCurrentState(TrainScheduleActivity.this)) {
 			Toast.makeText(TrainScheduleActivity.this, "Failed to save state!", Toast.LENGTH_LONG).show();
 		}
@@ -356,6 +369,12 @@ public class TrainScheduleActivity extends Activity {
 		super.onResume();
 		readCurrentState(TrainScheduleActivity.this);
 		lin_lay.requestFocusFromTouch();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onStop();
+		tracker.stopSession();
 	}
 
 	@Override
