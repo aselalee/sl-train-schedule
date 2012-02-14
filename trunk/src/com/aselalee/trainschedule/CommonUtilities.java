@@ -167,6 +167,11 @@ public class CommonUtilities {
 		return;
 	}
 
+	/**
+	 * Intent chooser is customized to remove unwanted apps.
+	 * 1. FaceBook has bug where only links can be shared.
+	 * 2. Cannot share this type of content via Google Docs and Skype.
+	 */
 	public static void ShareResult(Context mContext, String mResult) {
 		List<Intent> targetedShareIntents = new ArrayList<Intent>();
 		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -181,7 +186,8 @@ public class CommonUtilities {
 				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TITLE, "I'll be on this train");
 				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TEXT, mResult);
 				if(!packageName.toLowerCase().contains("com.facebook.katana") &&
-					!packageName.toLowerCase().contains("com.google.android.apps.docs")) {
+					!packageName.toLowerCase().contains("com.google.android.apps.docs") &&
+					!packageName.toLowerCase().contains("com.skype.raider")) {
 					targetedShareIntent.setPackage(packageName);
 					targetedShareIntents.add(targetedShareIntent);
 				}
@@ -190,6 +196,20 @@ public class CommonUtilities {
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[]{}));
 			mContext.startActivity(chooserIntent);
 		}
+		return;
+	}
+
+	public static void NewVersionInfo(Context mContext) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		builder.setMessage(R.string.version_info)
+		       .setCancelable(false)
+		       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		AlertDialog alert = builder.create();
+		alert.show();
 		return;
 	}
 	/**
