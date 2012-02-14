@@ -17,6 +17,8 @@
 
 package com.aselalee.trainschedule;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -64,6 +66,7 @@ public class ResultViewActivity extends Activity{
 	private Context myContext = null;
 	private int errorCode = Constants.ERR_NO_ERROR;
 	private String selectedResult = "";
+	GoogleAnalyticsTracker tracker;
 
 	private static final int DIALOG_DETAILS = 1;
 	private static final int DIALOG_PROGRESS = 2;
@@ -74,6 +77,14 @@ public class ResultViewActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.result_table);
+		/**
+		 * Setup analytics.
+		 */
+		tracker = GoogleAnalyticsTracker.getInstance();
+		tracker.setAnonymizeIp(true);
+		tracker.startNewSession("UA-29173474-1", 20, ResultViewActivity.this);
+		tracker.trackPageView("/ResultViewActivity");
+
 		myContext = ResultViewActivity.this;
 
 		/**
@@ -101,6 +112,7 @@ public class ResultViewActivity extends Activity{
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 					activePosition = position;
+					tracker.trackEvent("ResultsView", "Get_Result_Details", "List_Item Click", 1);
 					showDialog(DIALOG_DETAILS);
 			}
 		});
@@ -189,11 +201,13 @@ public class ResultViewActivity extends Activity{
 	@Override
 	public void onPause() {
 		super.onPause();
+		tracker.dispatch();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onStop();
+		tracker.stopSession();
 		isStop = true;
 	}
 
@@ -201,7 +215,7 @@ public class ResultViewActivity extends Activity{
 	public void onResume() {
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
@@ -263,6 +277,7 @@ public class ResultViewActivity extends Activity{
 				button = (Button) dialog.findViewById(R.id.result_table_details_send_btn);
 				button.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
+						tracker.trackEvent("ResultsView", "Send_Result", "Details_Dialog_Click", 1);
 						CommonUtilities.ShareResult(ResultViewActivity.this, selectedResult);
 					}
 				});
