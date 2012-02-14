@@ -300,6 +300,10 @@ public class TrainScheduleActivity extends Activity {
 			SharedPreferences.Editor e = p.edit();
 			e.putInt(Constants.APP_VERSION_CODE, version_code);
 			e.commit();
+			/**
+			 * Display new version info.
+			 */
+			CommonUtilities.NewVersionInfo(TrainScheduleActivity.this);
 			return;
 		}
 		/**
