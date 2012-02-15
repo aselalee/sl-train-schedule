@@ -102,7 +102,12 @@ public final class Constants {
 	/**
 	 * Strings to be displayed as first and last time stamp strings.
 	 */
-    public static final String TIME_FIRST_FROM = "00:00";
-    public static final String TIME_LAST_TO = "24:00";
+	public static final String TIME_FIRST_FROM = "00:00";
+	public static final String TIME_LAST_TO = "24:00";
+	
+	/**
+	 * Google Analytics ID
+	 */
+	public static final String ANALYTICS_ID = "UA-29173474-1";
 
 }

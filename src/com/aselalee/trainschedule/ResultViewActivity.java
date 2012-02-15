@@ -17,8 +17,6 @@
 
 package com.aselalee.trainschedule;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -66,7 +64,7 @@ public class ResultViewActivity extends Activity{
 	private Context myContext = null;
 	private int errorCode = Constants.ERR_NO_ERROR;
 	private String selectedResult = "";
-	GoogleAnalyticsTracker tracker;
+	private AnalyticsWrapper tracker;
 
 	private static final int DIALOG_DETAILS = 1;
 	private static final int DIALOG_PROGRESS = 2;
@@ -80,10 +78,8 @@ public class ResultViewActivity extends Activity{
 		/**
 		 * Setup analytics.
 		 */
-		tracker = GoogleAnalyticsTracker.getInstance();
-		tracker.setAnonymizeIp(true);
-		tracker.startNewSession("UA-29173474-1", 20, ResultViewActivity.this);
-		tracker.trackPageView("/ResultViewActivity");
+		tracker = new AnalyticsWrapper(ResultViewActivity.this);
+		tracker.TrackPageView("/ResultViewActivity");
 
 		myContext = ResultViewActivity.this;
 
@@ -112,7 +108,7 @@ public class ResultViewActivity extends Activity{
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 					activePosition = position;
-					tracker.trackEvent("ResultsView", "Get_Result_Details", "List_Item Click", 1);
+					tracker.TrackEvent("ResultViewActivity", "Get_Result_Details", "List_Item_Click", 1);
 					showDialog(DIALOG_DETAILS);
 			}
 		});
@@ -201,13 +197,13 @@ public class ResultViewActivity extends Activity{
 	@Override
 	public void onPause() {
 		super.onPause();
-		tracker.dispatch();
+		tracker.Dispatch();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onStop();
-		tracker.stopSession();
+		tracker.StopSession();
 		isStop = true;
 	}
 
@@ -242,9 +238,11 @@ public class ResultViewActivity extends Activity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
+			tracker.TrackEvent("ResultViewActivity", "Add_to_Favs", "Menu_Click", 1);
 			showDialog(DIALOG_ADD_TO_FAV);
 			return true;
 		case R.id.search_menu_switch_result_view:
+			tracker.TrackEvent("ResultViewActivity", "Switch_Res_View", "Menu_Click", 1);
 			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 			return true;
 		default:
@@ -277,7 +275,7 @@ public class ResultViewActivity extends Activity{
 				button = (Button) dialog.findViewById(R.id.result_table_details_send_btn);
 				button.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
-						tracker.trackEvent("ResultsView", "Send_Result", "Details_Dialog_Click", 1);
+						tracker.TrackEvent("ResultViewActivity", "Send_Result", "Details_Dialog_Click", 1);
 						CommonUtilities.ShareResult(ResultViewActivity.this, selectedResult);
 					}
 				});
