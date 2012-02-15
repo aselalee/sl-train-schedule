@@ -17,8 +17,6 @@
 
 package com.aselalee.trainschedule;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -52,7 +50,7 @@ public class ResultViewActivityWebView extends Activity {
 	private String resultHTML = "<html><head><title>Test</title></head><body><h1>Dummy</h1></body></html>";
 	private Result [] results = null;
 	private int errorCode = Constants.ERR_NO_ERROR;
-	GoogleAnalyticsTracker tracker;
+	private AnalyticsWrapper tracker;
 	
 	private static final int DIALOG_PROGRESS = 2;
 	private static final int DIALOG_ADD_TO_FAV = 3;
@@ -65,10 +63,8 @@ public class ResultViewActivityWebView extends Activity {
 		/**
 		 * Setup analytics.
 		 */
-		tracker = GoogleAnalyticsTracker.getInstance();
-		tracker.setAnonymizeIp(true);
-		tracker.startNewSession("UA-29173474-1", 20, ResultViewActivityWebView.this);
-		tracker.trackPageView("/ResultViewActivityWebView");
+		tracker = new AnalyticsWrapper(ResultViewActivityWebView.this);
+		tracker.TrackPageView("/ResultViewActivityWebView");
 
 		/**
 		 * Read data passed from the calling activity.
@@ -155,13 +151,13 @@ public class ResultViewActivityWebView extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		tracker.dispatch();
+		tracker.Dispatch();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onStop();
-		tracker.stopSession();
+		tracker.StopSession();
 		isStop = true;
 		if(mWebView != null) {
 			mWebView.destroy();
@@ -191,9 +187,11 @@ public class ResultViewActivityWebView extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.search_menu_add_to_fav:
+			tracker.TrackEvent("ResultViewActivityWebView", "Add_to_Favs", "Menu_Click", 1);
 			showDialog(DIALOG_ADD_TO_FAV);
 			return true;
 		case R.id.search_menu_switch_result_view:
+			tracker.TrackEvent("ResultViewActivityWebView", "Switch_Res_View", "Menu_Click", 1);
 			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 			return true;
 		default:

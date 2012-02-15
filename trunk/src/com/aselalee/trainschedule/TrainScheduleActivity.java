@@ -47,7 +47,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class TrainScheduleActivity extends Activity {
 	private LinearLayout lin_lay;
@@ -76,7 +75,7 @@ public class TrainScheduleActivity extends Activity {
 	private CommonUtilities cu = null;	
 	private static final int DIALOG_ADD_TO_FAV = 3;
 	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
-	GoogleAnalyticsTracker tracker;
+	private AnalyticsWrapper tracker;
 
 	/**
 	 * Default values.
@@ -92,10 +91,8 @@ public class TrainScheduleActivity extends Activity {
 		/**
 		 * Setup analytics.
 		 */
-		tracker = GoogleAnalyticsTracker.getInstance();
-		tracker.setAnonymizeIp(true);
-		tracker.startNewSession("UA-29173474-1", 20, TrainScheduleActivity.this);
-		tracker.trackPageView("/TrainScheduleActivity");
+		tracker = new AnalyticsWrapper(TrainScheduleActivity.this);
+		tracker.TrackPageView("/TrainScheduleActivity");
 		/**
 		 * Setup "AutoCompleteText" views
 		 */
@@ -109,7 +106,7 @@ public class TrainScheduleActivity extends Activity {
 		actv_to.setOnItemClickListener(new ACTVToItemClickListner());
 
 		/**
-		 * Setup time "spinner"s
+		 * Setup time "spinners"
 		 */
 		adapter_times_from = ArrayAdapter.createFromResource(
 				TrainScheduleActivity.this, R.array.times_from_array, R.layout.spinner);
@@ -135,7 +132,7 @@ public class TrainScheduleActivity extends Activity {
 				time_to_val = CommonUtilities.MapTimeTo(spinner_times_to.getSelectedItemPosition());
 				time_from_txt = spinner_times_from.getSelectedItem().toString();
 				time_to_txt = spinner_times_to.getSelectedItem().toString();
-				tracker.trackEvent("SearchPageButton", "Get_Filtered_Results", "Button Click", 1);
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Get_Filtered_Results", "Button_Click", 1);
 				show_results();
 				}
 			});
@@ -150,7 +147,7 @@ public class TrainScheduleActivity extends Activity {
 				time_to_val = CommonUtilities.MapTimeTo(-1);
 				time_from_txt = Constants.TIME_FIRST_FROM;
 				time_to_txt = Constants.TIME_LAST_TO;
-				tracker.trackEvent("SearchPageButton", "Get_Full_Schedule", "Button Click", 1);
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Get_Full_Schedule", "Button_Click", 1);
 				show_results();
 			}
 		});
@@ -164,7 +161,7 @@ public class TrainScheduleActivity extends Activity {
 				time_to_val = CommonUtilities.MapTimeTo(-1);
 				time_from_txt = dateFormat.format(date);
 				time_to_txt = Constants.TIME_LAST_TO;
-				tracker.trackEvent("SearchPageButton", "Get_Next_Train", "Button Click", 1);
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Get_Next_Train", "Button_Click", 1);
 				show_results();
 				}
 			});
@@ -189,6 +186,7 @@ public class TrainScheduleActivity extends Activity {
 				tmp = null;
 				actv_to.setText(station_to_txt);
 				actv_from.setText(station_from_txt);
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Swap_Stations", "Button_Click", 1);
 			}
 		});
 	}
@@ -358,10 +356,10 @@ public class TrainScheduleActivity extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		tracker.dispatch();
 		if(!writeCurrentState(TrainScheduleActivity.this)) {
 			Toast.makeText(TrainScheduleActivity.this, "Failed to save state!", Toast.LENGTH_LONG).show();
 		}
+		tracker.Dispatch();
 	}
 
 	@Override
@@ -374,7 +372,7 @@ public class TrainScheduleActivity extends Activity {
 	@Override
 	public void onDestroy() {
 		super.onStop();
-		tracker.stopSession();
+		tracker.StopSession();
 	}
 
 	@Override
@@ -400,12 +398,15 @@ public class TrainScheduleActivity extends Activity {
 				time_to_val = CommonUtilities.MapTimeTo(spinner_times_to.getSelectedItemPosition());
 				time_from_txt = spinner_times_from.getSelectedItem().toString();
 				time_to_txt = spinner_times_to.getSelectedItem().toString();
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Add_to_Favs", "Menu_Click", 1);
 				showDialog(DIALOG_ADD_TO_FAV);
 				return true;
 			case R.id.search_menu_switch_result_view:
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Switch_Res_View", "Menu_Click", 1);
 				showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 				return true;
 			case R.id.search_menu_share:
+				tracker.TrackEvent("TrainScheduleActivityButtons", "Share", "Menu_Click", 1);
 				CommonUtilities.ShareApplication(TrainScheduleActivity.this);
 				return true;
 			default:

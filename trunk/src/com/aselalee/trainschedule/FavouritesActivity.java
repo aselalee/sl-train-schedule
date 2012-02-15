@@ -17,8 +17,6 @@
 
 package com.aselalee.trainschedule;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -47,7 +45,7 @@ public class FavouritesActivity extends ListActivity {
 	private ParameterSet [] paramsList = null;
 	private HisAndFavAdapter adapter = null;
 	private int postionToRename = 0;
-	GoogleAnalyticsTracker tracker;
+	private AnalyticsWrapper tracker;
 
 	private static final int DIALOG_RENAME_FAV = 5;
 
@@ -57,10 +55,8 @@ public class FavouritesActivity extends ListActivity {
 		/**
 		 * Setup analytics.
 		 */
-		tracker = GoogleAnalyticsTracker.getInstance();
-		tracker.setAnonymizeIp(true);
-		tracker.startNewSession("UA-29173474-1", 20, FavouritesActivity.this);
-		tracker.trackPageView("/FavouritesActivity");
+		tracker = new AnalyticsWrapper(FavouritesActivity.this);
+		tracker.TrackPageView("/FavouritesActivity");
 
 		ListView lv = getListView();
 		registerForContextMenu (lv);
@@ -68,7 +64,7 @@ public class FavouritesActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> adv, View view,
 					int position, long id) {
 				if(paramsList != null) {
-					tracker.trackEvent("FavouritesAcitiviy", "Get_Results", "List_Item Click", 1);
+					tracker.TrackEvent("FavouritesAcitiviy", "Get_Results", "List_Item_Click", 1);
 					getResults(paramsList[position]);
 				} else {
 					Log.w(Constants.LOG_TAG, "Favourites list is empty");
@@ -82,7 +78,7 @@ public class FavouritesActivity extends ListActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		tracker.dispatch();
+		tracker.Dispatch();
 	}
 
 	@Override
@@ -94,7 +90,7 @@ public class FavouritesActivity extends ListActivity {
 	@Override
 	public void onDestroy() {
 		super.onStop();
-		tracker.stopSession();
+		tracker.StopSession();
 	}
 
 	@Override
@@ -117,6 +113,7 @@ public class FavouritesActivity extends ListActivity {
 				myDBAcc.ClearFavouritesTable();
 				myDBAcc.close();
 				updateFavList();
+				tracker.TrackEvent("FavouritesAcitiviy", "Clear_Favs", "Menu_Click", 1);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -139,12 +136,14 @@ public class FavouritesActivity extends ListActivity {
 		switch (item.getItemId()) {
 			case R.id.fav_ctx_menu_rename_fav:
 				postionToRename = info.position;
+				tracker.TrackEvent("FavouritesAcitiviy", "Rename_Fav", "Ctx_Menu_Click", 1);
 				showDialog(DIALOG_RENAME_FAV);
 				break;
 			case R.id.fav_ctx_menu_delete_fav:
 				DBDataAccess myDBAcc = new DBDataAccess(FavouritesActivity.this);
 				myDBAcc.DeleteFavRecord(paramsList[info.position].id);
 				myDBAcc.close();
+				tracker.TrackEvent("FavouritesAcitiviy", "Delete_Fav", "Ctx_Menu_Click", 1);
 				break;
 			default:
 				return super.onContextItemSelected(item);
@@ -193,8 +192,6 @@ public class FavouritesActivity extends ListActivity {
 		LayoutInflater factory = LayoutInflater.from(FavouritesActivity.this);
 		View textEntryView = factory.inflate(R.layout.text_entry_dialog, null);
 		final EditText et = (EditText)textEntryView.findViewById(R.id.dialog_new_name);
-		//et.setText(paramsList[postionToRename].name);
-		//et.setSelection(et.getText().length());
 		final CheckBox cb = (CheckBox)textEntryView.findViewById(R.id.dialog_isTimeFilterOnCB);
 		cb.setVisibility(View.GONE);
 		AlertDialog.Builder builder = new AlertDialog.Builder(FavouritesActivity.this);
