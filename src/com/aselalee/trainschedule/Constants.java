@@ -108,6 +108,6 @@ public final class Constants {
 	/**
 	 * Google Analytics ID
 	 */
-	public static final String ANALYTICS_ID = "UA-29173474-1";
+	public static final String ANALYTICS_ID = "UA-29241401-1";
 
 }
