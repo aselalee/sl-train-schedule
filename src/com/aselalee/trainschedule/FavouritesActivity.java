@@ -90,6 +90,7 @@ public class FavouritesActivity extends ListActivity {
 	@Override
 	public void onDestroy() {
 		super.onStop();
+		tracker.Dispatch();
 		tracker.StopSession();
 	}
 
