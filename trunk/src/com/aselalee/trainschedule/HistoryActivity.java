@@ -76,6 +76,7 @@ public class HistoryActivity extends ListActivity {
 	@Override
 	public void onDestroy() {
 		super.onStop();
+		tracker.Dispatch();
 		tracker.StopSession();
 	}
 

@@ -157,11 +157,12 @@ public class ResultViewActivityWebView extends Activity {
 	@Override
 	public void onDestroy() {
 		super.onStop();
-		tracker.StopSession();
 		isStop = true;
 		if(mWebView != null) {
 			mWebView.destroy();
 		}
+		tracker.Dispatch();
+		tracker.StopSession();
 	}
 
 	@Override
@@ -177,22 +178,23 @@ public class ResultViewActivityWebView extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.search_activity_menu, menu);
-		menu.findItem(R.id.search_menu_share).setEnabled(false);
-		menu.findItem(R.id.search_menu_share).setVisible(false);
+		inflater.inflate(R.menu.results_activity_menu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.search_menu_add_to_fav:
+		case R.id.results_menu_add_to_fav:
 			tracker.TrackEvent("ResultViewActivityWebView", "Add_to_Favs", "Menu_Click", 1);
 			showDialog(DIALOG_ADD_TO_FAV);
 			return true;
-		case R.id.search_menu_switch_result_view:
+		case R.id.results_menu_switch_result_view:
 			tracker.TrackEvent("ResultViewActivityWebView", "Switch_Res_View", "Menu_Click", 1);
 			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
+			return true;
+		case R.id.results_menu_share:
+			//Add share all results.
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -202,9 +204,9 @@ public class ResultViewActivityWebView extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if(isAddToFavsActive == false) {
-			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(false);
+			menu.findItem(R.id.results_menu_add_to_fav).setEnabled(false);
 		} else {
-			menu.findItem(R.id.search_menu_add_to_fav).setEnabled(true);
+			menu.findItem(R.id.results_menu_add_to_fav).setEnabled(true);
 		}
 		return true;
 	}

@@ -372,6 +372,7 @@ public class TrainScheduleActivity extends Activity {
 	@Override
 	public void onDestroy() {
 		super.onStop();
+		tracker.Dispatch();
 		tracker.StopSession();
 	}
 
