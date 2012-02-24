@@ -190,7 +190,7 @@ public class CommonUtilities {
 	 * 1. FaceBook has bug where only links can be shared.
 	 * 2. Cannot share this type of content via Google Docs and Skype.
 	 */
-	public static void ShareResult(Context mContext, String mResult) {
+	public static void ShareResult(Context mContext, String mResult, String mTitle) {
 		List<Intent> targetedShareIntents = new ArrayList<Intent>();
 		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
 		shareIntent.setType("text/plain");
@@ -200,8 +200,8 @@ public class CommonUtilities {
 				String packageName = resolveInfo.activityInfo.packageName;
 				Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
 				targetedShareIntent.setType("text/plain");
-				targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "I'll be on this train");
-				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TITLE, "I'll be on this train");
+				targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mTitle);
+				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TITLE, mTitle);
 				targetedShareIntent.putExtra(android.content.Intent.EXTRA_TEXT, mResult);
 				if(!packageName.toLowerCase().contains("com.facebook.katana") &&
 					!packageName.toLowerCase().contains("com.google.android.apps.docs") &&
@@ -215,6 +215,35 @@ public class CommonUtilities {
 			mContext.startActivity(chooserIntent);
 		}
 		return;
+	}
+	public static String FormatResultForSharing(Result results[]) {
+		int count = results.length;
+		String outputStr = "";
+		String tmp;
+		if(count < 0) return outputStr;
+		outputStr += "From: ";
+		outputStr += results[0].startStationName;
+		outputStr += "\n";
+		outputStr += "To: ";
+		outputStr += results[0].endStationName;
+		outputStr += "\n";
+		for(int index = 0; index < count; index++) {
+			tmp = "(" + String.valueOf(index + 1) + ")\n";
+			outputStr += tmp;
+			outputStr += "Depatrue: ";
+			outputStr += results[index].depatureTime_str;
+			outputStr += " - ";
+			outputStr += "Arrival: ";
+			outputStr += results[index].arrivalAtDestinationTime_str;
+			outputStr += "\n";
+			outputStr += "Frequency: ";
+			outputStr += results[index].fDescription_original;
+			outputStr += "\n";
+			outputStr += "Duration: ";
+			outputStr += results[index].duration_str;
+			outputStr += "\n";
+		}
+		return outputStr;
 	}
 
 	public static void NewVersionInfo(Context mContext) {

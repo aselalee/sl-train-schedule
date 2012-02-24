@@ -213,8 +213,9 @@ public class GetResultsFromSite extends Thread {
 						trainsArray.getJSONObject(i).getString("endStationName").toString().trim());
 				results[i].toTrStationName = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("toTrStationName").toString().trim());
-				results[i].fDescription = formatFrequency(
-						CommonUtilities.ToTitleCase(trainsArray.getJSONObject(i).getString("fDescription").toString().trim()));
+				results[i].fDescription_original =
+						CommonUtilities.ToTitleCase(trainsArray.getJSONObject(i).getString("fDescription").toString().trim());
+				results[i].fDescription = formatFrequency(results[i].fDescription_original);
 				results[i].tyDescription = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("tyDescription").toString().trim());
 				results[i].duration_str = calcDuration(results[i].depatureTime_dt,
@@ -261,22 +262,21 @@ public class GetResultsFromSite extends Thread {
 		long durationInMilliSecs = endTimeInMilliSecs - startTimeInMilliSecs;
 		if(durationInMilliSecs > 0) {
 			int hours = (int)(durationInMilliSecs/1000/60/60);
-			if(hours <= 9) {
-				durationStr = "0" + String.valueOf(hours);
-			} else {
-				durationStr = String.valueOf(hours);
-			}
-			durationStr += ":"; 
 			int mins = (int)(durationInMilliSecs/1000/60)%60;
-			if(mins < 9) {
-				durationStr += "0" + String.valueOf(mins);
-			} else {
-				durationStr += String.valueOf(mins);
-			}
+			durationStr = strToDoubleDigits(hours) + ":" + strToDoubleDigits(mins);
 		} else {
 			durationStr = "---/---";
 		}
 		return durationStr;
+	}
+	private String strToDoubleDigits(int value) {
+		String output = "";
+		if(value <= 9) {
+			output += "0" + String.valueOf(value);
+		} else {
+			output += String.valueOf(value);
+		}
+		return output;
 	}
 	private String chop(String strIn) {
 		String strOut;
