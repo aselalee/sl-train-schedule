@@ -64,6 +64,7 @@ public class CommonUtilities {
 	}
 
 	public static final void HideSoftKeyboard(View view, Context context) {
+		if(view == null || context == null) return;
 		InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 	}

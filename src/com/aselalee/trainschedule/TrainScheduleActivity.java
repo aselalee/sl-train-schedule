@@ -170,13 +170,16 @@ public class TrainScheduleActivity extends Activity {
 		 * Get Layout handle.
 		 */
 		lin_lay = (LinearLayout)findViewById(R.id.search_lin_lay);
+		lin_lay.setFocusable(true);
+		lin_lay.setFocusableInTouchMode(true);
 		/**
 		 * Setup swap button.
 		 */
 		swap_btn = (Button)findViewById(R.id.search_swap);
 		swap_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				lin_lay.requestFocusFromTouch();
+				lin_lay.requestFocus();
+				CommonUtilities.HideSoftKeyboard(getCurrentFocus(), getBaseContext());
 				String tmp = station_to_txt;
 				station_to_txt = station_from_txt;
 				station_from_txt = tmp;
@@ -244,7 +247,7 @@ public class TrainScheduleActivity extends Activity {
 			Station selectedStation = (Station) parent.getItemAtPosition(pos);
 			station_from_txt = selectedStation.getText();
 			station_from_val = selectedStation.getValue();
-			actv_to.requestFocusFromTouch();
+			actv_to.requestFocus();
 		}
 	}
 
@@ -257,7 +260,7 @@ public class TrainScheduleActivity extends Activity {
 			station_to_txt = selectedStation.getText();
 			station_to_val = selectedStation.getValue();
 			CommonUtilities.HideSoftKeyboard(actv_to, getBaseContext());
-			lin_lay.requestFocusFromTouch();
+			lin_lay.requestFocus();
 		}
 	}
 
@@ -359,6 +362,7 @@ public class TrainScheduleActivity extends Activity {
 		if(!writeCurrentState(TrainScheduleActivity.this)) {
 			Toast.makeText(TrainScheduleActivity.this, "Failed to save state!", Toast.LENGTH_LONG).show();
 		}
+		CommonUtilities.HideSoftKeyboard(actv_to, getBaseContext());
 		tracker.Dispatch();
 	}
 
@@ -366,7 +370,7 @@ public class TrainScheduleActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		readCurrentState(TrainScheduleActivity.this);
-		lin_lay.requestFocusFromTouch();
+		lin_lay.requestFocus();
 	}
 
 	@Override

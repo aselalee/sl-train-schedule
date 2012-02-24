@@ -17,7 +17,7 @@
             android:label="@string/app_name"
             android:name=".TabHostActivity"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +29,7 @@
             android:label="@string/user_input"
             android:name=".TrainScheduleActivity"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
 
@@ -37,7 +37,7 @@
             android:label="@string/history"
             android:name=".HistoryActivity"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
 
@@ -45,7 +45,7 @@
             android:label="@string/favourites"
             android:name=".FavouritesActivity"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
 
@@ -53,7 +53,7 @@
             android:label="@string/results"
             android:name=".ResultViewActivity" 
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
 
@@ -61,7 +61,7 @@
             android:label="@string/results_web_view"
             android:name=".ResultViewActivityWebView"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
 
