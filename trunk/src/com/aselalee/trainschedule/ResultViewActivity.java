@@ -59,6 +59,7 @@ public class ResultViewActivity extends Activity{
 	private int activePosition = 0;
 	private boolean isAddToFavsActive = true;
 	private ListView listView = null;
+	private ResultViewAdapter adapter = null;
 	private TextView tv = null;
 	private Result [] results = null;
 	private Context myContext = null;
@@ -74,7 +75,6 @@ public class ResultViewActivity extends Activity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.result_table);
 		/**
 		 * Setup analytics.
 		 */
@@ -99,6 +99,25 @@ public class ResultViewActivity extends Activity{
 			date_today = extras.getString("date_today");
 		}
 		isStop = false;
+		isAddToFavsActive = true;
+		setupUI();
+		/**
+		 * Display progress Dialog.
+		 */
+		showDialog(DIALOG_PROGRESS);
+
+		/**
+		 * This will execute the "run" method in a new thread.
+		 */
+		resultsThread = new GetResultsFromSite(handler,
+				station_from, station_to,
+				time_from, time_to,
+				date_today);
+		resultsThread.start();
+	}
+
+	private void setupUI() {
+		setContentView(R.layout.result_table);
 		/**
 		 * Get the required handles.
 		 * Update start station and end station
@@ -115,22 +134,8 @@ public class ResultViewActivity extends Activity{
 		tv = (TextView) findViewById(R.id.res_table_station_names);
 		tv.setText( CommonUtilities.ToTitleCase(station_from_txt) + " - " +
 				CommonUtilities.ToTitleCase(station_to_txt));
-		
-		/**
-		 * Display progress Dialog.
-		 */
-		showDialog(DIALOG_PROGRESS);
-
-		/**
-		 * This will execute the "run" method in a new thread.
-		 */
-		resultsThread = new GetResultsFromSite(handler,
-				station_from, station_to,
-				time_from, time_to,
-				date_today);
-		resultsThread.start();
+		return;
 	}
-
 	/**
 	 * Handler variable which is used to handle processing after results are received.
 	 * 1. Remove the progress dialog
@@ -148,7 +153,8 @@ public class ResultViewActivity extends Activity{
 					errorCode = resultsThread.GetErrorCode();
 					if(results != null) {
 						isAddToFavsActive = true;
-						listView.setAdapter(new ResultViewAdapter(myContext, results));
+						adapter = new ResultViewAdapter(myContext, results);
+						listView.setAdapter(adapter);
 					} else {
 						isAddToFavsActive = false;
 						setNoResultsState();
@@ -224,6 +230,17 @@ public class ResultViewActivity extends Activity{
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		/**
+		 * isAddToFavsActive == false means that some error occurred
+		 * and data is not present to display in the list. Activity
+		 * is showing an error state. So do nothing. 
+		 */
+		if(isAddToFavsActive == true) {
+			setupUI();
+			if(adapter != null) {
+				listView.setAdapter(adapter);
+			}
+		}
 	}
 
 	@Override
