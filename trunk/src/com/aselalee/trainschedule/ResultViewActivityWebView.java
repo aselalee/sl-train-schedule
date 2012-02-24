@@ -194,7 +194,11 @@ public class ResultViewActivityWebView extends Activity {
 			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 			return true;
 		case R.id.results_menu_share:
-			//Add share all results.
+			tracker.TrackEvent("ResultViewActivityWebView", "Send_All_Result", "Menu_Click", 1);
+			String msg = CommonUtilities.FormatResultForSharing(results);
+			CommonUtilities.ShareResult(ResultViewActivityWebView.this,
+										msg,
+										"Train Schedule");
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -205,8 +209,10 @@ public class ResultViewActivityWebView extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if(isAddToFavsActive == false) {
 			menu.findItem(R.id.results_menu_add_to_fav).setEnabled(false);
+			menu.findItem(R.id.results_menu_share).setEnabled(false);
 		} else {
 			menu.findItem(R.id.results_menu_add_to_fav).setEnabled(true);
+			menu.findItem(R.id.results_menu_share).setEnabled(true);
 		}
 		return true;
 	}

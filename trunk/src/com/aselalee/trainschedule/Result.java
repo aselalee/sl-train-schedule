@@ -32,6 +32,7 @@ public class Result {
 	public String startStationName; /* Staring station of user */
 	public String endStationName; /* Target destination of user */
 	public String toTrStationName; /* Final destination of train*/
+	public String fDescription_original; /* Train frequency */
 	public String fDescription; /* Train frequency */
 	public String tyDescription; /* Train type */
 	public String duration_str; /* Traveling time. Calculated locally. */

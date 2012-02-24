@@ -245,7 +245,11 @@ public class ResultViewActivity extends Activity{
 			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
 			return true;
 		case R.id.results_menu_share:
-			//Add share all results.
+			tracker.TrackEvent("ResultViewActivity", "Send_All_Result", "Menu_Click", 1);
+			String msg = CommonUtilities.FormatResultForSharing(results);
+			CommonUtilities.ShareResult(ResultViewActivity.this,
+										msg,
+										"Train Schedule");
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -256,8 +260,10 @@ public class ResultViewActivity extends Activity{
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if(isAddToFavsActive == false) {
 			menu.findItem(R.id.results_menu_add_to_fav).setEnabled(false);
+			menu.findItem(R.id.results_menu_share).setEnabled(false);
 		} else {
 			menu.findItem(R.id.results_menu_add_to_fav).setEnabled(true);
+			menu.findItem(R.id.results_menu_share).setEnabled(true);
 		}
 		return true;
 	}
@@ -278,7 +284,9 @@ public class ResultViewActivity extends Activity{
 				button.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						tracker.TrackEvent("ResultViewActivity", "Send_Result", "Details_Dialog_Click", 1);
-						CommonUtilities.ShareResult(ResultViewActivity.this, selectedResult);
+						CommonUtilities.ShareResult(ResultViewActivity.this,
+								selectedResult,
+								"I'll be on this train!!!");
 					}
 				});
 				/**
@@ -343,11 +351,18 @@ public class ResultViewActivity extends Activity{
 		selectedResult += "To: ";
 		selectedResult += results[pos].endStationName;
 		selectedResult += "\n";
-		selectedResult += "At: ";
+		selectedResult += "Dep: ";
 		selectedResult += results[pos].depatureTime_str;
 		selectedResult += "\n";
-		selectedResult += "Duration: ";
+		selectedResult += "Arr: ";
+		selectedResult += results[pos].arrivalAtDestinationTime_str;
+		selectedResult += "\n";
+		selectedResult += "Dur: ";
 		selectedResult += results[pos].duration_str;
+		selectedResult += "\n";
+		selectedResult += "Freq: ";
+		selectedResult += results[pos].fDescription_original;
+		
 		/* Arrival at start */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_arr_at_start_txt);
 		tv.setText("Arrival at\n" + results[pos].startStationName);
@@ -363,7 +378,7 @@ public class ResultViewActivity extends Activity{
 		tv.setText("Reaching\n" + results[pos].endStationName);
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_reach_dest_val);
 		tv.setText(results[pos].arrivalAtDestinationTime_str);
-		/* Duration */
+		/* Frequency */
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_txt);
 		tv.setText("Frequency");
 		tv = (TextView)dialog.findViewById(R.id.result_table_details_freq_val);
