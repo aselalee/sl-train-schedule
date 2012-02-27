@@ -178,7 +178,7 @@ public class FavouritesActivity extends ListActivity {
 	}
 
 	private void getResults(ParameterSet paramSet) {
-		Intent intent = CommonUtilities.GetResultViewIntent(FavouritesActivity.this);
+		Intent intent = new Intent(FavouritesActivity.this, ResultViewActivity.class);
 		CommonUtilities.PupulateIntentForResultsActivity(
 				paramSet.start_station_val, paramSet.start_station_txt,
 				paramSet.end_station_val, paramSet.end_station_txt,
