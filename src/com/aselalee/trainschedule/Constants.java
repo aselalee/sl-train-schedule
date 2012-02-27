@@ -34,7 +34,6 @@ public final class Constants {
 	public static final String STATION_FROM_VAL = "station_from_val";
 	public static final String STATION_TO_TXT = "station_to_txt";
 	public static final String STATION_TO_VAL = "station_to_val";
-	public static final String IS_RESULTS_WEB_VIEW = "is_results_web_view";
 
 	/**
 	 * LOG Tag
@@ -71,7 +70,7 @@ public final class Constants {
 	/**
 	 * Maximum entries kept in the history table.
 	 */
-	public static final int MAX_HIS_COUNT = 5;
+	public static final int MAX_HIS_COUNT = 10;
 
 	/**
 	 * Maximum entries kept in the favourites table.

@@ -30,7 +30,6 @@
     <string name="full_schedule">Get Full Schedule</string>
     <string name="next_train">Get Next Train</string>
     <string name="add_to_fav_txt">Add To Favourites</string>
-    <string name="switch_result_view">Switch Results View</string>
     <string name="share">Share</string>
     <string name="clear_his_txt">Clear History</string>
     <string name="list_from_txt">From:</string>
@@ -720,8 +719,8 @@
     </string-array>
 
     <string name="version_info">
-        Version 1.10\n
-        &#160;1. Removed a couple of icons to reduce app size.\n
-        &#160;2. Re-enabled portrait mode.\n
+        Version 1.11\n
+        &#160;1. Removed the old results view page and some icons to reduce app size.\n
+        &#160;2. Landscape mode (As requested by tab users).\n
     </string>
 </resources>

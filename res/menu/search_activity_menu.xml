@@ -19,9 +19,6 @@
     <item android:id="@+id/search_menu_add_to_fav"
         android:title="@string/add_to_fav_txt"
         android:icon="@android:drawable/ic_menu_add"/>
-    <item android:id="@+id/search_menu_switch_result_view"
-        android:title="@string/switch_result_view"
-        android:icon="@android:drawable/ic_menu_view"/>
     <item android:id="@+id/search_menu_share"
         android:title="@string/share"
         android:icon="@android:drawable/ic_menu_share"/>

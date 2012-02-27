@@ -70,7 +70,6 @@ public class ResultViewActivity extends Activity{
 	private static final int DIALOG_DETAILS = 1;
 	private static final int DIALOG_PROGRESS = 2;
 	private static final int DIALOG_ADD_TO_FAV = 3;
-	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -257,10 +256,6 @@ public class ResultViewActivity extends Activity{
 			tracker.TrackEvent("ResultViewActivity", "Add_to_Favs", "Menu_Click", 1);
 			showDialog(DIALOG_ADD_TO_FAV);
 			return true;
-		case R.id.results_menu_switch_result_view:
-			tracker.TrackEvent("ResultViewActivity", "Switch_Res_View", "Menu_Click", 1);
-			showDialog(DIALOG_CHANGE_RESULTS_VIEW);
-			return true;
 		case R.id.results_menu_share:
 			tracker.TrackEvent("ResultViewActivity", "Send_All_Result", "Menu_Click", 1);
 			String msg = CommonUtilities.FormatResultForSharing(results);
@@ -335,9 +330,6 @@ public class ResultViewActivity extends Activity{
 						time_from_txt, time_from,
 						time_to_txt, time_to, handler);
 				break;
-			case DIALOG_CHANGE_RESULTS_VIEW:
-				dialog = CommonUtilities.GetResultsViewChoiceFromUser(ResultViewActivity.this);
-				break;
 		default:
 			dialog = null;
 		}
@@ -351,7 +343,6 @@ public class ResultViewActivity extends Activity{
 				break;
 			case DIALOG_PROGRESS:
 			case DIALOG_ADD_TO_FAV:
-			case DIALOG_CHANGE_RESULTS_VIEW:
 				break;
 			default:
 				return;

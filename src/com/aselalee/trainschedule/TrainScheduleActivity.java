@@ -74,7 +74,6 @@ public class TrainScheduleActivity extends Activity {
 	private String time_to_val = "";
 	private CommonUtilities cu = null;	
 	private static final int DIALOG_ADD_TO_FAV = 3;
-	private static final int DIALOG_CHANGE_RESULTS_VIEW = 4;
 	private AnalyticsWrapper tracker;
 
 	/**
@@ -280,7 +279,7 @@ public class TrainScheduleActivity extends Activity {
 					time_from_txt, time_from_val,
 					time_to_txt, time_to_val);
 
-			Intent intent = CommonUtilities.GetResultViewIntent(TrainScheduleActivity.this);
+			Intent intent = new Intent(TrainScheduleActivity.this, ResultViewActivity.class);
 			CommonUtilities.PupulateIntentForResultsActivity(
 					station_from_val, station_from_txt,
 					station_to_val, station_to_txt,
@@ -406,10 +405,6 @@ public class TrainScheduleActivity extends Activity {
 				tracker.TrackEvent("TrainScheduleActivityButtons", "Add_to_Favs", "Menu_Click", 1);
 				showDialog(DIALOG_ADD_TO_FAV);
 				return true;
-			case R.id.search_menu_switch_result_view:
-				tracker.TrackEvent("TrainScheduleActivityButtons", "Switch_Res_View", "Menu_Click", 1);
-				showDialog(DIALOG_CHANGE_RESULTS_VIEW);
-				return true;
 			case R.id.search_menu_share:
 				tracker.TrackEvent("TrainScheduleActivityButtons", "Share", "Menu_Click", 1);
 				CommonUtilities.ShareApplication(TrainScheduleActivity.this);
@@ -434,9 +429,6 @@ public class TrainScheduleActivity extends Activity {
 						time_from_txt, time_from_val,
 						time_to_txt, time_to_val, handler);
 				break;
-			case DIALOG_CHANGE_RESULTS_VIEW:
-				dialog = CommonUtilities.GetResultsViewChoiceFromUser(TrainScheduleActivity.this);
-				break;
 			default:
 				dialog = null;
 		}
@@ -450,8 +442,6 @@ public class TrainScheduleActivity extends Activity {
 						station_to_txt, station_to_val,
 						time_from_txt, time_from_val,
 						time_to_txt, time_to_val, dialog);
-				break;
-			case DIALOG_CHANGE_RESULTS_VIEW:
 				break;
 			default:
 				return;

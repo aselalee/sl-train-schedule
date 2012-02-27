@@ -25,7 +25,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.Message;
@@ -85,17 +84,6 @@ public class CommonUtilities {
 		return "";
 	}
 
-	public static Intent GetResultViewIntent(Context packageContext) {
-		Intent intent = null;
-		SharedPreferences pref = packageContext.getSharedPreferences(Constants.PREFERENCES_FILE,
-													android.content.Context.MODE_WORLD_READABLE);
-		if(pref.getInt(Constants.IS_RESULTS_WEB_VIEW, Constants.FALSE) == Constants.FALSE) {		
-			intent = new Intent(packageContext, ResultViewActivity.class);
-		} else {
-			intent = new Intent(packageContext, ResultViewActivityWebView.class);
-		}
-		return intent;
-	}
 	/**
 	 * Match "from time" in spinner to actual string received by the server.
 	 */
@@ -122,36 +110,6 @@ public class CommonUtilities {
 			return time_to[time_to.length - 1];
 		}
 		return time_to[pos];
-	}
-
-	public static AlertDialog GetResultsViewChoiceFromUser(final Context packageContext) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(packageContext);
-		SharedPreferences pref = packageContext.getSharedPreferences(Constants.PREFERENCES_FILE,
-				android.content.Context.MODE_WORLD_READABLE);
-		int current_choice = pref.getInt(Constants.IS_RESULTS_WEB_VIEW, -1);
-		CharSequence[] choice = {"New List View\n(Fast and Looks Cool)",
-								"Old Web View\n(Slow and Looks ...old)"};
-		builder.setSingleChoiceItems(choice, current_choice, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				if(which == 0) {
-					CommonUtilities.setResultsViewState(packageContext, Constants.FALSE);
-				} else {
-					CommonUtilities.setResultsViewState(packageContext, Constants.TRUE);
-				}
-				dialog.cancel();
-			}
-		});
-		builder.setTitle("Select Reuslts View");
-		AlertDialog alert = builder.create();
-		return alert;
-	}
-
-	private static void setResultsViewState(Context packageContext, int isResultWebView) {
-		SharedPreferences pref = packageContext.getSharedPreferences(Constants.PREFERENCES_FILE,
-				android.content.Context.MODE_WORLD_READABLE);
-		SharedPreferences.Editor e = pref.edit();
-		e.putInt(Constants.IS_RESULTS_WEB_VIEW, isResultWebView);
-		e.commit();
 	}
 
 	public static void AddParamsToHistory(final Context mPackageContext,
