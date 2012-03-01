@@ -63,6 +63,7 @@ public class GetResultsFromSite extends Thread {
 		time_to = tm_to;
 		date_today = date;
 	}
+
 	public void run() {
 		/**
 		 * Call the "GetResults" method to retrieve data from server.
@@ -75,6 +76,7 @@ public class GetResultsFromSite extends Thread {
 		myMsg.arg1 = Constants.THREAD_GET_RESULTS;
 		mHandler.sendMessage(myMsg);
 	}
+
 	private void GetResultsViaJASON(String station_from, String station_to,
 			String time_from, String time_to, String date_today)
 	{
@@ -159,6 +161,7 @@ public class GetResultsFromSite extends Thread {
 		}
 		JSONToResultsList(strBuilder.toString());
 	}
+
 	private void JSONToResultsList(String strJSON) {
 		JSONObject jObject;
 		JSONArray trainsArray;
@@ -235,6 +238,7 @@ public class GetResultsFromSite extends Thread {
 			}
 		}
 	}
+
 	private String formatFrequency(String frequency) {
 		String result = frequency;
 		int freqLength = frequency.length();
@@ -255,6 +259,7 @@ public class GetResultsFromSite extends Thread {
 		}
 		return result;
 	}
+
 	private String calcDuration(Date depatureTime, Date arrAtDestinationTime) {
 		String durationStr = "";
 		long startTimeInMilliSecs = depatureTime.getTime();
@@ -269,6 +274,7 @@ public class GetResultsFromSite extends Thread {
 		}
 		return durationStr;
 	}
+
 	private String strToDoubleDigits(int value) {
 		String output = "";
 		if(value <= 9) {
@@ -278,6 +284,7 @@ public class GetResultsFromSite extends Thread {
 		}
 		return output;
 	}
+
 	private String chop(String strIn) {
 		String strOut;
 		if(strIn == null) {
