@@ -42,7 +42,6 @@ public class CommonUtilities {
 	 * Static methods Than can be accessed directly.
 	 * *********************************************
 	 */
-
 	public static final void PupulateIntentForResultsActivity(
 			String station_from_val, String station_from_txt,
 			String station_to_val, String station_to_txt,
@@ -174,6 +173,7 @@ public class CommonUtilities {
 		}
 		return;
 	}
+
 	public static String FormatResultForSharing(Result results[]) {
 		int count = results.length;
 		String outputStr = "";
@@ -217,6 +217,7 @@ public class CommonUtilities {
 		alert.show();
 		return;
 	}
+
 	/**
 	 * **********************************************************************
 	 * Utilities methods that can be accessed via an instance of this class.
