@@ -311,6 +311,12 @@ public class TrainScheduleActivity extends Activity {
 		if( p.getInt(Constants.APP_VERSION_CODE, -1) != version_code) {
 			SharedPreferences.Editor e = p.edit();
 			e.putInt(Constants.APP_VERSION_CODE, version_code);
+			e.putString(Constants.STATION_FROM_TXT, "");
+			e.putString(Constants.STATION_FROM_VAL, "");
+			e.putString(Constants.STATION_TO_TXT, "");
+			e.putString(Constants.STATION_TO_VAL, "");
+			e.putInt(Constants.TIME_FROM_POS, def_time_from);
+			e.putInt(Constants.TIME_TO_POS, def_time_to);
 			e.commit();
 			/**
 			 * Display new version info.

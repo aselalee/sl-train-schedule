@@ -148,18 +148,33 @@ public class GetResultsFromSite extends Thread {
 		try {
 			char[] bytes = new char[1024];
 			int numRead = 0;
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ips, "UTF-8"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ips, "UTF-8"), 8192);
 			while((numRead = reader.read(bytes)) > 0) {
 				strBuilder.append(new String(bytes, 0, numRead));
 			}
+			reader.close();
 		} catch(IOException e) {
 			errorCode = Constants.ERR_ERROR;
-			errorString = "InputStreamReaderERROR : IOException - Read Error : " + e;
+			errorString = "InputStreamReaderERROR : IOException - Read/Close Error : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
 			results = null;
 			return;
 		}
 		JSONToResultsList(strBuilder.toString());
+		strBuilder = null;
+		httpClient = null;
+		httpGet = null;
+		response = null;
+		try {
+			ips.close();
+		} catch (IOException e) {
+			errorCode = Constants.ERR_ERROR;
+			errorString = "InputStreamReaderError: IOException - Close Error" + e;
+			Log.e(Constants.LOG_TAG, errorString);
+			results = null;
+			return;
+		}
+
 	}
 
 	private void JSONToResultsList(String strJSON) {
