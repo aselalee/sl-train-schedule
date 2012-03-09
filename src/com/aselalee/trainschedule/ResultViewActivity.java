@@ -27,6 +27,7 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +40,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -152,6 +154,7 @@ public class ResultViewActivity extends Activity{
 					errorCode = resultsThread.GetErrorCode();
 					if(results != null) {
 						isAddToFavsActive = true;
+						setPricesHead();
 						adapter = new ResultViewAdapter(myContext, results);
 						listView.setAdapter(adapter);
 					} else {
@@ -169,10 +172,26 @@ public class ResultViewActivity extends Activity{
 		}
 	};
 
+	private void setPricesHead() {
+		float [] prices = resultsThread.GetPrices();
+		String pricesStr = "";
+		pricesStr += "1<sup>st</sup> - Rs." + String.format("%.2f", prices[0]);
+		pricesStr += ", 2<sup>nd</sup> - Rs." + String.format("%.2f", prices[1]);
+		pricesStr += ", 3<sup>rd</sup> - Rs." + String.format("%.2f", prices[2]);
+		tv = (TextView) findViewById(R.id.res_table_prices);
+		tv.setText(Html.fromHtml(pricesStr));
+		LayoutParams parms = (LinearLayout.LayoutParams)tv.getLayoutParams();
+		parms.height = (int) (tv.getTextSize() + 20);
+		tv.setLayoutParams(parms);
+
+		return;
+	}
 	private void setNoResultsState() {
 		LinearLayout linlay_root = (LinearLayout) findViewById(R.id.res_table_root_linlay);
 		LinearLayout linlay_table_head = (LinearLayout) linlay_root.findViewById(R.id.res_table_table_head);
 		linlay_table_head.setVisibility(View.GONE);
+		TextView tv_head = (TextView) linlay_root.findViewById(R.id.res_table_prices);
+		tv_head.setVisibility(View.GONE);
 		LayoutInflater factory = LayoutInflater.from(ResultViewActivity.this);
 		View errorView = factory.inflate(R.layout.result_error, null);
 		TextView tv = (TextView) errorView.findViewById(R.id.results_error_msg);
@@ -237,6 +256,7 @@ public class ResultViewActivity extends Activity{
 		if(isAddToFavsActive == true) {
 			setupUI();
 			if(adapter != null) {
+				setPricesHead();
 				listView.setAdapter(adapter);
 			}
 		}

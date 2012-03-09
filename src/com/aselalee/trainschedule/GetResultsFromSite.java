@@ -50,9 +50,10 @@ public class GetResultsFromSite extends Thread {
 	private String time_from;
 	private String time_to;
 	private String date_today;
+	
 	private volatile Result [] results = null;
+	private volatile float [] prices = null;
 	private volatile int errorCode = Constants.ERR_NO_ERROR;
-
 	private String errorString = "No Error";
 
 	public GetResultsFromSite(Handler handle, String st_from, String st_to, String tm_from, String tm_to, String date) {
@@ -66,9 +67,13 @@ public class GetResultsFromSite extends Thread {
 
 	public void run() {
 		/**
-		 * Call the "GetResults" method to retrieve data from server.
+		 * Call the "GetResults" method to retrieve schedule data from server.
 		 */ 
-		GetResultsViaJASON(station_from, station_to, time_from, time_to, date_today);
+		GetResultsViaJSON(station_from, station_to, time_from, time_to, date_today);
+		/**
+		 * Call the "GetPrice" method to retrieve price from server.
+		 */
+		GetPriceViaJSON(station_from, station_to);
 		/**
 		 * This will send message to the calling thread to continue and display data.
 		 */
@@ -77,12 +82,34 @@ public class GetResultsFromSite extends Thread {
 		mHandler.sendMessage(myMsg);
 	}
 
-	private void GetResultsViaJASON(String station_from, String station_to,
+	private void GetPriceViaJSON(String station_from, String station_to) {
+		/**
+		 * Create name value pairs to be sent.
+		 */
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+		nameValuePairs.add(new BasicNameValuePair("lang", "en"));
+		nameValuePairs.add(new BasicNameValuePair("startStationCode", station_from));
+		nameValuePairs.add(new BasicNameValuePair("endStationCode", station_to));
+		String strParams =  URLEncodedUtils.format(nameValuePairs, "utf-8");
+		strParams = Constants.JSONURL_GETPRICE + "?" + strParams;
+		String JSONStr = doJSONRequest(strParams);
+		if(JSONStr == null) {
+			results = null;
+			prices = null;
+			return;
+		}
+		if(JSONToPriceList(JSONStr) == false) {
+			results = null;
+			prices = null;
+			return;
+		}
+	}
+
+	private void GetResultsViaJSON(String station_from, String station_to,
 			String time_from, String time_to, String date_today)
 	{
 		/**
-		 * Create name value pairs to be sent the the above URL.
-		 * variable names were extracted manually from the site.
+		 * Create name value pairs to be sent.
 		 */
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(7);
 		nameValuePairs.add(new BasicNameValuePair("lang", "en"));
@@ -93,18 +120,30 @@ public class GetResultsFromSite extends Thread {
 		nameValuePairs.add(new BasicNameValuePair("currentDate", date_today));
 		nameValuePairs.add(new BasicNameValuePair("currentTime","01:00:00"));
 		String strParams =  URLEncodedUtils.format(nameValuePairs, "utf-8");
-		String url = Constants.JASONURL + "?" + strParams;
-
+		strParams = Constants.JSONURL_GETSCH + "?" + strParams;
+		String JSONStr = doJSONRequest(strParams);
+		if(JSONStr == null) {
+			results = null;
+			prices = null;
+			return;
+		}
+		if(JSONToResultsList(JSONStr) == false) {
+			results = null;
+			prices = null;
+			return;
+		}
+	}
+	
+	private String doJSONRequest(String getReqURLStr) {
+		String JSONOutputStr = null;
 		/**
 		 * Setup networking.
-		 * Then set HTTP POST data.
 		 */
-		HttpGet httpGet = new HttpGet(url);
+		HttpGet httpGet = new HttpGet(getReqURLStr);
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
-
 		/**
-		 * Send HTTP POST request.
+		 * Send HTTP GET request.
 		 */
 		try {
 			response = httpClient.execute(httpGet);
@@ -112,18 +151,15 @@ public class GetResultsFromSite extends Thread {
 			errorCode = Constants.ERR_NETWORK_ERROR;
 			errorString = "HTTPERROR : ClientProtocolException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
+			return null;
 		} catch(IOException e) {
 			errorCode = Constants.ERR_NETWORK_ERROR;
 			errorString = "HTTPERROR : IOException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
+			return null;
 		}
-
 		/**
-		 * Get output from response.
+		 * Get output stream from response.
 		 */
 		InputStream ips = null;
 		try {
@@ -132,17 +168,15 @@ public class GetResultsFromSite extends Thread {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "getEntity.getContentERROR : IOException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
+			return null;
 		} catch(IllegalStateException e) {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "getEntity.getContentERROR : IllegalStateException : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
+			return null;
 		}
 		/**
-		 * Read output result from server.
+		 * Read output result from stream.
 		 */
 		StringBuilder strBuilder = new StringBuilder();
 		try {
@@ -153,59 +187,58 @@ public class GetResultsFromSite extends Thread {
 				strBuilder.append(new String(bytes, 0, numRead));
 			}
 			reader.close();
+			reader = null;
 		} catch(IOException e) {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "InputStreamReaderERROR : IOException - Read/Close Error : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
+			return null;
 		}
-		JSONToResultsList(strBuilder.toString());
-		strBuilder = null;
-		httpClient = null;
-		httpGet = null;
-		response = null;
+		JSONOutputStr = strBuilder.toString();
 		try {
 			ips.close();
 		} catch (IOException e) {
 			errorCode = Constants.ERR_ERROR;
 			errorString = "InputStreamReaderError: IOException - Close Error" + e;
 			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
 		}
-
+		strBuilder = null;
+		httpClient = null;
+		httpGet = null;
+		response = null;
+		ips = null;
+		return JSONOutputStr;
 	}
 
-	private void JSONToResultsList(String strJSON) {
-		JSONObject jObject;
-		JSONArray trainsArray;
-		String strTmp;
+	private boolean JSONToPriceList(String strJSON) {
+		JSONArray ratesArray = getJasonArray(strJSON, "rates");
+		if(ratesArray == null) return false;
+		
+		/**
+		 * Length is hard coded for the time being.
+		 * Should only have 1st Class, 2nd Class and 3rd Class.
+		 */
+		prices = new float[ratesArray.length()];
+		String strTmp = null;
+		for(int i = 0; i < ratesArray.length(); i++) {
+			try {
+				strTmp =  ratesArray.getJSONObject(i).getString("price").toString().trim();
+				prices[i] = new Float(strTmp);
+			} catch (JSONException e) {
+				errorCode = Constants.ERR_JSON_ERROR;
+				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
+				Log.e(Constants.LOG_TAG, errorString);
+				return false;
+			}
+		}
+		return true;
+	}
 
-		try {
-			jObject = new JSONObject(strJSON); 
-		} catch(JSONException e) {
-			errorCode = Constants.ERR_JASON_ERROR;
-			errorString =  "JASONObjectERROR : Error Parsing JSON string : " + e;
-			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
-		}
-		try {
-			trainsArray = jObject.getJSONArray("trains");
-		} catch(JSONException e) {
-			errorCode = Constants.ERR_JASON_ERROR;
-			errorString = "getJASONArrayERROR : Error Parsing JSON object :" + e;
-			Log.e(Constants.LOG_TAG, errorString);
-			results = null;
-			return;
-		}
-		if(trainsArray.length() < 1) {
-			errorCode = Constants.ERR_NO_RESULTS_FOUND_ERROR;
-			errorString = "No Results Found";
-			results = null;
-			return;
-		}
+	private boolean JSONToResultsList(String strJSON) {
+		JSONArray trainsArray = getJasonArray(strJSON, "trains");
+		if(trainsArray == null) return false;
+		
+		String strTmp = null;
 		results = new Result[trainsArray.length()];
 		for(int i = 0; i < trainsArray.length(); i++) {
 			SimpleDateFormat dateFormatterIn = new SimpleDateFormat("HH:mm:ss");
@@ -239,21 +272,49 @@ public class GetResultsFromSite extends Thread {
 				results[i].duration_str = calcDuration(results[i].depatureTime_dt,
 						results[i].arrivalAtDestinationTime_dt);
 			} catch(JSONException e) {
-				errorCode = Constants.ERR_JASON_ERROR;
+				errorCode = Constants.ERR_JSON_ERROR;
 				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
 				Log.e(Constants.LOG_TAG, errorString);
-				results = null;
-				return;
+				return false;
 			} catch(ParseException e) {
 				errorCode = Constants.ERR_DATE_STRING_PARSE_ERROR;
 				errorString = "dateFormatter.parse() : Error Parsing Time String : " + e;
 				Log.e(Constants.LOG_TAG, errorString);
-				results = null;
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 
+	private JSONArray getJasonArray(String strJSON, String arrayNameStr) {
+		JSONObject jObject = null;
+		JSONArray JSONarray = null;
+
+		try {
+			jObject = new JSONObject(strJSON); 
+		} catch(JSONException e) {
+			errorCode = Constants.ERR_JSON_ERROR;
+			errorString =  "JSONObjectERROR : Error Parsing JSON string : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
+			return null;
+		}
+		try {
+			JSONarray = jObject.getJSONArray(arrayNameStr);
+		} catch(JSONException e) {
+			errorCode = Constants.ERR_JSON_ERROR;
+			errorString = "getJSONArrayERROR : Error Parsing JSON object :" + e;
+			Log.e(Constants.LOG_TAG, errorString);
+			return null;
+		}
+		if(JSONarray.length() < 1) {
+			errorCode = Constants.ERR_NO_RESULTS_FOUND_ERROR;
+			errorString = "No Results Found";
+			Log.e(Constants.LOG_TAG, errorString);
+			return null;
+		}
+		return JSONarray;
+	}
+	
 	private String formatFrequency(String frequency) {
 		String result = frequency;
 		int freqLength = frequency.length();
@@ -321,7 +382,11 @@ public class GetResultsFromSite extends Thread {
 	public String GetErrorString() {
 		return errorString;
 	}
-	
+
+	public float [] GetPrices() {
+		return prices;
+	}
+
 	public Result [] GetResults() {
 		return results;
 	}

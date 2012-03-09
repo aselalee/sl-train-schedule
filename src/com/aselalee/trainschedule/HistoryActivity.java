@@ -99,6 +99,7 @@ public class HistoryActivity extends ListActivity {
 				DBDataAccess myDBAcc = new DBDataAccess(HistoryActivity.this);
 				myDBAcc.ClearHistoryTable();
 				myDBAcc.close();
+				myDBAcc = null;
 				updateHistoryList();
 				tracker.TrackEvent("HistoryActivity", "Clear_His", "Menu_Click", 1);
 				return true;
@@ -128,6 +129,7 @@ public class HistoryActivity extends ListActivity {
 		paramsList = myDBAcc.GetHistory();
 		adapter.paramSet = paramsList;
 		myDBAcc.close();
+		myDBAcc = null;
 		adapter.notifyDataSetChanged();
 		return;
 	}

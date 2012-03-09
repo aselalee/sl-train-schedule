@@ -32,6 +32,17 @@
         android:background="@drawable/results_view_table_head_background"
         android:padding="5dp"
         android:textStyle="bold" />
+    <TextView
+        android:id="@+id/res_table_prices"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#000000"
+        android:text=""
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:background="@drawable/results_view_table_head_background"
+        android:padding="2dp" />
     <LinearLayout
         android:id="@+id/res_table_table_head"
         android:layout_width="fill_parent"
