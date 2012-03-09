@@ -64,6 +64,7 @@ public class ResultViewActivity extends Activity{
 	private ResultViewAdapter adapter = null;
 	private TextView tv = null;
 	private Result [] results = null;
+	private String pricesStr = "";
 	private Context myContext = null;
 	private int errorCode = Constants.ERR_NO_ERROR;
 	private String selectedResult = "";
@@ -154,6 +155,7 @@ public class ResultViewActivity extends Activity{
 					errorCode = resultsThread.GetErrorCode();
 					if(results != null) {
 						isAddToFavsActive = true;
+						formatPricesString();
 						setPricesHead();
 						adapter = new ResultViewAdapter(myContext, results);
 						listView.setAdapter(adapter);
@@ -172,12 +174,25 @@ public class ResultViewActivity extends Activity{
 		}
 	};
 
-	private void setPricesHead() {
+	private void formatPricesString() {
 		float [] prices = resultsThread.GetPrices();
-		String pricesStr = "";
-		pricesStr += "1<sup>st</sup> - Rs." + String.format("%.2f", prices[0]);
-		pricesStr += ", 2<sup>nd</sup> - Rs." + String.format("%.2f", prices[1]);
-		pricesStr += ", 3<sup>rd</sup> - Rs." + String.format("%.2f", prices[2]);
+		pricesStr = "";
+		switch(prices.length) {
+			case 3:
+				pricesStr = ", 3<sup>rd</sup> - Rs." + String.format("%.2f", prices[2]);
+				/* No break */
+			case 2:
+				pricesStr = ", 2<sup>nd</sup> - Rs." + String.format("%.2f", prices[1]) + pricesStr;
+				/* No break */
+			case 1:
+				pricesStr = "1<sup>st</sup> - Rs." + String.format("%.2f", prices[0]) + pricesStr;
+				break;
+			default:
+				Log.e(Constants.LOG_TAG, "Unsupported amount of rates");
+				pricesStr = "Ticket Prices Unknown";
+		}
+	}
+	private void setPricesHead() {
 		tv = (TextView) findViewById(R.id.res_table_prices);
 		tv.setText(Html.fromHtml(pricesStr));
 		LayoutParams parms = (LinearLayout.LayoutParams)tv.getLayoutParams();
