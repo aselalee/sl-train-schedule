@@ -113,6 +113,7 @@ public class FavouritesActivity extends ListActivity {
 				DBDataAccess myDBAcc = new DBDataAccess(FavouritesActivity.this);
 				myDBAcc.ClearFavouritesTable();
 				myDBAcc.close();
+				myDBAcc = null;
 				updateFavList();
 				tracker.TrackEvent("FavouritesAcitiviy", "Clear_Favs", "Menu_Click", 1);
 				return true;
@@ -144,6 +145,7 @@ public class FavouritesActivity extends ListActivity {
 				DBDataAccess myDBAcc = new DBDataAccess(FavouritesActivity.this);
 				myDBAcc.DeleteFavRecord(paramsList[info.position].id);
 				myDBAcc.close();
+				myDBAcc = null;
 				tracker.TrackEvent("FavouritesAcitiviy", "Delete_Fav", "Ctx_Menu_Click", 1);
 				break;
 			default:
@@ -205,6 +207,7 @@ public class FavouritesActivity extends ListActivity {
 					DBDataAccess myDBAcc = new DBDataAccess(thisContext);
 					myDBAcc.RenameFavRecord(paramsList[postionToRename].id, newName);
 					myDBAcc.close();
+					myDBAcc = null;
 				} else {
 					Toast.makeText(thisContext, "Invalid name.", Toast.LENGTH_LONG).show();
 				}
@@ -233,6 +236,7 @@ public class FavouritesActivity extends ListActivity {
 		paramsList = myDBAcc.GetFavourites();
 		adapter.paramSet = paramsList;
 		myDBAcc.close();
+		myDBAcc = null;
 		adapter.notifyDataSetChanged();
 		return;
 	}

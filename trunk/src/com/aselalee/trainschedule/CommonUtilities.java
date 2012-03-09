@@ -65,6 +65,7 @@ public class CommonUtilities {
 		if(view == null || context == null) return;
 		InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		imm = null;
 	}
 
 	public static final String ToTitleCase(String string) {
@@ -124,6 +125,7 @@ public class CommonUtilities {
 						mTimeFromTxt, mTimeFromVal,
 						mTimeToTxt, mTimeToVal);
 				myDBAcc.close();
+				myDBAcc = null;
 			}
 		};
 		Thread thread = new Thread(runnable);
@@ -315,6 +317,7 @@ public class CommonUtilities {
 								name_txt, handler );
 					}
 					myDBAcc.close();
+					myDBAcc = null;
 				}
 		};
 		Thread thread = new Thread(runnable);

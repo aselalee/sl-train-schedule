@@ -43,7 +43,8 @@ public final class Constants {
 	/**
 	 * Site to fetch results from.
 	 */
-	public static final String JASONURL = "http://mobile.icta.lk/services/railwayservice/getSchedule.php";
+	public static final String JSONURL_GETSCH = "http://mobile.icta.lk/services/railwayservice/getSchedule.php";
+	public static final String JSONURL_GETPRICE = "http://mobile.icta.lk/services/railwayservice/getTicketPrices.php";
 
 	/**
 	 * Application version code save in to preferences file.
@@ -94,7 +95,7 @@ public final class Constants {
 	public static final int ERR_ERROR = 0;
 	public static final int ERR_NETWORK_ERROR = -1;
 	public static final int ERR_NO_RESULTS_FOUND_ERROR = -2;
-	public static final int ERR_JASON_ERROR = -3;
+	public static final int ERR_JSON_ERROR = -3;
 	public static final int ERR_PROCESSING_ERROR = -4;
 	public static final int ERR_DATE_STRING_PARSE_ERROR = -5;
 

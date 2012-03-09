@@ -150,6 +150,8 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.endTransaction();
 		myCur.close();
 		db.close();
+		myCur = null;
+		db = null;
 		return true;
 	}
 
@@ -195,6 +197,8 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		}
 		myCur.close();
 		db.close();
+		myCur = null;
+		db = null;
 		return paramsList;
 	}
 
@@ -222,6 +226,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();
+		db = null;
 	}
 
 	public boolean PushDataFavourites(String start_st_txt, String start_st_val,
@@ -305,6 +310,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			return false;
 		}
 		db.close();
+		db = null;
 		msgStr = "Sucessfully added to favourites.";
 		myMsg.obj = (Object)msgStr;
 		handler.sendMessage(myMsg);
@@ -354,6 +360,8 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		}
 		myCur.close();
 		db.close();
+		myCur = null;
+		db = null;
 		return paramsList;
 	}
 
@@ -381,6 +389,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();
+		db = null;
 	}
 	public boolean DeleteFavRecord(long id) {
 		SQLiteDatabase db = null;
@@ -406,6 +415,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();
+		db = null;
 		return true;
 	}
 
@@ -435,6 +445,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();
+		db = null;
 		return true;
 	}
 }
