@@ -720,7 +720,7 @@
 
     <string name="version_info">
         Version 1.12\n
-        &#160;1. Landscape fix for ICS.\n
+        &#160;1. Ticket prices.\n
         &#160;2. Enabled Move to SD card (2.2 Onwards).\n
     </string>
 </resources>
