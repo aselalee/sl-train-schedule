@@ -201,45 +201,40 @@
                 android:layout_margin="1dp"
                 android:gravity="center_vertical" />
         </TableRow>
-        <TableRow
+        <LinearLayout 
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content" >
-            <LinearLayout 
-                android:layout_span="2"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <Button 
+                android:id="@+id/result_table_details_back_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:text="@string/results_view_details_dialog_back_btn"
                 android:layout_gravity="center"
-                android:gravity="center">
-                <Button 
-                    android:id="@+id/result_table_details_back_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/results_view_details_dialog_back_btn"
-                    android:layout_gravity="center"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/button_background" />
-                <Button 
-                    android:id="@+id/result_table_details_send_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/share"
-                    android:layout_gravity="center"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/button_background" />
-                </LinearLayout>
-        </TableRow>
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="1dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/button_background" />
+            <Button 
+                android:id="@+id/result_table_details_send_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share"
+                android:layout_gravity="center"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="1dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/button_background" />
+        </LinearLayout>
     </TableLayout>
 </ScrollView>
