@@ -102,6 +102,11 @@ public class ResultViewActivity extends Activity{
 		}
 		isStop = false;
 		isAddToFavsActive = true;
+		/**
+		 * Setup UI. Call this function when configuration changes
+		 * to re-setup the UI elements. This is because a different
+		 * layout is used for landscape.
+		 */
 		setupUI();
 		/**
 		 * Display progress Dialog.
@@ -156,7 +161,7 @@ public class ResultViewActivity extends Activity{
 					if(results != null) {
 						isAddToFavsActive = true;
 						formatPricesString();
-						setPricesHead();
+						setupPricesView();
 						adapter = new ResultViewAdapter(myContext, results);
 						listView.setAdapter(adapter);
 					} else {
@@ -188,11 +193,11 @@ public class ResultViewActivity extends Activity{
 				pricesStr = "1<sup>st</sup> - Rs." + String.format("%.2f", prices[0]) + pricesStr;
 				break;
 			default:
-				Log.e(Constants.LOG_TAG, "Unsupported amount of rates");
+				Log.e(Constants.LOG_TAG, "Unsupported rates count");
 				pricesStr = "Ticket Prices Unknown";
 		}
 	}
-	private void setPricesHead() {
+	private void setupPricesView() {
 		tv = (TextView) findViewById(R.id.res_table_prices);
 		tv.setText(Html.fromHtml(pricesStr));
 		LayoutParams parms = (LinearLayout.LayoutParams)tv.getLayoutParams();
@@ -271,7 +276,7 @@ public class ResultViewActivity extends Activity{
 		if(isAddToFavsActive == true) {
 			setupUI();
 			if(adapter != null) {
-				setPricesHead();
+				setupPricesView();
 				listView.setAdapter(adapter);
 			}
 		}
