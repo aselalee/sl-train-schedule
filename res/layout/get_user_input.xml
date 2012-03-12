@@ -71,7 +71,7 @@
                 android:id="@+id/search_swap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_swap_btn_med"
+                android:drawableLeft="@drawable/ic_swap"
                 android:layout_gravity="center"
                 android:background="@drawable/button_get_user_input_activity_swap" />
         </LinearLayout>
