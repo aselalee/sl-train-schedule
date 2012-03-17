@@ -275,9 +275,14 @@ public class ResultViewActivity extends Activity{
 		 */
 		if(isAddToFavsActive == true) {
 			setupUI();
-			if(adapter != null) {
+			if(adapter != null && results != null) {
 				setupPricesView();
 				listView.setAdapter(adapter);
+			} else {
+				isAddToFavsActive = false;
+				setNoResultsState();
+				Log.e(Constants.LOG_TAG,
+					"Something is worng. This is a failsafe else code. Program should not hit this line");
 			}
 		}
 	}
