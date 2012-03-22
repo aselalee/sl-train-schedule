@@ -49,7 +49,7 @@
                         android:inputType="text"
                         android:selectAllOnFocus="true"
                         android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/search_stations_to" />"
+                        android:nextFocusDown="@+id/search_stations_to" />
                 </TableRow>
                 <TableRow >
                     <TextView

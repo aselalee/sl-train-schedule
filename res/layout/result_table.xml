@@ -19,7 +19,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:id="@+id/res_table_root_linlay" >"
+    android:id="@+id/res_table_root_linlay" >
     <TextView
         android:id="@+id/res_table_station_names"
         android:layout_width="fill_parent"

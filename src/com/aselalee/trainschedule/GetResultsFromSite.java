@@ -223,7 +223,7 @@ public class GetResultsFromSite extends Thread {
 		for(int i = 0; i < ratesArray.length(); i++) {
 			try {
 				strTmp =  ratesArray.getJSONObject(i).getString("price").toString().trim();
-				prices[i] = new Float(strTmp);
+				prices[i] = Float.valueOf(strTmp);
 			} catch (JSONException e) {
 				errorCode = Constants.ERR_JSON_ERROR;
 				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
