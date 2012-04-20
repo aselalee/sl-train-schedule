@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class CommonUtilities {
 
@@ -208,13 +209,20 @@ public class CommonUtilities {
 
 	public static void NewVersionInfo(Context mContext) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		builder.setMessage(R.string.version_info)
-		       .setCancelable(false)
-		       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
+		final TextView tv = new TextView(mContext);
+		String[] versionInfoArr = mContext.getResources().getStringArray(R.array.version_info);
+		String versionInfoStr = "";
+		for(int idx = 0; idx < versionInfoArr.length; idx++) {
+			versionInfoStr += versionInfoArr[idx];
+		}
+		tv.setText(versionInfoStr);tv.setTextSize(14);tv.setPadding(5, 5, 5, 5);
+		builder.setView(tv)
+			.setCancelable(false)
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
 		AlertDialog alert = builder.create();
 		alert.show();
 		return;
