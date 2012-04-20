@@ -317,6 +317,10 @@ public class GetResultsFromSite extends Thread {
 	
 	private String formatFrequency(String frequency) {
 		String result = frequency;
+		if(frequency.contains(" Except Holidays)")) {
+			result = frequency.replace(" Except Holidays)", "\n(Except Holidays)");
+			return result;
+		}
 		int freqLength = frequency.length();
 		if( freqLength > 12) {
 			int firstSpace = -1;
