@@ -716,9 +716,11 @@
         <item>24:00</item>
     </string-array>
 
-    <string name="version_info">
-        Version 1.13\n
-        &#160;1. Retrieve ticket prices from server.\n
-        &#160;2. Enabled Move to SD card (2.2 Onwards).\n
-    </string>
+    <string-array name="version_info">
+        <item>Version 1.14\n</item>
+        <item>&#160;&#160;1. Fixed a bug which affected ICS devices.\n</item>
+        <item>Version 1.13\n</item>
+        <item>&#160;&#160;1. Retrieve ticket prices from server.\n</item>
+        <item>&#160;&#160;2. Enabled Move to SD card (2.2 Onwards).\n</item>
+    </string-array>
 </resources>

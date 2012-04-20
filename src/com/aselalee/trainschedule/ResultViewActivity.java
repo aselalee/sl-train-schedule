@@ -279,10 +279,11 @@ public class ResultViewActivity extends Activity{
 				setupPricesView();
 				listView.setAdapter(adapter);
 			} else {
-				isAddToFavsActive = false;
-				setNoResultsState();
-				Log.e(Constants.LOG_TAG,
-					"Something is worng. This is a failsafe else code. Program should not hit this line");
+				/**
+				 * User changed the orientation of the device while
+				 * fetching results from the server. Do nothing.
+				 * Screen will be updated when results are available.
+				 */
 			}
 		}
 	}
