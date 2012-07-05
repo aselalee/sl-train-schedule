@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+* @copyright	Copyright (C) 2011 Asela Leelaratne
+* @license		GNU/GPL Version 3
+*
+* This Application is released to the public under the GNU General Public License.
+*
+* GNU/GPL V3 Extract. 
+* 15. Disclaimer of Warranty.
+* THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+* EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+* PROVIDE THE PROGRAM AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+* PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+* NECESSARY SERVICING, REPAIR OR CORRECTION.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    <TextView
+        android:id="@+id/res_list_item_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="30sp"
+        android:textColor="#ffffff"
+        android:text="@string/dummy" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+        <TextView
+            android:id="@+id/res_list_item_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#ffffff"
+            android:text="@string/dummy"
+            android:paddingBottom="1dp" />
+        <TextView
+            android:id="@+id/res_list_item_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:background="@drawable/results_view_duration_backgroud"
+            android:textColor="#000000"
+            android:text="@string/dummy"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/res_list_item_freq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:text="@string/dummy"
+        android:layout_gravity="center" />
+    <ImageView 
+        android:src="@drawable/ic_more"
+        android:contentDescription="@string/more"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="right"
+        android:adjustViewBounds="true"
+        android:scaleType="fitEnd"
+        android:paddingRight="10dp" />
+</LinearLayout>
