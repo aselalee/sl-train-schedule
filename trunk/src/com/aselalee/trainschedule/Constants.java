@@ -43,8 +43,8 @@ public final class Constants {
 	/**
 	 * Site to fetch results from.
 	 */
-	public static final String JSONURL_GETSCH = "http://mobile.icta.lk/services/railwayservice/getSchedule.php";
-	public static final String JSONURL_GETPRICE = "http://mobile.icta.lk/services/railwayservice/getTicketPrices.php";
+	public static final String JSONURL_GETSCH = "http://m.icta.lk/services/railwayservice/getSchedule.php";
+	public static final String JSONURL_GETPRICE = "http://m.icta.lk/services/railwayservice/getTicketPrices.php";
 
 	/**
 	 * Application version code save in to preferences file.
