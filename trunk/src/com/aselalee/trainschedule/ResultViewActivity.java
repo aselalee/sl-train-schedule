@@ -228,7 +228,13 @@ public class ResultViewActivity extends Activity{
 					});
 				break;
 			default:
-				tv.setText("Network Error ...");
+				String msg = "Train schedule search service provided by ICTA is unavailable. Please try again later.\n\n";
+				msg += "The availability of this service and the accuracy of information provided is beyond my control.\n\n";
+				msg += "Contact info of ICTA:\n";
+				msg += "Email: info@icta.lk\n";
+				msg += "Phone: +94-11-236 9100\n";
+				msg += "URL: http://www.icta.lk";
+				tv.setText(msg);
 				bv.setText("Retry");
 				bv.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {

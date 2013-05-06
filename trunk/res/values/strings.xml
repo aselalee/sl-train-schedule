@@ -717,15 +717,14 @@
     </string-array>
 
     <string-array name="version_info">
+        <item>Version 1.16\n</item>
+        <item>&#160;&#160;1. Updated error msg.\n</item>
+        <item>\n</item>
         <item>Version 1.15\n</item>
         <item>&#160;&#160;1. Fixed Network Error.\n</item>
         <item>&#160;&#160;(ICTA where the app pulls data from, has changed the URL. Apologies for the delay in fixing.)\n</item>
         <item>\n</item>
         <item>Version 1.14\n</item>
         <item>&#160;&#160;1. Fixed a bug which affected ICS devices.\n</item>
-        <item>\n</item>
-        <item>Version 1.13\n</item>
-        <item>&#160;&#160;1. Retrieve ticket prices from server.\n</item>
-        <item>&#160;&#160;2. Enabled Move to SD card (2.2 Onwards).\n</item>
     </string-array>
 </resources>
