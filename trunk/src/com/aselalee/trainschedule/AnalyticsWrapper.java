@@ -22,7 +22,7 @@ import android.content.Context;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class AnalyticsWrapper {
-	private boolean useAnalytics = true;
+	private boolean useAnalytics = false;
 	private GoogleAnalyticsTracker tracker = null;
 
 	public AnalyticsWrapper(Context mContext) {
