@@ -198,8 +198,8 @@ public class TrainScheduleActivity extends Activity {
 	 */
 	private void populateStations( )
 	{
-		stationsText = getResources().getStringArray(R.array.stations_array);
-		stationsVal = getResources().getStringArray(R.array.stations_val_array);
+		stationsText = getResources().getStringArray(R.array.stations_array_v2);
+		stationsVal = getResources().getStringArray(R.array.stations_val_array_v2);
 		stations = new Station[stationsText.length];
 		int index = 0;
 		for(index = 0; index < stationsText.length; index++) {

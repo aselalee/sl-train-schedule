@@ -44,7 +44,9 @@ public final class Constants {
 	 * Site to fetch results from.
 	 */
 	public static final String JSONURL_GETSCH = "http://m.icta.lk/services/railwayservice/getSchedule.php";
+	public static final String JSONURL_GETSCH_V2 = "http://m.icta.lk/services/railwayservicev2/train/searchTrain";
 	public static final String JSONURL_GETPRICE = "http://m.icta.lk/services/railwayservice/getTicketPrices.php";
+	public static final String JSONURL_GETPRICE_V2 = "http://m.icta.lk/services/railwayservicev2/ticket/getPrice";
 
 	/**
 	 * Application version code save in to preferences file.
@@ -98,6 +100,7 @@ public final class Constants {
 	public static final int ERR_JSON_ERROR = -3;
 	public static final int ERR_PROCESSING_ERROR = -4;
 	public static final int ERR_DATE_STRING_PARSE_ERROR = -5;
+	public static final int ERR_SERVER_ERROR = -6;
 
 	/**
 	 * Strings to be displayed as first and last time stamp strings.
