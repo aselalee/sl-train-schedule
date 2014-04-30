@@ -75,7 +75,10 @@ public class CommonUtilities {
 		for(int i = 0; i < words.length; i++) {
 			result += toInitialCap( words[i] ) + " ";
 		}
-		return result.trim();
+		result = result.trim();
+		if (result.contains("Intercity"))
+			result += " Express";
+		return result;
 	}
 
 	private static final String toInitialCap(String word) {
@@ -89,7 +92,7 @@ public class CommonUtilities {
 	 * Match "from time" in spinner to actual string received by the server.
 	 */
 	public static String MapTimeFrom(int pos) {
-		String time_from[] = {"00:00:01","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00",
+		String time_from[] = {"00:01:00","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00",
 				"06:00:00","07:00:00","08:00:00","09:00:00","10:00:00","11:00:00",
 				"11:59:59","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00",
 				"18:00:00","19:00:00","20:00:00","21:00:0,","22:00:00","23:00:00"};

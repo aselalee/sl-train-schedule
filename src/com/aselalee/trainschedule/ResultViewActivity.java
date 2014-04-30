@@ -56,7 +56,7 @@ public class ResultViewActivity extends Activity{
 	private String time_to_txt;
 	private String date_today;
 	private ProgressDialog pd;
-	private GetResultsFromSite resultsThread = null;
+	private GetResultsFromSiteV2 resultsThread = null;
 	private boolean isStop = false;
 	private int activePosition = 0;
 	private boolean isAddToFavsActive = true;
@@ -116,7 +116,7 @@ public class ResultViewActivity extends Activity{
 		/**
 		 * This will execute the "run" method in a new thread.
 		 */
-		resultsThread = new GetResultsFromSite(handler,
+		resultsThread = new GetResultsFromSiteV2(handler,
 				station_from, station_to,
 				time_from, time_to,
 				date_today);
@@ -181,6 +181,10 @@ public class ResultViewActivity extends Activity{
 
 	private void formatPricesString() {
 		float [] prices = resultsThread.GetPrices();
+		if (prices == null) {
+			pricesStr = "Ticket Prices Unknown";
+			return;
+		}
 		pricesStr = "";
 		switch(prices.length) {
 			case 3:
@@ -404,6 +408,9 @@ public class ResultViewActivity extends Activity{
 
 	private void set_dialog_details(Dialog dialog, int pos) {
 		TextView tv = null;
+		if(results == null || 0 > pos || results.length < pos) {
+			dismissDialog(DIALOG_DETAILS);
+		}
 		selectedResult = "";
 		selectedResult += "From: ";
 		selectedResult += results[pos].startStationName;
