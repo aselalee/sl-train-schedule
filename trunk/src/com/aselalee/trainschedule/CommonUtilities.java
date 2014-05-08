@@ -48,8 +48,7 @@ public class CommonUtilities {
 			String station_to_val, String station_to_txt,
 			String time_from_val, String time_from_txt,
 			String time_to_val, String time_to_txt,
-			Intent intent) {
-		String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
+			String date_today, Intent intent) {
 		intent.putExtra("station_from", station_from_val);
 		intent.putExtra("station_from_txt", station_from_txt);
 		intent.putExtra("station_to", station_to_val);
@@ -92,7 +91,7 @@ public class CommonUtilities {
 	 * Match "from time" in spinner to actual string received by the server.
 	 */
 	public static String MapTimeFrom(int pos) {
-		String time_from[] = {"00:01:00","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00",
+		String time_from[] = {"00:00:00","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00",
 				"06:00:00","07:00:00","08:00:00","09:00:00","10:00:00","11:00:00",
 				"11:59:59","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00",
 				"18:00:00","19:00:00","20:00:00","21:00:0,","22:00:00","23:00:00"};

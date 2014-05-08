@@ -31,7 +31,7 @@ public class AnalyticsWrapper {
 		 * variable or a value saved in a SharedPreferences file.
 		 * For now it's fixed to true.
 		 */
-		useAnalytics = true;
+		useAnalytics = false;
 
 		if(useAnalytics == true) {
 			tracker = GoogleAnalyticsTracker.getInstance();

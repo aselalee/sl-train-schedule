@@ -45,6 +45,7 @@
     <string name="dummy">############</string>
     <string name="more">more&#8230;</string>
     <string name="results_view_details_dialog_back_btn">Back</string>
+    <string name="pick_date">Pick Date</string>
 
     <string-array name="stations_array_v1">
         <item>Abanpola</item>

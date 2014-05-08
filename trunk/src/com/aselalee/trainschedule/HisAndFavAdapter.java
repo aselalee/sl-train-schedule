@@ -97,7 +97,7 @@ public class HisAndFavAdapter extends BaseAdapter {
 		public void setParams(ParameterSet params) {
 			startStationTV.setText("\t" + params.start_station_txt);
 			endStationTV.setText("\t" + params.end_station_txt);
-			filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt);
+			filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt + " (Today)");
 		}
 	}
 
@@ -124,7 +124,7 @@ public class HisAndFavAdapter extends BaseAdapter {
 		public void setParams(ParameterSet params) {
 			startStationTV.setText(params.start_station_txt);
 			endStationTV.setText(params.end_station_txt);
-			filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt);
+			filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt + " (Today)");
 			nameTV.setText(params.name);
 		}
 	}
