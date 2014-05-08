@@ -81,8 +81,6 @@ public class ResultViewAdapter extends BaseAdapter {
 			setParams(result);
 		}
 		public void setParams(Result result) {
-			if(startTime == null || endTime == null || duration == null || freq == null)
-				return;
 			startTime.setText(result.depatureTime_str);
 			endTime.setText(result.arrivalAtDestinationTime_str);
 			duration.setText(result.duration_str);
