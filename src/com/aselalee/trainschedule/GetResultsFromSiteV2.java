@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -52,6 +53,7 @@ public class GetResultsFromSiteV2 extends Thread {
 	private String date_today;
 	
 	private volatile Result [] results = null;
+	private volatile List<Result> resultsList = new ArrayList<Result>();
 	private volatile float [] prices = null;
 	private volatile int errorCode = Constants.ERR_NO_ERROR;
 	private String errorString = "No Error";
@@ -94,12 +96,10 @@ public class GetResultsFromSiteV2 extends Thread {
 		strParams = Constants.JSONURL_GETPRICE_V2 + "?" + strParams;
 		String JSONStr = doJSONRequest(strParams);
 		if(JSONStr == null) {
-			results = null;
 			prices = null;
 			return;
 		}
 		if(JSONToPriceList(JSONStr) == false) {
-			results = null;
 			prices = null;
 			return;
 		}
@@ -123,11 +123,13 @@ public class GetResultsFromSiteV2 extends Thread {
 		String JSONStr = doJSONRequest(strParams);
 		if(JSONStr == null) {
 			results = null;
+			resultsList = null;
 			prices = null;
 			return;
 		}
 		if(JSONToResultsList(JSONStr) == false) {
 			results = null;
+			resultsList = null;
 			prices = null;
 			return;
 		}
@@ -295,55 +297,80 @@ public class GetResultsFromSiteV2 extends Thread {
 			errorString =  "JSONObjectERROR : Error Parsing JSON string : " + e;
 			Log.e(Constants.LOG_TAG, errorString);
 			return false;
+		} catch (NullPointerException e) {
+			errorCode = Constants.ERR_JSON_ERROR;
+			errorString =  "JSONObjectERROR : Error Parsing JSON string : " + e;
+			Log.e(Constants.LOG_TAG, errorString);
+			return false;
 		}
-		if (directTrains != null && connectedTrains != null && (directTrains.length() + connectedTrains.length()) > 0 ) {
-			results = new Result[directTrains.length() + connectedTrains.length()];
-		} else {
-			errorCode = Constants.ERR_NO_RESULTS_FOUND_ERROR;
-			errorString = "No results found.";
+		if (directTrains == null || connectedTrains == null) {
+			errorCode = Constants.ERR_JSON_ERROR;
+			errorString =  "JSONObjectERROR : Error Parsing JSON string";
 			Log.e(Constants.LOG_TAG, errorString);
 			return false;
 		}
 			
 		if (ProcessDirectTrains(directTrains) == false || ProcessConnectedTrains(connectedTrains) == false)
 			return false;
+		if (resultsList.size() == 0) {
+			errorCode = Constants.ERR_NO_RESULTS_FOUND_ERROR;
+			errorString =  "No results for this query.";
+			Log.e(Constants.LOG_TAG, errorString);
+			return false;
+		}
+		results = new Result[resultsList.size()];
+		int idx = 0;
+		for(ListIterator<Result> it = resultsList.listIterator(); it.hasNext();)
+		{
+			results[idx] = it.next();
+			idx++;
+		}
 		return true;
 	}
 
 	private boolean ProcessDirectTrains(JSONArray trainsArray) {
 		String strTmp = null;
-		if (trainsArray.length() == 0) return true;
+
 		for(int i = 0; i < trainsArray.length(); i++) {
+			Result result = new Result();
 			SimpleDateFormat dateFormatterIn = new SimpleDateFormat("HH:mm:ss");
 			SimpleDateFormat dateFormatterOut = new SimpleDateFormat("HH:mm");
 			try {
-				results[i] = new Result();
-				results[i].name = trainsArray.getJSONObject(i).getString("trainNo").toString().trim();
-				strTmp = trainsArray.getJSONObject(i).getString("arrivalTime").toString().trim();
-				results[i].arrivalTime_dt = dateFormatterIn.parse(strTmp);
-				results[i].arrivalTime_str = dateFormatterOut.format(results[i].arrivalTime_dt);
-				strTmp = trainsArray.getJSONObject(i).getString("depatureTime").toString().trim();
-				results[i].depatureTime_dt = dateFormatterIn.parse(strTmp);
-				results[i].depatureTime_str = dateFormatterOut.format(results[i].depatureTime_dt);
-				strTmp = trainsArray.getJSONObject(i).getString("arrivalTimeFinalStation").toString().trim();
-				results[i].arrivalAtDestinationTime_dt = dateFormatterIn.parse(strTmp);
-				results[i].arrivalAtDestinationTime_str = dateFormatterOut.format(results[i].arrivalAtDestinationTime_dt);
-				results[i].delayTime_str = "";
-				results[i].comment = "";
+				result.name = trainsArray.getJSONObject(i).getString("trainNo").toString().trim();
 				
-				results[i].startStationName = CommonUtilities.ToTitleCase(
+				strTmp = trainsArray.getJSONObject(i).getString("arrivalTime").toString().trim();
+				result.arrivalTime_dt = dateFormatterIn.parse(strTmp);
+				result.arrivalTime_str = dateFormatterOut.format(result.arrivalTime_dt);
+				
+				strTmp = trainsArray.getJSONObject(i).getString("depatureTime").toString().trim();				
+				result.depatureTime_dt = dateFormatterIn.parse(strTmp);
+				result.depatureTime_str = dateFormatterOut.format(result.depatureTime_dt);
+				
+				strTmp = trainsArray.getJSONObject(i).getString("arrivalTimeEndStation").toString().trim();
+				result.arrivalAtDestinationTime_dt = dateFormatterIn.parse(strTmp);
+				result.arrivalAtDestinationTime_str = dateFormatterOut.format(result.arrivalAtDestinationTime_dt);
+				
+				result.delayTime_str = "";
+				result.comment = "";
+				
+				result.startStationName = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("startStationName").toString().trim());
-				results[i].endStationName = CommonUtilities.ToTitleCase(
+				
+				result.endStationName = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("endStationName").toString().trim());
-				results[i].toTrStationName = CommonUtilities.ToTitleCase(
+				
+				result.toTrStationName = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("finalStationName").toString().trim());
-				results[i].fDescription_original =
+				
+				result.fDescription_original =
 						CommonUtilities.ToTitleCase(trainsArray.getJSONObject(i).getString("trainFrequncy").toString().trim());
-				results[i].fDescription = formatFrequency(results[i].fDescription_original);
-				results[i].tyDescription = CommonUtilities.ToTitleCase(
+				result.fDescription = formatFrequency(result.fDescription_original);
+				
+				result.tyDescription = CommonUtilities.ToTitleCase(
 						trainsArray.getJSONObject(i).getString("trainType").toString().trim());
-				results[i].duration_str = calcDuration(results[i].depatureTime_dt,
-						results[i].arrivalAtDestinationTime_dt);
+				
+				result.duration_str = calcDuration(result.depatureTime_dt,
+						result.arrivalAtDestinationTime_dt);
 			} catch(JSONException e) {
 				errorCode = Constants.ERR_JSON_ERROR;
 				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
@@ -355,17 +382,19 @@ public class GetResultsFromSiteV2 extends Thread {
 				Log.e(Constants.LOG_TAG, errorString);
 				return false;
 			}
+			resultsList.add(result);
 		}
 		return true;
 	}
-	private boolean ProcessConnectedTrains(JSONArray ct) {
+	private boolean ProcessConnectedTrains(JSONArray trainsArray) {
 		String strTmp = null;
-		if (ct.length() == 0) return true;
-		JSONObject [] recHeader = new JSONObject[ct.length()];
 		
-		for(int i = 0; i < ct.length(); i++) {
+		if (trainsArray.length() == 0) return true;
+		JSONObject [] recHeader = new JSONObject[trainsArray.length()];
+		
+		for(int i = 0; i < trainsArray.length(); i++) {
 			try {
-				recHeader[i] = ct.getJSONObject(i).getJSONArray("recordHeader").getJSONObject(0);
+				recHeader[i] = trainsArray.getJSONObject(i).getJSONArray("recordHeader").getJSONObject(0);
 			} catch (JSONException e) {
 				errorCode = Constants.ERR_JSON_ERROR;
 				errorString =  "JSONObjectERROR : Error Parsing JSON string : " + e;
@@ -375,33 +404,42 @@ public class GetResultsFromSiteV2 extends Thread {
 		}
 		
 		for(int i = 0; i < recHeader.length; i++) {
+			Result result = new Result();
 			SimpleDateFormat dateFormatterIn = new SimpleDateFormat("HH:mm:ss");
 			SimpleDateFormat dateFormatterOut = new SimpleDateFormat("HH:mm");
 			try {
-				results[i] = new Result();
-				results[i].name = "-";
-				strTmp = recHeader[i].getString("startArrivalTime").toString().trim();
-				results[i].arrivalTime_dt = dateFormatterIn.parse(strTmp);
-				results[i].arrivalTime_str = dateFormatterOut.format(results[i].arrivalTime_dt);
-				strTmp = recHeader[i].getString("startDepartureTime").toString().trim();
-				results[i].depatureTime_dt = dateFormatterIn.parse(strTmp);
-				results[i].depatureTime_str = dateFormatterOut.format(results[i].depatureTime_dt);
-				strTmp = recHeader[i].getString("endArrivalTime").toString().trim();
-				results[i].arrivalAtDestinationTime_dt = dateFormatterIn.parse(strTmp);
-				results[i].arrivalAtDestinationTime_str = dateFormatterOut.format(results[i].arrivalAtDestinationTime_dt);
-				results[i].delayTime_str = "";
-				results[i].comment = "";
+				result.name = "-";
 				
-				results[i].startStationName = CommonUtilities.ToTitleCase(
+				strTmp = recHeader[i].getString("startArrivalTime").toString().trim();
+				result.arrivalTime_dt = dateFormatterIn.parse(strTmp);
+				result.arrivalTime_str = dateFormatterOut.format(result.arrivalTime_dt);
+				
+				strTmp = recHeader[i].getString("startDepartureTime").toString().trim();
+				result.depatureTime_dt = dateFormatterIn.parse(strTmp);
+				result.depatureTime_str = dateFormatterOut.format(result.depatureTime_dt);
+				
+				strTmp = recHeader[i].getString("endArrivalTime").toString().trim();
+				result.arrivalAtDestinationTime_dt = dateFormatterIn.parse(strTmp);
+				result.arrivalAtDestinationTime_str = dateFormatterOut.format(result.arrivalAtDestinationTime_dt);
+				
+				result.delayTime_str = "-";
+				result.comment = "-";
+				
+				result.startStationName = CommonUtilities.ToTitleCase(
 						recHeader[i].getString("startName").toString().trim());
-				results[i].endStationName = CommonUtilities.ToTitleCase(
+				
+				result.endStationName = CommonUtilities.ToTitleCase(
 						recHeader[i].getString("endName").toString().trim());
-				results[i].toTrStationName = "-";
-				results[i].fDescription_original = "Connected Train";
-				results[i].fDescription = "Connected Train";
-				results[i].tyDescription = "Connected Train";
-				results[i].duration_str = calcDuration(results[i].depatureTime_dt,
-						results[i].arrivalAtDestinationTime_dt);
+				
+				result.toTrStationName = "-";
+				
+				result.fDescription_original = "Connected Train";
+				result.fDescription = "Connected Train";
+				
+				result.tyDescription = "Connected Train";
+				
+				result.duration_str = calcDuration(result.depatureTime_dt,
+						result.arrivalAtDestinationTime_dt);
 			} catch(JSONException e) {
 				errorCode = Constants.ERR_JSON_ERROR;
 				errorString = "getJSONObject.getStringError : Error Parsing JSON array object : " + e;
@@ -413,6 +451,7 @@ public class GetResultsFromSiteV2 extends Thread {
 				Log.e(Constants.LOG_TAG, errorString);
 				return false;
 			}
+			resultsList.add(result);
 		}
 		return true;
 	}
@@ -465,20 +504,6 @@ public class GetResultsFromSiteV2 extends Thread {
 			output += String.valueOf(value);
 		}
 		return output;
-	}
-
-	private String chop(String strIn) {
-		String strOut;
-		if(strIn == null) {
-			return "";
-			}
-		int strLen = strIn.length();
-		if(strLen < 4) {
-			return "";
-		}
-		int lastIdx = strLen - 3;
-		strOut = strIn.substring(0, lastIdx);
-		return strOut;
 	}
 
 	public int GetErrorCode() {

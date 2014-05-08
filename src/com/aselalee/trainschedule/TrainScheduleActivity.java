@@ -19,9 +19,11 @@ package com.aselalee.trainschedule;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +46,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -54,6 +58,9 @@ public class TrainScheduleActivity extends Activity {
 	private Button get_all_btn;
 	private Button get_next_btn;
 	private Button swap_btn;
+	private Button pick_date;
+	private Button reset_date;
+	private EditText picked_date;
 	private AutoCompleteTextView actv_from;
 	private AutoCompleteTextView actv_to;
 	private ArrayAdapter<Station> adapter;
@@ -74,7 +81,11 @@ public class TrainScheduleActivity extends Activity {
 	private String time_to_val = "";
 	private CommonUtilities cu = null;	
 	private static final int DIALOG_ADD_TO_FAV = 3;
+	private static final int DATE_PICKER = 4;
 	private AnalyticsWrapper tracker;
+	private int mYear;
+	private int mMonth;
+	private int mDay;
 
 	/**
 	 * Default values.
@@ -191,6 +202,22 @@ public class TrainScheduleActivity extends Activity {
 				tracker.TrackEvent("TrainScheduleActivityButtons", "Swap_Stations", "Button_Click", 1);
 			}
 		});
+		/**
+		 * Setup date picker
+		 */
+		pick_date = (Button)findViewById(R.id.pick_date);
+		pick_date.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View v) { showDialog(DATE_PICKER); }
+	    });
+		picked_date = (EditText)findViewById(R.id.picked_date);
+		picked_date.setKeyListener(null);
+		reset_date = (Button)findViewById(R.id.reset_date);
+		reset_date.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View v) {SetDateToday(); UpdateDateDisplay();}
+	    });
+		
+		SetDateToday();
+	    UpdateDateDisplay();
 	}
 
 	/**
@@ -285,7 +312,7 @@ public class TrainScheduleActivity extends Activity {
 					station_to_val, station_to_txt,
 					time_from_val, time_from_txt,
 					time_to_val, time_to_txt,
-					intent);
+					FormatedDateString(), intent);
 			startActivity(intent);
 		}
 		return;
@@ -435,6 +462,8 @@ public class TrainScheduleActivity extends Activity {
 						time_from_txt, time_from_val,
 						time_to_txt, time_to_val, handler);
 				break;
+			case DATE_PICKER:
+				return new DatePickerDialog(this, mDateSetListener, mYear, mMonth, mDay);
 			default:
 				dialog = null;
 		}
@@ -515,4 +544,41 @@ public class TrainScheduleActivity extends Activity {
 		}
 		return -1;
 	}
+	
+
+	private DatePickerDialog.OnDateSetListener mDateSetListener =
+	    new DatePickerDialog.OnDateSetListener() {
+	        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+	            mYear = year;
+	            mMonth = monthOfYear;
+	            mDay = dayOfMonth;
+	            UpdateDateDisplay();
+	        }
+	};
+	private void UpdateDateDisplay() {
+	    picked_date.setText(FormatedDateString());
+	}
+	private String FormatedDateString() {
+		// Month is 0 based so add 1
+		return new StringBuilder()
+        .append(mYear).append("-")
+        .append(strToDoubleDigits(mMonth + 1)).append("-")
+        .append(strToDoubleDigits(mDay)).append("").toString();
+	}
+	private String strToDoubleDigits(int value) {
+		String output = "";
+		if(value <= 9) {
+			output += "0" + String.valueOf(value);
+		} else {
+			output += String.valueOf(value);
+		}
+		return output;
+	}
+	private void SetDateToday() {
+	    Calendar c = Calendar.getInstance();
+	    mYear = c.get(Calendar.YEAR);
+	    mMonth = c.get(Calendar.MONTH);
+	    mDay = c.get(Calendar.DAY_OF_MONTH);
+	}
+
 }
