@@ -298,13 +298,12 @@ public class TrainScheduleActivity extends Activity {
 		if(validateStations()) {
 			/**
 			 * Add params to history database.
-			 * This is done in a separate thread inside the called function.
 			 */
 			CommonUtilities.AddParamsToHistory(TrainScheduleActivity.this,
 					station_from_txt, station_from_val,
 					station_to_txt, station_to_val,
 					time_from_txt, time_from_val,
-					time_to_txt, time_to_val);
+					time_to_txt, time_to_val, FormatedDateString());
 
 			Intent intent = new Intent(TrainScheduleActivity.this, ResultViewActivity.class);
 			CommonUtilities.PupulateIntentForResultsActivity(
@@ -545,7 +544,9 @@ public class TrainScheduleActivity extends Activity {
 		return -1;
 	}
 	
-
+	/**
+	 * Date handling functions
+	 */
 	private DatePickerDialog.OnDateSetListener mDateSetListener =
 	    new DatePickerDialog.OnDateSetListener() {
 	        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {

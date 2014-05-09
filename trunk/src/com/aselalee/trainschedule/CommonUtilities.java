@@ -48,7 +48,7 @@ public class CommonUtilities {
 			String station_to_val, String station_to_txt,
 			String time_from_val, String time_from_txt,
 			String time_to_val, String time_to_txt,
-			String date_today, Intent intent) {
+			String query_date, Intent intent) {
 		intent.putExtra("station_from", station_from_val);
 		intent.putExtra("station_from_txt", station_from_txt);
 		intent.putExtra("station_to", station_to_val);
@@ -57,7 +57,7 @@ public class CommonUtilities {
 		intent.putExtra("time_from_txt", time_from_txt);
 		intent.putExtra("time_to", time_to_val);
 		intent.putExtra("time_to_txt", time_to_txt);
-		intent.putExtra("date_today", date_today);
+		intent.putExtra("query_date", query_date);
 		return;
 	}
 
@@ -119,14 +119,14 @@ public class CommonUtilities {
 			final String mStationFromTxt, final String mStationFromVal,
 			final String mStationToTxt, final String mStationToVal,
 			final String mTimeFromTxt, final String mTimeFromVal,
-			final String mTimeToTxt, final String mTimeToVal) {
+			final String mTimeToTxt, final String mTimeToVal, final String dateTxt) {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				DBDataAccess myDBAcc = new DBDataAccess(mPackageContext);
 				myDBAcc.PushDataHistory(mStationFromTxt, mStationFromVal,
 						mStationToTxt, mStationToVal,
 						mTimeFromTxt, mTimeFromVal,
-						mTimeToTxt, mTimeToVal);
+						mTimeToTxt, mTimeToVal, dateTxt);
 				myDBAcc.close();
 				myDBAcc = null;
 			}

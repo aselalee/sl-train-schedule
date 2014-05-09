@@ -54,7 +54,7 @@ public class ResultViewActivity extends Activity{
 	private String time_from_txt;
 	private String time_to;
 	private String time_to_txt;
-	private String date_today;
+	private String query_date;
 	private ProgressDialog pd;
 	private GetResultsFromSiteV2 resultsThread = null;
 	private boolean isStop = false;
@@ -98,7 +98,7 @@ public class ResultViewActivity extends Activity{
 			time_from_txt = extras.getString("time_from_txt");
 			time_to = extras.getString("time_to");
 			time_to_txt = extras.getString("time_to_txt");
-			date_today = extras.getString("date_today");
+			query_date = extras.getString("query_date");
 		}
 		isStop = false;
 		isAddToFavsActive = true;
@@ -119,7 +119,7 @@ public class ResultViewActivity extends Activity{
 		resultsThread = new GetResultsFromSiteV2(handler,
 				station_from, station_to,
 				time_from, time_to,
-				date_today);
+				query_date);
 		resultsThread.start();
 	}
 
@@ -140,7 +140,7 @@ public class ResultViewActivity extends Activity{
 		});
 		tv = (TextView) findViewById(R.id.res_table_station_names);
 		tv.setText( CommonUtilities.ToTitleCase(station_from_txt) + " - " +
-				CommonUtilities.ToTitleCase(station_to_txt));
+				CommonUtilities.ToTitleCase(station_to_txt) + " (" + query_date + ")");
 		return;
 	}
 	/**

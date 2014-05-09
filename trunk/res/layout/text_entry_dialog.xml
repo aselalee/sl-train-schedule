@@ -31,4 +31,8 @@
         android:layout_height="wrap_content"
         android:text="@string/add_filter_txt"
         android:checked="true" />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_fav_date_txt" />
 </LinearLayout>

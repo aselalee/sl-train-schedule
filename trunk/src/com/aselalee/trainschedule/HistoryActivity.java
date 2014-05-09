@@ -110,13 +110,12 @@ public class HistoryActivity extends ListActivity {
 
 	private void getResults(ParameterSet paramSet) {
 		Intent intent = new Intent(HistoryActivity.this, ResultViewActivity.class);
-		String date_today = android.text.format.DateFormat.format("yyyy-MM-dd", new java.util.Date()).toString();
 		CommonUtilities.PupulateIntentForResultsActivity(
 				paramSet.start_station_val, paramSet.start_station_txt,
 				paramSet.end_station_val, paramSet.end_station_txt,
 				paramSet.start_time_val, paramSet.start_time_txt,
 				paramSet.end_time_val, paramSet.end_time_txt,
-				date_today, intent);
+				paramSet.date_txt, intent);
 		startActivity(intent);
 	}
 

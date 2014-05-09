@@ -50,7 +50,7 @@ public class GetResultsFromSiteV2 extends Thread {
 	private String station_to;
 	private String time_from;
 	private String time_to;
-	private String date_today;
+	private String query_date;
 	
 	private volatile Result [] results = null;
 	private volatile List<Result> resultsList = new ArrayList<Result>();
@@ -64,14 +64,14 @@ public class GetResultsFromSiteV2 extends Thread {
 		station_to = st_to;
 		time_from = tm_from;
 		time_to = tm_to;
-		date_today = date;
+		query_date = date;
 	}
 
 	public void run() {
 		/**
 		 * Call the "GetResults" method to retrieve schedule data from server.
 		 */ 
-		GetResultsViaJSON(station_from, station_to, time_from, time_to, date_today);
+		GetResultsViaJSON(station_from, station_to, time_from, time_to, query_date);
 		/**
 		 * Call the "GetPrice" method to retrieve price from server.
 		 */
@@ -106,7 +106,7 @@ public class GetResultsFromSiteV2 extends Thread {
 	}
 
 	private void GetResultsViaJSON(String station_from, String station_to,
-			String time_from, String time_to, String date_today)
+			String time_from, String time_to, String date)
 	{
 		/**
 		 * Create name value pairs to be sent.
@@ -117,7 +117,7 @@ public class GetResultsFromSiteV2 extends Thread {
 		nameValuePairs.add(new BasicNameValuePair("endStationID", station_to));
 		nameValuePairs.add(new BasicNameValuePair("startTime", time_from));
 		nameValuePairs.add(new BasicNameValuePair("endTime", time_to));
-		nameValuePairs.add(new BasicNameValuePair("searchDate", date_today));
+		nameValuePairs.add(new BasicNameValuePair("searchDate", date));
 		String strParams =  URLEncodedUtils.format(nameValuePairs, "utf-8");
 		strParams = Constants.JSONURL_GETSCH_V2 + "?" + strParams;
 		String JSONStr = doJSONRequest(strParams);
