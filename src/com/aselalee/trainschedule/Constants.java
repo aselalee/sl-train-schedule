@@ -57,7 +57,7 @@ public final class Constants {
 	 * Database constants
 	 */
 	public static final String DB_NAME = "trains_serch_info.db";
-	public static final int DB_VER = 2;
+	public static final int DB_VER = 3;
 	public static final String TABLE_HIS = "history";
 	public static final String TABLE_FAV = "favourites";
 	public static final String COL_START_STATION_TXT = "start_station_txt";
@@ -68,17 +68,18 @@ public final class Constants {
 	public static final String COL_END_TIME_TXT = "end_time_txt";
 	public static final String COL_START_TIME_VAL = "start_time_val";
 	public static final String COL_END_TIME_VAL = "end_time_val";
+	public static final String COL_DATE_TXT = "date_txt";
 	public static final String COL_FAV_NAME = "fav_name";
 
 	/**
 	 * Maximum entries kept in the history table.
 	 */
-	public static final int MAX_HIS_COUNT = 10;
+	public static final int MAX_HIS_COUNT = 20;
 
 	/**
 	 * Maximum entries kept in the favourites table.
 	 */
-	public static final int MAX_FAV_COUNT = 15;
+	public static final int MAX_FAV_COUNT = 20;
 
 	/**
 	 * Indicates message is sent from GetResultsActivity thread.

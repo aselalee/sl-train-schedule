@@ -26,6 +26,7 @@ public class ParameterSet {
 	public String start_time_val;
 	public String end_time_txt;
 	public String end_time_val;
+	public String date_txt;
 	public long id;
 	public String name;
 }

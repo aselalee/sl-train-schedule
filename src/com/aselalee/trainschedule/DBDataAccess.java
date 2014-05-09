@@ -44,7 +44,8 @@ public class DBDataAccess extends SQLiteOpenHelper {
 				+ Constants.COL_START_TIME_TXT + " TEXT,"
 				+ Constants.COL_START_TIME_VAL + " TEXT,"
 				+ Constants.COL_END_TIME_TXT + " TEXT,"
-				+ Constants.COL_END_TIME_VAL + " TEXT"
+				+ Constants.COL_END_TIME_VAL + " TEXT,"
+				+ Constants.COL_DATE_TXT + " TEXT"
 				+ ");");
 		db.execSQL("CREATE TABLE " + Constants.TABLE_FAV + " ("
 				+ BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -72,7 +73,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 	public boolean PushDataHistory(String start_st_txt, String start_st_val,
 			String end_st_txt, String end_st_val,
 			String start_time_txt, String start_time_val,
-			String end_time_txt, String end_time_val) {
+			String end_time_txt, String end_time_val, String date_txt) {
 		SQLiteDatabase db = null;
 		Cursor myCur = null;
 		long rowID = -1;
@@ -95,6 +96,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 		keyValPairs.put(Constants.COL_START_TIME_VAL, start_time_val);
 		keyValPairs.put(Constants.COL_END_TIME_TXT, end_time_txt);
 		keyValPairs.put(Constants.COL_END_TIME_VAL, end_time_val);
+		keyValPairs.put(Constants.COL_DATE_TXT, date_txt);
 		db.beginTransaction();
 		try {
 			if(db.insert(Constants.TABLE_HIS, null, keyValPairs) < 0) {
@@ -193,6 +195,7 @@ public class DBDataAccess extends SQLiteOpenHelper {
 			paramsList[i].start_time_val = myCur.getString(6);
 			paramsList[i].end_time_txt = myCur.getString(7);
 			paramsList[i].end_time_val = myCur.getString(8);
+			paramsList[i].date_txt = myCur.getString(9);
 			myCur.moveToPrevious();
 		}
 		myCur.close();

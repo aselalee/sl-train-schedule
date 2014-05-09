@@ -97,7 +97,11 @@ public class HisAndFavAdapter extends BaseAdapter {
 		public void setParams(ParameterSet params) {
 			startStationTV.setText("\t" + params.start_station_txt);
 			endStationTV.setText("\t" + params.end_station_txt);
-			filterTV.setText("Time Filter: " + params.start_time_txt + " to " + params.end_time_txt + " (Today)");
+			filterTV.setText(
+							"Time Filter: " + 
+							params.start_time_txt + " to " + params.end_time_txt + 
+							" (" + params.date_txt + ")"
+							);
 		}
 	}
 
