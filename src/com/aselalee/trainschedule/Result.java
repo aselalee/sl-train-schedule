@@ -19,7 +19,7 @@ package com.aselalee.trainschedule;
 
 import java.util.Date;
 
-public class Result {
+public class Result implements Comparable<Result> {
 	public String name; /* Train Name */
 	public String arrivalTime_str; /* Arriving at starting station */
 	public Date arrivalTime_dt;
@@ -36,4 +36,9 @@ public class Result {
 	public String fDescription; /* Train frequency formated to fit screen */
 	public String tyDescription; /* Train type */
 	public String duration_str; /* Traveling time. Calculated locally. */
+	
+	public int compareTo(Result arg0) {
+		//0 if equal, -1 if smaller, 1 if greater
+		return depatureTime_dt.compareTo(arg0.depatureTime_dt);
+	}
 }

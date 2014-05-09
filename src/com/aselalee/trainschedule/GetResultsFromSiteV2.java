@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -318,6 +319,7 @@ public class GetResultsFromSiteV2 extends Thread {
 			Log.e(Constants.LOG_TAG, errorString);
 			return false;
 		}
+		Collections.sort(resultsList);
 		results = new Result[resultsList.size()];
 		int idx = 0;
 		for(ListIterator<Result> it = resultsList.listIterator(); it.hasNext();)
