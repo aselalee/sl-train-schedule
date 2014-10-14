@@ -55,17 +55,18 @@
     </LinearLayout>
     <TextView
         android:id="@+id/res_list_item_freq"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:textSize="14sp"
         android:textColor="#ffffff"
         android:text="@string/dummy"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_weight="1" />
     <ImageView 
         android:src="@drawable/ic_more"
         android:contentDescription="@string/more"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="right"
