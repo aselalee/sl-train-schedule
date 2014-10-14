@@ -408,8 +408,9 @@ public class ResultViewActivity extends Activity{
 
 	private void set_dialog_details(Dialog dialog, int pos) {
 		TextView tv = null;
-		if(results == null || 0 > pos || results.length < pos) {
+		if(results == null || 0 > pos || results.length < pos || results[pos] == null) {
 			dismissDialog(DIALOG_DETAILS);
+			return;
 		}
 		selectedResult = "";
 		selectedResult += "From: ";

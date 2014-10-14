@@ -17,8 +17,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aselalee.trainschedule"
-    android:versionCode="118"
-    android:versionName="1.18"
+    android:versionCode="119"
+    android:versionName="1.19"
     android:installLocation="auto" >
 
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10"/>
